@@ -51,7 +51,7 @@ const rooms = {
         title: '01. Galeria Principal (10 Obras)',
         texture: './imagens/panorama-360.jpg',
         artworks: [
-            { id: 'art1', title: 'Obra 01', desc: 'Galeria Principal', image: './imagens/brasaoparana.jpg', lon: 0, lat: 0, width: 90, height: 110 },
+            { id: 'art1', title: 'Obra 01', desc: 'Galeria Principal', image: 'brasaoparana.jpg', lon: 0, lat: 0, width: 90, height: 110 },
             { id: 'art2', title: 'Obra 02', desc: 'Galeria Principal', image: './imagens/obra2.jpg', lon: 36, lat: 2, width: 100, height: 80 },
             { id: 'art3', title: 'Obra 03', desc: 'Galeria Principal', image: './imagens/obra3.jpg', lon: 72, lat: -1, width: 90, height: 90 },
             { id: 'art4', title: 'Obra 04', desc: 'Galeria Principal', image: './imagens/obra4.jpg', lon: 108, lat: 1, width: 80, height: 120 },
