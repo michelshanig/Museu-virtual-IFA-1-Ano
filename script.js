@@ -603,29 +603,31 @@ function renderizarPaginaLivro() {
 
     if (!pagEsq || !pagDir) return;
 
+    // Efeito visual de virada de página
     if (container) {
         container.classList.remove('animar-virada');
-        void container.offsetWidth;
+        void container.offsetWidth; // Trigger reflow
         container.classList.add('animar-virada');
     }
 
+    // RENDERIZAR CAPA FECHADA (paginaLivroAtual === -1)
     if (paginaLivroAtual === -1) {
         pagEsq.innerHTML = `
-            <div class="flex-1 flex flex-col justify-center items-center h-full w-full bg-[#2A160A] text-[#C59B27] p-6 rounded-l-lg border-r-2 border-[#C59B27]/40 shadow-inner select-none cursor-pointer hover:bg-[#321B0C] transition group" onclick="goToSpread(0)">
-                <div class="text-center space-y-4 my-auto w-full max-w-xs border border-[#C59B27]/30 p-6 rounded-xl bg-[#1F0E05]/60 shadow-xl">
-                    <div class="w-16 h-16 mx-auto rounded-full bg-[#7A1C1C] border-2 border-[#C59B27] flex items-center justify-center text-3xl shadow-xl group-hover:scale-105 transition-transform">
+            <div class="flex-1 flex flex-col justify-center items-center h-full w-full bg-[#2A160A] text-[#C59B27] p-4 sm:p-6 rounded-l-lg border-r-2 border-[#C59B27]/40 shadow-inner select-none cursor-pointer hover:bg-[#321B0C] transition group min-h-[200px]" onclick="goToSpread(0)">
+                <div class="text-center space-y-3 sm:space-y-4 my-auto w-full max-w-xs border border-[#C59B27]/30 p-4 sm:p-6 rounded-xl bg-[#1F0E05]/60 shadow-xl">
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto rounded-full bg-[#7A1C1C] border-2 border-[#C59B27] flex items-center justify-center text-2xl sm:text-3xl shadow-xl group-hover:scale-105 transition-transform">
                         🏛️
                     </div>
                     <div>
-                        <h3 class="font-serif font-bold text-sm text-[#FAF8F5] tracking-wider uppercase">
+                        <h3 class="font-serif font-bold text-xs sm:text-sm text-[#FAF8F5] tracking-wider uppercase">
                             Museu Digital do Paraná
                         </h3>
-                        <p class="font-serif italic text-[11px] text-amber-200/70 mt-1">
+                        <p class="font-serif italic text-[10px] sm:text-[11px] text-amber-200/70 mt-1">
                             Projeto Pedagógico Interdisciplinar
                         </p>
                     </div>
-                    <div class="w-16 h-0.5 bg-[#C59B27] mx-auto opacity-50"></div>
-                    <p class="font-serif text-[10px] text-stone-400 uppercase tracking-widest">
+                    <div class="w-12 sm:w-16 h-0.5 bg-[#C59B27] mx-auto opacity-50"></div>
+                    <p class="font-serif text-[9px] sm:text-[10px] text-stone-400 uppercase tracking-widest">
                         Edição Interativa
                     </p>
                 </div>
@@ -633,21 +635,21 @@ function renderizarPaginaLivro() {
         `;
 
         pagDir.innerHTML = `
-            <div class="flex-1 flex flex-col justify-between items-center h-full w-full bg-[#3D2314] text-[#C59B27] p-6 md:p-8 rounded-r-lg border-2 border-[#C59B27]/80 shadow-2xl select-none cursor-pointer hover:bg-[#482a18] transition group" onclick="goToSpread(0)">
-                <div class="text-center space-y-5 my-auto w-full max-w-sm border-2 border-[#C59B27]/60 p-6 md:p-8 rounded-xl bg-[#2A160A]/90 shadow-2xl backdrop-blur-sm">
-                    <div class="text-5xl md:text-6xl mb-1 transition-transform duration-300 group-hover:scale-110">
+            <div class="flex-1 flex flex-col justify-between items-center h-full w-full bg-[#3D2314] text-[#C59B27] p-4 sm:p-6 md:p-8 rounded-r-lg border-2 border-[#C59B27]/80 shadow-2xl select-none cursor-pointer hover:bg-[#482a18] transition group min-h-[260px]" onclick="goToSpread(0)">
+                <div class="text-center space-y-3 sm:space-y-5 my-auto w-full max-w-sm border-2 border-[#C59B27]/60 p-4 sm:p-6 md:p-8 rounded-xl bg-[#2A160A]/90 shadow-2xl backdrop-blur-sm">
+                    <div class="text-4xl sm:text-5xl md:text-6xl mb-1 transition-transform duration-300 group-hover:scale-110">
                         ${livroObj.iconeCapa || '📜'}
                     </div>
-                    <h2 class="font-serif font-bold text-2xl md:text-3xl text-[#FAF8F5] tracking-wide leading-tight drop-shadow-md">
+                    <h2 class="font-serif font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl text-[#FAF8F5] tracking-wide leading-tight drop-shadow-md">
                         ${livroObj.titulo}
                     </h2>
-                    <div class="w-20 h-1 bg-[#C59B27] mx-auto rounded-full"></div>
-                    <p class="font-serif italic text-xs md:text-sm text-amber-200/90 font-medium">
+                    <div class="w-16 sm:w-20 h-1 bg-[#C59B27] mx-auto rounded-full"></div>
+                    <p class="font-serif italic text-xs md:text-sm text-amber-200/90 font-medium line-clamp-4">
                         ${livroObj.subtitulo}
                     </p>
                     
-                    <div class="pt-3">
-                        <span class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C59B27] hover:bg-amber-400 text-stone-950 font-serif font-bold text-xs md:text-sm rounded-full shadow-xl transition-all border border-amber-200 group-hover:scale-105">
+                    <div class="pt-2 sm:pt-3">
+                        <span class="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-[#C59B27] hover:bg-amber-400 text-stone-950 font-serif font-bold text-xs md:text-sm rounded-full shadow-xl transition-all border border-amber-200 group-hover:scale-105">
                             📖 Clique na Capa para Abrir
                         </span>
                     </div>
@@ -658,6 +660,44 @@ function renderizarPaginaLivro() {
         atualizarIndicadoresLivro();
         return;
     }
+
+    // RENDERIZAR PÁGINAS DO LIVRO (paginaLivroAtual >= 0)
+    const item = listaDados[paginaLivroAtual];
+    if (!item) return;
+
+    const imgEsq = item.imagemEsq || item.imagem || '';
+    const imgDir = item.imagemDir || item.imagem || '';
+
+    // Render Página Esquerda (100% visível no mobile sem cortes)
+    pagEsq.innerHTML = `
+        <div class="w-full h-full flex flex-col justify-center items-center">
+            <div class="w-full border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgEsq}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
+                <div class="w-full flex items-center justify-center bg-stone-100 dark:bg-zinc-800 rounded-lg overflow-hidden relative min-h-[220px] sm:min-h-[320px]">
+                    <img src="${imgEsq}" alt="Página Esquerda" class="w-full h-auto max-h-[50vh] md:max-h-[65vh] object-contain img-zoom filter sepia-[0.08] contrast-105">
+                    <span class="absolute bottom-2 right-2 bg-[#3D2314]/90 text-[#C59B27] text-[10px] font-serif px-2.5 py-1 rounded-md border border-[#C59B27]/40 shadow-md pointer-events-none">
+                        🔍 Ampliar
+                    </span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Render Página Direita (100% visível no mobile sem cortes)
+    pagDir.innerHTML = `
+        <div class="w-full h-full flex flex-col justify-center items-center">
+            <div class="w-full border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgDir}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
+                <div class="w-full flex items-center justify-center bg-stone-100 dark:bg-zinc-800 rounded-lg overflow-hidden relative min-h-[220px] sm:min-h-[320px]">
+                    <img src="${imgDir}" alt="Página Direita" class="w-full h-auto max-h-[50vh] md:max-h-[65vh] object-contain img-zoom filter sepia-[0.08] contrast-105">
+                    <span class="absolute bottom-2 right-2 bg-[#3D2314]/90 text-[#C59B27] text-[10px] font-serif px-2.5 py-1 rounded-md border border-[#C59B27]/40 shadow-md pointer-events-none">
+                        🔍 Ampliar
+                    </span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    atualizarIndicadoresLivro();
+}
 
     const item = listaDados[paginaLivroAtual];
     if (!item) return;
