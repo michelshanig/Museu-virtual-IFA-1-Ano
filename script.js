@@ -1,4 +1,3 @@
-
 /**
  * ===================================================================
  * MUSEU DIGITAL DO PARANÁ - SCRIPT PRINCIPAL E INTERATIVIDADE
@@ -79,7 +78,6 @@ function limparRecursos3D(objeto) {
 // ==========================================
 
 const dadosHistoria = [
-    
     {
         titulo: "Cerco da Lapa",
         descricao: "Jornal do dia 16 de Fevereiro de 1894.",
@@ -105,7 +103,7 @@ const dadosHistoria = [
         imagens: [
             "contestado (1).webp", "contestado (2).webp", "contestado (3).webp",
             "contestado (4).webp", "contestado (5).webp", "contestado (6).webp",
-            "contestado (5).webp", "contestado (8).webp", "contestado (9).webp",
+            "contestado (8).webp", "contestado (9).webp",
             "contestado (10).webp", "contestado (11).webp"
         ],
         autor: "Ana T., Henry Frescura e Daniel Rossoni."
@@ -215,9 +213,7 @@ const dadosGeografia = [
         ],
         autor: "Pesquisa de Geografia"
     }
-    
 ];
-
 
 const dadosArte = [
     {
@@ -312,12 +308,11 @@ const trabalhosAlunos = [
         id: 't1',
         titulo: 'As regiões Oeste e Sudoeste em traços e cores',
         descricao: 'Produções artísticas com material alternativo e foco na sustentabilidade.',
-        descricaoDetalhada: 'Trabalho prático integrando Arte, História e Geografia. Os alunos analisaram as características e particularidades culturais, históricas e geográficas de cada região do Paraná, influenciados pelos principais artistas plásticos paranaenses. Produziram retratos utilizando bases e riscadores alternativos, tendo como foco a produção sustentável.',
+        descricaoDetalhada: 'Trabalho prático integrando Arte, História e Geografia. Os alunos analisaram as características e particularidades culturais, históricas e geográficas de cada região do Paraná, influenciados pelos principais artistas plásticos paranaenses.',
         autor: 'Tayane, Victor e Danilo.',
         disciplina: 'Arte / História / Geografia.',
         imagem: 'As regiões Oeste e Sudoeste em traços e cores_.webp',
-        lon: 0,
-        lat: 0
+        lon: 0, lat: 0
     },
     {
         id: 't2',
@@ -327,19 +322,17 @@ const trabalhosAlunos = [
         autor: 'Victor',
         disciplina: 'Arte',
         imagem: 'As araucárias - Victor_.webp',
-        lon: 36,
-        lat: 0
+        lon: 36, lat: 0
     },
     {
         id: 't3',
         titulo: 'Do litoral à metrópole',
         descricao: 'Produções artísticas com material alternativo e foco na sustentabilidade.',
-        descricaoDetalhada: 'Trabalho prático integrando Arte, História e Geografia. Os alunos analisaram as características e particularidades culturais, históricas e geográficas de cada região do Paraná, influenciados pelos principais artistas plásticos paranaenses. Produziram retratos utilizando bases e riscadores alternativos, tendo como foco a produção sustentável.',
+        descricaoDetalhada: 'Trabalho prático integrando Arte, História e Geografia. Produziram retratos utilizando bases e riscadores alternativos.',
         autor: 'Trabalho Coletivo (Sabrina, Rafael e Eduardo)',
         disciplina: 'Arte / História / Geografia.',
         imagem: 'Do litoral à metrópole_.webp',
-        lon: 72,
-        lat: 0
+        lon: 72, lat: 0
     },
     {
         id: 't4',
@@ -349,8 +342,7 @@ const trabalhosAlunos = [
         autor: 'Luiza',
         disciplina: 'Arte',
         imagem: 'IMG_20260903_102822.webp',
-        lon: 108,
-        lat: 0
+        lon: 108, lat: 0
     },
     {
         id: 't5',
@@ -360,8 +352,7 @@ const trabalhosAlunos = [
         autor: 'Pyetro',
         disciplina: 'Artes',
         imagem: 'O Cafezal - Pyetro.webp',
-        lon: 144,
-        lat: 0
+        lon: 144, lat: 0
     },
     {
         id: 't6',
@@ -371,8 +362,7 @@ const trabalhosAlunos = [
         autor: 'Eduardo',
         disciplina: 'Arte',
         imagem: 'IMG_20260903_102805.webp',
-        lon: 180,
-        lat: 0
+        lon: 180, lat: 0
     },
     {
         id: 't7',
@@ -382,8 +372,7 @@ const trabalhosAlunos = [
         autor: 'Rafael Huber',
         disciplina: 'Arte',
         imagem: 'IMG_20260902_083851.webp',
-        lon: 216,
-        lat: 0
+        lon: 216, lat: 0
     },
     {
         id: 't8',
@@ -393,8 +382,7 @@ const trabalhosAlunos = [
         autor: 'Sabrina',
         disciplina: 'Arte',
         imagem: 'IMG_20260902_083837.webp',
-        lon: 252,
-        lat: 0
+        lon: 252, lat: 0
     },
     {
         id: 't9',
@@ -404,19 +392,17 @@ const trabalhosAlunos = [
         autor: 'Danilo',
         disciplina: 'Arte',
         imagem: 'IMG_20260902_083827.webp',
-        lon: 288,
-        lat: 0
+        lon: 288, lat: 0
     },
     {
         id: 't10',
         titulo: 'Um olhar sobre os Campos gerais paranaenses',
         descricao: 'Produções artísticas com material alternativo e foco na sustentabilidade.',
-        descricaoDetalhada: 'Trabalho prático integrando Arte, História e Geografia. Os alunos analisaram as características e particularidades culturais, históricas e geográficas de cada região do Paraná, influenciados pelos principais artistas plásticos paranaenses. Produziram retratos utilizando bases e riscadores alternativos, tendo como foco a produção sustentável.',
+        descricaoDetalhada: 'Trabalho prático integrando Arte, História e Geografia. Os alunos analisaram as características e particularidades culturais das regiões do Paraná.',
         autor: 'Trabalho Coletivo (Luiza, Rafael H. e Maisa)',
         disciplina: 'História / Arte / Geografia',
         imagem: 'Um olhar sobre os Campos gerais paranaenses_.webp',
-        lon: 324,
-        lat: 0
+        lon: 324, lat: 0
     },
     {
         id: 't11',
@@ -426,8 +412,7 @@ const trabalhosAlunos = [
         autor: 'Sthefanny',
         disciplina: 'Arte',
         imagem: 'IMG20260902114137.webp',
-        lon: 288,
-        lat: 0
+        lon: 288, lat: 0
     },
     {
         id: 't12',
@@ -437,8 +422,7 @@ const trabalhosAlunos = [
         autor: 'Rafael Frasson',
         disciplina: 'Arte',
         imagem: 'IMG20260902082909.webp',
-        lon: 288,
-        lat: 0
+        lon: 288, lat: 0
     },
     {
         id: 't13',
@@ -448,8 +432,7 @@ const trabalhosAlunos = [
         autor: 'Maisa',
         disciplina: 'Arte',
         imagem: 'IMG20260902082805.webp',
-        lon: 288,
-        lat: 0
+        lon: 288, lat: 0
     },
     {
         id: 't14',
@@ -459,8 +442,7 @@ const trabalhosAlunos = [
         autor: 'Professora Ingridi',
         disciplina: 'Arte',
         imagem: 'IMG20260824110034.webp',
-        lon: 288,
-        lat: 0
+        lon: 288, lat: 0
     },
     {
         id: 't15',
@@ -469,19 +451,17 @@ const trabalhosAlunos = [
         autor: 'Trabalho Coletivo (Pedro, Pyetro e Sthefanny)',
         disciplina: 'Arte',
         imagem: 'Campo de araucárias_.webp',
-        lon: 288,
-        lat: 0
+        lon: 288, lat: 0
     }
 ];
 
-// Obras expostas na Árvore do Café
 const obrasCafe = [
     {
         id: 'c1',
         titulo: 'Uma história curiosa sobre o café',
         descricao: 'Estudo em pintura sobre a expansão cafeeira no Norte do Paraná.',
         descricaoDetalhada: 'Uma antiga lenda conta que um pastor teria percebido os efeitos dos frutos do café ao observar o comportamento animado de suas cabras. A história ajuda a explicar como o café passou a ser associado à energia e à disposição.',
-        autor: 'confirmar',
+        autor: 'Geografia',
         disciplina: 'Geografia',
         imagem: 'Mariana 1.webp'
     },
@@ -499,7 +479,7 @@ const obrasCafe = [
         titulo: 'O café e a identidade do Norte do Paraná',
         descricao: 'Integração da flora nativa com a cultura cafeeira.',
         descricaoDetalhada: 'O café foi muito mais que um produto agrícola: ajudou a transformar paisagens, comunidades e modos de vida no Paraná.',
-        autor: 'confirmar',
+        autor: 'Geografia',
         disciplina: 'Geografia',
         imagem: 'Mariana 3.webp'
     },
@@ -517,7 +497,7 @@ const obrasCafe = [
         titulo: 'As mudanças no campo',
         descricao: 'Retrato do cotidiano rural nas plantações históricas.',
         descricaoDetalhada: 'A história do café também revela como a agricultura se adapta às condições econômicas, ambientais e às transformações no território.',
-        autor: 'confirmar',
+        autor: 'Geografia',
         disciplina: 'Geografia',
         imagem: 'Mariana 2.webp'
     },
@@ -535,7 +515,7 @@ const obrasCafe = [
         titulo: 'Um período de grande expansão',
         descricao: 'Pigmentação natural derivada dos próprios grãos de café.',
         descricaoDetalhada: 'A cafeicultura viveu um momento de forte crescimento e deixou marcas importantes na economia e na ocupação do território paranaense.',
-        autor: 'confirmar',
+        autor: 'Geografia',
         disciplina: 'Geografia',
         imagem: 'Mariana 4.webp'
     },
@@ -551,101 +531,31 @@ const obrasCafe = [
 ];
 
 // ==========================================
-// 3. MOTOR DO LIVRO INTERATIVO (SUPORTE A MÚLTIPLOS LIVROS)
+// 3. MOTOR DO LIVRO INTERATIVO (COM GESTOS SWIPE)
 // ==========================================
 const colecaoLivros = {
     livro1: {
         titulo: "Da Folha Ao Mate",
-        subtitulo: "A erva-mate faz parte da história e da identidade cultural do Paraná. Presente nos costumes de diferentes comunidades, o mate representa muito mais do que uma bebida: envolve conhecimentos, práticas de cultivo, modos de preparo e momentos de convivência. Neste livreto, “Da folha ao mate”, os estudantes conheceram o caminho percorrido pela erva-mate, desde sua origem e cultivo até a preparação do mate, valorizando sua importância cultural e histórica para o Paraná.",
+        subtitulo: "A erva-mate faz parte da história e da identidade cultural do Paraná. Presente nos costumes de diferentes comunidades, o mate representa muito mais do que uma bebida.",
         iconeCapa: "📜",
         dados: [
-            {
-                capitulo: "Capítulo I",
-                paginaEsq: "Pág. 02",
-                paginaDir: "Pág. 03",
-                titulo: "A Orografia e os Três Planaltos",
-                imagemEsq: "STHEFANNY TONETO-1 ANO (2).webp",
-                imagemDir: "STHEFANNY TONETO-1 ANO (3).webp"
-            },
-            {
-                capitulo: "Capítulo II",
-                paginaEsq: "Pág. 04",
-                paginaDir: "Pág. 05",
-                titulo: "Clima e Vegetação",
-                imagemEsq: "STHEFANNY TONETO-1 ANO (4).webp",
-                imagemDir: "STHEFANNY TONETO-1 ANO (5).webp"
-            },
-            {
-                capitulo: "Capítulo III",
-                paginaEsq: "Pág. 06",
-                paginaDir: "Pág. 07",
-                titulo: "Solos e Agricultura",
-                imagemEsq: "STHEFANNY TONETO-1 ANO (5).webp",
-                imagemDir: "STHEFANNY TONETO-1 ANO (6).webp"
-            },
-             {
-                capitulo: "Capítulo II",
-                paginaEsq: "Pág. 04",
-                paginaDir: "Pág. 05",
-                titulo: "Clima e Vegetação",
-                imagemEsq: "STHEFANNY TONETO-1 ANO (7).webp",
-                imagemDir: "STHEFANNY TONETO-1 ANO (8).webp"
-            },
-             {
-                capitulo: "Capítulo II",
-                paginaEsq: "Pág. 04",
-                paginaDir: "Pág. 05",
-                titulo: "Clima e Vegetação",
-                imagemEsq: "STHEFANNY TONETO-1 ANO (9).webp",
-                imagemDir: "STHEFANNY TONETO-1 ANO (10).webp"
-            },
+            { capitulo: "Capítulo I", paginaEsq: "Pág. 02", paginaDir: "Pág. 03", titulo: "A Orografia e os Três Planaltos", imagemEsq: "STHEFANNY TONETO-1 ANO (2).webp", imagemDir: "STHEFANNY TONETO-1 ANO (3).webp" },
+            { capitulo: "Capítulo II", paginaEsq: "Pág. 04", paginaDir: "Pág. 05", titulo: "Clima e Vegetação", imagemEsq: "STHEFANNY TONETO-1 ANO (4).webp", imagemDir: "STHEFANNY TONETO-1 ANO (5).webp" },
+            { capitulo: "Capítulo III", paginaEsq: "Pág. 06", paginaDir: "Pág. 07", titulo: "Solos e Agricultura", imagemEsq: "STHEFANNY TONETO-1 ANO (5).webp", imagemDir: "STHEFANNY TONETO-1 ANO (6).webp" },
+            { capitulo: "Capítulo IV", paginaEsq: "Pág. 08", paginaDir: "Pág. 09", titulo: "A Colheita e Processamento", imagemEsq: "STHEFANNY TONETO-1 ANO (7).webp", imagemDir: "STHEFANNY TONETO-1 ANO (8).webp" },
+            { capitulo: "Capítulo V", paginaEsq: "Pág. 10", paginaDir: "Pág. 11", titulo: "Tradição e Identidade", imagemEsq: "STHEFANNY TONETO-1 ANO (9).webp", imagemDir: "STHEFANNY TONETO-1 ANO (10).webp" }
         ]
     },
     livro2: {
         titulo: "Da Folha Ao Mate",
-        subtitulo: "A erva-mate faz parte da história e da identidade cultural do Paraná. Presente nos costumes de diferentes comunidades, o mate representa muito mais do que uma bebida: envolve conhecimentos, práticas de cultivo, modos de preparo e momentos de convivência. Neste livreto, “Da folha ao mate”, os estudantes conheceram o caminho percorrido pela erva-mate, desde sua origem e cultivo até a preparação do mate, valorizando sua importância cultural e histórica para o Paraná.",
+        subtitulo: "A erva-mate faz parte da história e da identidade cultural do Paraná. Presente nos costumes de diferentes comunidades, o mate representa muito mais do que uma bebida.",
         iconeCapa: "📕",
         dados: [
-            {
-                capitulo: "Capítulo I",
-                paginaEsq: "Pág. 02",
-                paginaDir: "Pág. 03",
-                titulo: "Registros de Povoamento",
-                imagemEsq: "TAYANE ZAMPERON-1 ANO (1).webp",
-                imagemDir: "TAYANE ZAMPERON-1 ANO (2).webp"
-            },
-            {
-                capitulo: "Capítulo II",
-                paginaEsq: "Pág. 04",
-                paginaDir: "Pág. 05",
-                titulo: "Pioneiros e Imigração",
-                imagemEsq: "TAYANE ZAMPERON-1 ANO (3).webp",
-                imagemDir: "TAYANE ZAMPERON-1 ANO (4).webp"
-            },
-            {
-                capitulo: "Capítulo II",
-                paginaEsq: "Pág. 04",
-                paginaDir: "Pág. 05",
-                titulo: "Pioneiros e Imigração",
-                imagemEsq: "TAYANE ZAMPERON-1 ANO (5).webp",
-                imagemDir: "TAYANE ZAMPERON-1 ANO (6).webp"
-            },
-            {
-                capitulo: "Capítulo II",
-                paginaEsq: "Pág. 04",
-                paginaDir: "Pág. 05",
-                titulo: "Pioneiros e Imigração",
-                imagemEsq: "TAYANE ZAMPERON-1 ANO (7).webp",
-                imagemDir: "TAYANE ZAMPERON-1 ANO (8).webp"
-            },
-            {
-                capitulo: "Capítulo II",
-                paginaEsq: "Pág. 04",
-                paginaDir: "Pág. 05",
-                titulo: "Pioneiros e Imigração",
-                imagemEsq: "TAYANE ZAMPERON-1 ANO (9).webp",
-                imagemDir: "TAYANE ZAMPERON-1 ANO (10).webp"
-            }
+            { capitulo: "Capítulo I", paginaEsq: "Pág. 02", paginaDir: "Pág. 03", titulo: "Registros de Povoamento", imagemEsq: "TAYANE ZAMPERON-1 ANO (1).webp", imagemDir: "TAYANE ZAMPERON-1 ANO (2).webp" },
+            { capitulo: "Capítulo II", paginaEsq: "Pág. 04", paginaDir: "Pág. 05", titulo: "Pioneiros e Imigração", imagemEsq: "TAYANE ZAMPERON-1 ANO (3).webp", imagemDir: "TAYANE ZAMPERON-1 ANO (4).webp" },
+            { capitulo: "Capítulo III", paginaEsq: "Pág. 06", paginaDir: "Pág. 07", titulo: "Tropas e Caminhos", imagemEsq: "TAYANE ZAMPERON-1 ANO (5).webp", imagemDir: "TAYANE ZAMPERON-1 ANO (6).webp" },
+            { capitulo: "Capítulo IV", paginaEsq: "Pág. 08", paginaDir: "Pág. 09", titulo: "Engenhos e Produção", imagemEsq: "TAYANE ZAMPERON-1 ANO (7).webp", imagemDir: "TAYANE ZAMPERON-1 ANO (8).webp" },
+            { capitulo: "Capítulo V", paginaEsq: "Pág. 10", paginaDir: "Pág. 11", titulo: "Legado Cultural", imagemEsq: "TAYANE ZAMPERON-1 ANO (9).webp", imagemDir: "TAYANE ZAMPERON-1 ANO (10).webp" }
         ]
     }
 };
@@ -658,18 +568,6 @@ function obterLivroAtual() {
     return colecaoLivros[livroChaveAtual] || colecaoLivros['livro1'];
 }
 
-//Suporte a Swipe
-let touchStartX = 0;
-let touchEndX = 0;
-
-const lightboxEl = document.getElementById('lightbox');
-lightboxEl.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
-lightboxEl.addEventListener('touchend', e => {
-    touchEndX = e.changedTouches[0].screenX;
-    if (touchStartX - touchEndX > 50) mudarSlide(1);  // Swipe para esquerda
-    if (touchEndX - touchStartX > 50) mudarSlide(-1); // Swipe para direita
-}, { passive: true });
-
 function atualizarIndicadoresLivro() {
     const livroObj = obterLivroAtual();
     const listaDados = livroObj.dados || [];
@@ -677,13 +575,13 @@ function atualizarIndicadoresLivro() {
     const textIndicador = document.getElementById('pageIndicatorText');
     const iconIndicador = document.getElementById('pageIndicatorIcon');
     const hintText = document.getElementById('hintText');
-    const btnPrev = document.getElementById('btn-livro-prev') || document.getElementById('btnPrev');
-    const btnNext = document.getElementById('btn-livro-next') || document.getElementById('btnNext');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
 
     if (paginaLivroAtual === -1) {
         if (textIndicador) textIndicador.textContent = "Capa Fechada";
         if (iconIndicador) iconIndicador.textContent = "📕";
-        if (hintText) hintText.textContent = "Clique na capa ou no botão 'Próxima' para abrir o livro.";
+        if (hintText) hintText.textContent = "Clique na capa, use o botão ou deslize para abrir o livro.";
         if (btnPrev) btnPrev.disabled = true;
         if (btnNext) btnNext.disabled = false;
     } else {
@@ -705,14 +603,12 @@ function renderizarPaginaLivro() {
 
     if (!pagEsq || !pagDir) return;
 
-    // Efeito visual de virada de página
     if (container) {
         container.classList.remove('animar-virada');
-        void container.offsetWidth; // Trigger reflow
+        void container.offsetWidth;
         container.classList.add('animar-virada');
     }
 
-    // RENDERIZAR CAPA FECHADA (paginaLivroAtual === -1)
     if (paginaLivroAtual === -1) {
         pagEsq.innerHTML = `
             <div class="flex-1 flex flex-col justify-center items-center h-full w-full bg-[#2A160A] text-[#C59B27] p-6 rounded-l-lg border-r-2 border-[#C59B27]/40 shadow-inner select-none cursor-pointer hover:bg-[#321B0C] transition group" onclick="goToSpread(0)">
@@ -742,7 +638,7 @@ function renderizarPaginaLivro() {
                     <div class="text-5xl md:text-6xl mb-1 transition-transform duration-300 group-hover:scale-110">
                         ${livroObj.iconeCapa || '📜'}
                     </div>
-                    <h2 class="font-serif font-bold text-2xl md:text-3xl lg:text-4xl text-[#FAF8F5] tracking-wide leading-tight drop-shadow-md">
+                    <h2 class="font-serif font-bold text-2xl md:text-3xl text-[#FAF8F5] tracking-wide leading-tight drop-shadow-md">
                         ${livroObj.titulo}
                     </h2>
                     <div class="w-20 h-1 bg-[#C59B27] mx-auto rounded-full"></div>
@@ -763,17 +659,15 @@ function renderizarPaginaLivro() {
         return;
     }
 
-    // RENDERIZAR PÁGINAS DO LIVRO (paginaLivroAtual >= 0)
     const item = listaDados[paginaLivroAtual];
     if (!item) return;
 
     const imgEsq = item.imagemEsq || item.imagem || '';
     const imgDir = item.imagemDir || item.imagem || '';
 
-    // Render Página Esquerda (Apenas Imagem)
     pagEsq.innerHTML = `
         <div class="flex-1 flex flex-col justify-center items-center h-full w-full">
-            <div class="w-full h-full border-2 border-[#C59B27]/60 p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgEsq}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
+            <div class="w-full h-full border-2 border-[#C59B27]/60 p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgEsq}'], 'Livro Interativo', '', 'Acervo Digital', 'Leitura')">
                 <div class="w-full h-full aspect-[4/3] md:aspect-[3/4] overflow-hidden rounded-lg relative flex items-center justify-center bg-stone-100 dark:bg-zinc-800">
                     <img src="${imgEsq}" alt="Ilustração Esquerda" class="w-full h-full object-cover img-zoom filter sepia-[0.08] contrast-105">
                     <span class="absolute bottom-2 right-2 bg-[#3D2314]/90 text-[#C59B27] text-[10px] font-serif px-2.5 py-1 rounded-md border border-[#C59B27]/40 shadow-md">
@@ -784,10 +678,9 @@ function renderizarPaginaLivro() {
         </div>
     `;
 
-    // Render Página Direita (Apenas Imagem)
     pagDir.innerHTML = `
         <div class="flex-1 flex flex-col justify-center items-center h-full w-full">
-            <div class="w-full h-full border-2 border-[#C59B27]/60 p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgDir}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
+            <div class="w-full h-full border-2 border-[#C59B27]/60 p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgDir}'], 'Livro Interativo', '', 'Acervo Digital', 'Leitura')">
                 <div class="w-full h-full aspect-[4/3] md:aspect-[3/4] overflow-hidden rounded-lg relative flex items-center justify-center bg-stone-100 dark:bg-zinc-800">
                     <img src="${imgDir}" alt="Ilustração Direita" class="w-full h-full object-cover img-zoom filter sepia-[0.08] contrast-105">
                     <span class="absolute bottom-2 right-2 bg-[#3D2314]/90 text-[#C59B27] text-[10px] font-serif px-2.5 py-1 rounded-md border border-[#C59B27]/40 shadow-md">
@@ -799,15 +692,6 @@ function renderizarPaginaLivro() {
     `;
 
     atualizarIndicadoresLivro();
-}
-
-function folhearLivro(delta) {
-    const listaDados = obterLivroAtual().dados || [];
-    const novaPag = paginaLivroAtual + delta;
-    if (novaPag >= -1 && novaPag < listaDados.length) {
-        paginaLivroAtual = novaPag;
-        renderizarPaginaLivro();
-    }
 }
 
 function nextSpread() {
@@ -839,12 +723,12 @@ function openTocModal() {
     const livroObj = obterLivroAtual();
     const listaDados = livroObj.dados || [];
 
-    const modal = document.getElementById('modalToc') || document.getElementById('modal-toc');
-    const container = document.getElementById('tocContainer') || document.getElementById('toc-container');
+    const modal = document.getElementById('modalToc');
+    const container = document.getElementById('tocContainer');
     if (!modal || !container) return;
 
     container.innerHTML = listaDados.map((item, idx) => `
-        <button onclick="goToSpread(${idx}); closeModal('${modal.id}');" 
+        <button onclick="goToSpread(${idx}); closeModal('modalToc');" 
                 class="w-full text-left p-3 rounded-lg bg-slate-800/80 hover:bg-amber-600/20 border border-slate-700/60 hover:border-amber-500/50 transition flex justify-between items-center text-xs text-amber-200">
             <span class="font-bold">${item.capitulo}: ${item.titulo || ('Página ' + (idx + 1))}</span>
             <span class="text-amber-400 font-serif">${item.paginaEsq || ('Pág. ' + (idx*2 + 2))}</span>
@@ -868,6 +752,29 @@ function toggleAudio() {
     }
 }
 
+// Configuração de Gestos no Leitor de Livros
+let bookTouchStartX = 0;
+let bookTouchEndX = 0;
+
+function configurarSwipeLivro() {
+    const container = document.getElementById('livro-container');
+    if (!container) return;
+
+    container.addEventListener('touchstart', (e) => {
+        bookTouchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    container.addEventListener('touchend', (e) => {
+        bookTouchEndX = e.changedTouches[0].screenX;
+        const diff = bookTouchStartX - bookTouchEndX;
+        if (diff > 40) {
+            nextSpread(); // Deslizou para esquerda -> Próxima página
+        } else if (diff < -40) {
+            prevSpread(); // Deslizou para direita -> Página anterior
+        }
+    }, { passive: true });
+}
+
 function abrirLeitorLivro(idLivro = 'livro1') {
     if (colecaoLivros[idLivro]) {
         livroChaveAtual = idLivro;
@@ -875,9 +782,8 @@ function abrirLeitorLivro(idLivro = 'livro1') {
         livroChaveAtual = 'livro1';
     }
     
-    paginaLivroAtual = -1; // Sempre abre na capa fechada
+    paginaLivroAtual = -1;
 
-    // Atualiza o título no cabeçalho do leitor
     const headerTitle = document.getElementById('headerBookTitle');
     if (headerTitle) {
         headerTitle.textContent = colecaoLivros[livroChaveAtual].titulo;
@@ -893,6 +799,7 @@ function abrirLeitorLivro(idLivro = 'livro1') {
     }, 10);
     
     renderizarPaginaLivro();
+    configurarSwipeLivro();
 
     document.removeEventListener('keydown', tratarTecladoLivro);
     document.addEventListener('keydown', tratarTecladoLivro);
@@ -924,13 +831,12 @@ function tratarTecladoLivro(e) {
     }
 }
 
-
 // ==========================================
-// // 4. CARREGAMENTO GERAL DAS SEÇÕES
+// 4. CARREGAMENTO GERAL DAS SEÇÕES
 // ==========================================
 const colecaoDados = {
     historia: { dados: dadosHistoria, tag: 'História' },
-    geografia: { dados: dadosGeografia, tag: 'Geografia' }, // <-- ADICIONADO AQUI
+    geografia: { dados: dadosGeografia, tag: 'Geografia' },
     arte: { dados: dadosArte, tag: 'Arte' },
     trabalhos: { dados: trabalhosAlunos, tag: 'Trabalho de Aluno' }
 };
@@ -973,11 +879,10 @@ function carregarSecoes() {
     };
 
     render('grid-historia', 'historia');
-    render('grid-geografia', 'geografia'); // <-- ADICIONADO AQUI
+    render('grid-geografia', 'geografia');
     render('grid-arte', 'arte');
     render('grid-trabalhos', 'trabalhos');
 
-    // Inicializar o Livro da Sabedoria
     renderizarPaginaLivro();
 }
 
@@ -988,10 +893,12 @@ if (document.readyState === 'loading') {
 }
 
 // ==========================================
-// 5. LIGHTBOX / APRESENTADOR DE SLIDES EXPANDIDO
+// 5. LIGHTBOX / SLIDES (COM GESTOS SWIPE)
 // ==========================================
 let galeriaImagensAtual = [];
 let indiceSlideAtual = 0;
+let lightboxTouchStartX = 0;
+let lightboxTouchEndX = 0;
 
 function abrirGaleriaPorIndice(categoria, index) {
     const grupo = colecaoDados[categoria];
@@ -1036,6 +943,27 @@ function abrirGaleria(listaImagens, titulo, descDetalhada, autor, tag, indiceIni
         lightbox.classList.add('opacity-100');
     }, 10);
     document.body.style.overflow = 'hidden';
+
+    configurarSwipeLightbox();
+}
+
+function configurarSwipeLightbox() {
+    const container = document.getElementById('lightbox-container');
+    if (!container) return;
+
+    container.addEventListener('touchstart', (e) => {
+        lightboxTouchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    container.addEventListener('touchend', (e) => {
+        lightboxTouchEndX = e.changedTouches[0].screenX;
+        const diff = lightboxTouchStartX - lightboxTouchEndX;
+        if (diff > 40) {
+            mudarSlide(1);  // Avançar slide
+        } else if (diff < -40) {
+            mudarSlide(-1); // Voltar slide
+        }
+    }, { passive: true });
 }
 
 function renderizarThumbnails() {
@@ -1175,33 +1103,6 @@ function initSala3D() {
         return;
     }
 
-    // toque na navegação 3d
-    // Exemplo de integração de Touch Events no Three.js
-container.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
-        interagindo = true;
-        mouseX = e.touches[0].clientX;
-        mouseY = e.touches[0].clientY;
-        startX = mouseX;
-        startY = mouseY;
-        lonOnDown = lon;
-        latOnDown = lat;
-    }
-}, { passive: true });
-
-container.addEventListener('touchmove', (e) => {
-    if (interagindo && e.touches.length === 1) {
-        lonAlvo = (mouseX - e.touches[0].clientX) * 0.2 + lonOnDown;
-        latAlvo = (e.touches[0].clientY - mouseY) * 0.2 + latOnDown;
-    }
-}, { passive: true });
-
-window.addEventListener('touchend', (e) => {
-    if (interagindo) {
-        interagindo = false;
-    }
-});
-
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
     cena = new THREE.Scene();
@@ -1267,6 +1168,7 @@ window.addEventListener('touchend', (e) => {
     grupoQuadros = new THREE.Group();
     cena.add(grupoQuadros);
 
+    // EVENTOS DE MOUSE
     container.addEventListener('mousedown', (e) => {
         interagindo = true;
         mouseX = e.clientX; mouseY = e.clientY;
@@ -1284,13 +1186,47 @@ window.addEventListener('touchend', (e) => {
     window.addEventListener('mouseup', (e) => {
         if (interagindo) {
             interagindo = false;
-            if (Math.hypot(e.clientX - startX, e.clientY - startY) < 6) {
+            if (Math.hypot(e.clientX - startX, e.clientY - startY) < 8) {
                 checarCliqueObra(e);
             }
         }
     });
 
+    // EVENTOS DE TOUCH (CELULARES / TCLAS INTERATIVAS)
+    container.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+            interagindo = true;
+            mouseX = e.touches[0].clientX;
+            mouseY = e.touches[0].clientY;
+            startX = mouseX;
+            startY = mouseY;
+            lonOnDown = lon;
+            latOnDown = lat;
+        }
+    }, { passive: true });
+
+    container.addEventListener('touchmove', (e) => {
+        if (interagindo && e.touches.length === 1) {
+            lonAlvo = (mouseX - e.touches[0].clientX) * 0.2 + lonOnDown;
+            latAlvo = (e.touches[0].clientY - mouseY) * 0.2 + latOnDown;
+        }
+    }, { passive: true });
+
+    window.addEventListener('touchend', (e) => {
+        if (interagindo) {
+            interagindo = false;
+            if (e.changedTouches && e.changedTouches.length > 0) {
+                const touch = e.changedTouches[0];
+                if (Math.hypot(touch.clientX - startX, touch.clientY - startY) < 12) {
+                    checarCliqueObra(touch);
+                }
+            }
+        }
+    });
+
     window.addEventListener('resize', noRedimensionamento);
+    window.addEventListener('orientationchange', () => setTimeout(noRedimensionamento, 200));
+
     montarObrasEPlacas3D();
 }
 
@@ -1341,8 +1277,6 @@ function montarObrasEPlacas3D() {
         spot.angle = Math.PI / 6;
         spot.penumbra = 0.4;
         spot.castShadow = true;
-        spot.shadow.mapSize.width = 1024;
-        spot.shadow.mapSize.height = 1024;
         cena.add(spot);
 
         grupoQuadros.add(grupoArte);
@@ -1377,8 +1311,12 @@ function checarCliqueObra(e) {
     const container = document.getElementById('tour-canvas-container');
     if (!container || !camera || !grupoQuadros) return;
     const rect = container.getBoundingClientRect();
-    mouse.x = ((e.clientX - rect.left) / container.clientWidth) * 2 - 1;
-    mouse.y = -((e.clientY - rect.top) / container.clientHeight) * 2 + 1;
+    
+    const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+    const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+
+    mouse.x = ((clientX - rect.left) / container.clientWidth) * 2 - 1;
+    mouse.y = -((clientY - rect.top) / container.clientHeight) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(grupoQuadros.children, true);
@@ -1400,16 +1338,11 @@ function noRedimensionamento() {
     const altura = container.clientHeight;
     
     camera.aspect = largura / altura;
-    // Aumenta o FOV em telas estreitas (ex: celulares em pé) para manter os quadros visíveis
-    camera.fov = largura < 768 ? 85 : 65; 
+    camera.fov = largura < 768 ? 85 : 65; // Ajuste dinâmico de FOV para mobile
     camera.updateProjectionMatrix();
     
     renderizador.setSize(largura, altura);
 }
-
-window.addEventListener('orientationchange', () => {
-    setTimeout(noRedimensionamento, 200);
-});
 
 function animar3D() {
     animacaoId = requestAnimationFrame(animar3D);
@@ -1615,33 +1548,6 @@ function initSalaArvore3D() {
         return;
     }
 
-    //suporte de navegação 3d
-    // Exemplo de integração de Touch Events no Three.js
-container.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
-        interagindo = true;
-        mouseX = e.touches[0].clientX;
-        mouseY = e.touches[0].clientY;
-        startX = mouseX;
-        startY = mouseY;
-        lonOnDown = lon;
-        latOnDown = lat;
-    }
-}, { passive: true });
-
-container.addEventListener('touchmove', (e) => {
-    if (interagindo && e.touches.length === 1) {
-        lonAlvo = (mouseX - e.touches[0].clientX) * 0.2 + lonOnDown;
-        latAlvo = (e.touches[0].clientY - mouseY) * 0.2 + latOnDown;
-    }
-}, { passive: true });
-
-window.addEventListener('touchend', (e) => {
-    if (interagindo) {
-        interagindo = false;
-    }
-});
-
     raycasterArvore = new THREE.Raycaster();
     mouseArvore = new THREE.Vector2();
     cenaArvore = new THREE.Scene();
@@ -1676,6 +1582,7 @@ window.addEventListener('touchend', (e) => {
     construirPlacaCafeStand();
     montarObrasNasPontas();
 
+    // EVENTOS DE MOUSE
     container.addEventListener('mousedown', (e) => {
         interagindoArvore = true;
         mouseXArvore = e.clientX; mouseYArvore = e.clientY;
@@ -1693,13 +1600,46 @@ window.addEventListener('touchend', (e) => {
     window.addEventListener('mouseup', (e) => {
         if (interagindoArvore) {
             interagindoArvore = false;
-            if (Math.hypot(e.clientX - startXArvore, e.clientY - startYArvore) < 6) {
+            if (Math.hypot(e.clientX - startXArvore, e.clientY - startYArvore) < 8) {
                 checarCliqueObraArvore(e);
             }
         }
     });
 
+    // EVENTOS DE TOUCH (CELULARES / TELAS TOUCH)
+    container.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+            interagindoArvore = true;
+            mouseXArvore = e.touches[0].clientX;
+            mouseYArvore = e.touches[0].clientY;
+            startXArvore = mouseXArvore;
+            startYArvore = mouseYArvore;
+            lonOnDownArvore = lonArvore;
+            latOnDownArvore = latArvore;
+        }
+    }, { passive: true });
+
+    container.addEventListener('touchmove', (e) => {
+        if (interagindoArvore && e.touches.length === 1) {
+            lonAlvoArvore = (mouseXArvore - e.touches[0].clientX) * 0.2 + lonOnDownArvore;
+            latAlvoArvore = (e.touches[0].clientY - mouseYArvore) * 0.2 + latOnDownArvore;
+        }
+    }, { passive: true });
+
+    window.addEventListener('touchend', (e) => {
+        if (interagindoArvore) {
+            interagindoArvore = false;
+            if (e.changedTouches && e.changedTouches.length > 0) {
+                const touch = e.changedTouches[0];
+                if (Math.hypot(touch.clientX - startXArvore, touch.clientY - startYArvore) < 12) {
+                    checarCliqueObraArvore(touch);
+                }
+            }
+        }
+    });
+
     window.addEventListener('resize', noRedimensionamentoArvore);
+    window.addEventListener('orientationchange', () => setTimeout(noRedimensionamentoArvore, 200));
 }
 
 function construirRecintoElegante() {
@@ -1983,7 +1923,6 @@ function montarObrasNasPontas() {
         grupoPendulo.add(meshMoldura);
         grupoPendulo.add(meshTela);
 
-        // Define a rotação Y limpa e direta para fora (evita rotações invertidas no balanço)
         grupoPendulo.rotation.set(0, Math.atan2(pontoAncoragem.x, pontoAncoragem.z), 0);
 
         const spot = new THREE.SpotLight(CONFIG_GALERIA_CLASSICA.corLuzGaleria, CONFIG_GALERIA_CLASSICA.intensidadeSpotlight);
@@ -2053,8 +1992,11 @@ function checarCliqueObraArvore(e) {
     if (!container || !cameraArvore || !grupoArvore) return;
 
     const rect = container.getBoundingClientRect();
-    mouseArvore.x = ((e.clientX - rect.left) / container.clientWidth) * 2 - 1;
-    mouseArvore.y = -((e.clientY - rect.top) / container.clientHeight) * 2 + 1;
+    const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+    const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+
+    mouseArvore.x = ((clientX - rect.left) / container.clientWidth) * 2 - 1;
+    mouseArvore.y = -((clientY - rect.top) / container.clientHeight) * 2 + 1;
 
     raycasterArvore.setFromCamera(mouseArvore, cameraArvore);
     const intersects = raycasterArvore.intersectObjects(grupoArvore.children, true);
@@ -2078,9 +2020,15 @@ function checarCliqueObraArvore(e) {
 function noRedimensionamentoArvore() {
     const container = document.getElementById('arvore-canvas-container');
     if (!container || !cameraArvore || !renderizadorArvore) return;
-    cameraArvore.aspect = container.clientWidth / container.clientHeight;
+    
+    const largura = container.clientWidth;
+    const altura = container.clientHeight;
+
+    cameraArvore.aspect = largura / altura;
+    cameraArvore.fov = largura < 768 ? 85 : 65;
     cameraArvore.updateProjectionMatrix();
-    renderizadorArvore.setSize(container.clientWidth, container.clientHeight);
+    
+    renderizadorArvore.setSize(largura, altura);
 }
 
 function abrirTourArvoreVirtual() {

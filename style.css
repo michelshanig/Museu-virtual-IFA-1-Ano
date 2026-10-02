@@ -56,6 +56,7 @@ main {
 /* Custom Scrollbar */
 .scrollbar-thin::-webkit-scrollbar {
     height: 6px;
+    width: 6px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
@@ -68,8 +69,12 @@ main {
     border-radius: 4px;
 }
 
+/* Otimizações para Telas Sensíveis ao Toque e Canvas 3D */
 #tour-canvas-container canvas,
 #arvore-canvas-container canvas {
     outline: none;
     display: block;
+    touch-action: none; /* Impede que a tela role ao arrastar o 3D */
+    user-select: none;
+    -webkit-user-select: none;
 }
