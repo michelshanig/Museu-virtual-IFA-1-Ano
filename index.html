@@ -1,0 +1,411 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Museu Digital do Paraná • Acervo de Livros</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        parana: {
+                            gold: '#C59B27',
+                            wine: '#7A1C1C',
+                            marfim: '#FAF8F5',
+                            marfimDark: '#EFECE6',
+                            mogno: '#3D2314'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Georgia', 'Cambria', 'serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Three.js CDN para as Salas Virtuais 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#FAF8F5] dark:bg-zinc-950 text-stone-800 dark:text-stone-200 font-sans transition-colors duration-300 min-h-screen flex flex-col">
+
+    <!-- BARRA DE ACESSIBILIDADE E CABEÇALHO -->
+    <header class="sticky top-0 z-40 w-full bg-[#FAF8F5]/90 dark:bg-zinc-950/90 backdrop-blur-md border-b border-[#E2D8C3] dark:border-zinc-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-[#7A1C1C] text-[#C59B27] flex items-center justify-center font-serif font-bold text-xl border border-[#C59B27]/40 shadow-md">
+                    🏛️
+                </div>
+                <div>
+                    <h1 class="font-serif font-bold text-lg md:text-xl text-[#3D2314] dark:text-stone-100 leading-tight">
+                        Museu Digital do Paraná
+                    </h1>
+                    <p class="text-[11px] text-[#7A1C1C] dark:text-amber-400 font-medium uppercase tracking-wider">
+                        História • Geografia • Arte
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 md:gap-4">
+                <div class="flex items-center bg-[#EFECE6] dark:bg-zinc-900 p-1 rounded-lg border border-[#D4C4A8] dark:border-zinc-800 text-xs font-semibold">
+                    <button onclick="alterarFonte(-1)" class="px-2.5 py-1 hover:bg-[#D4C4A8] dark:hover:bg-zinc-800 rounded transition-colors" title="Diminuir Fonte">A-</button>
+                    <button onclick="resetarFonte()" class="px-2 py-1 hover:bg-[#D4C4A8] dark:hover:bg-zinc-800 rounded transition-colors" title="Tamanho Padrão">A</button>
+                    <button onclick="alterarFonte(1)" class="px-2.5 py-1 hover:bg-[#D4C4A8] dark:hover:bg-zinc-800 rounded transition-colors" title="Aumentar Fonte">A+</button>
+                </div>
+
+                <button onclick="alternarTema()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#EFECE6] dark:bg-zinc-900 border border-[#D4C4A8] dark:border-zinc-800 text-xs font-semibold hover:bg-[#D4C4A8] dark:hover:bg-zinc-800 transition-all">
+                    <span id="theme-icon">☀️</span>
+                    <span id="theme-text" class="hidden sm:inline">Modo Claro</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- BANNER HERO PRINCIPAL -->
+    <section class="relative bg-[#3D2314] text-white py-16 md:py-24 px-4 overflow-hidden border-b-4 border-[#C59B27]">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#C59B27_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="max-w-4xl mx-auto text-center relative z-10 space-y-6">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-[#7A1C1C] text-[#C59B27] text-xs font-serif font-bold uppercase tracking-widest border border-[#C59B27]/30 shadow-lg">
+                IFA: Itinerário Formativo de Aprofundamento
+            </span>
+            <h2 class="text-3xl md:text-5xl font-serif font-bold leading-tight text-[#FAF8F5]">
+               Da cidade ao campo e do litoral às fronteira. 
+            </h2>
+            <p class="text-sm md:text-base text-stone-300 max-w-2xl mx-auto leading-relaxed">
+                como os fluxos de pessoas, o desenvolvimento econômico e as manifestações artísticas ao longo da história valorizam a nossa sociedade.
+            </p>
+         
+            <div class="pt-4 flex flex-wrap justify-center gap-4">
+                <button onclick="abrirTourVirtual()" class="inline-flex items-center gap-2 px-6 py-3.5 bg-[#C59B27] hover:bg-[#b0881f] text-stone-950 font-serif font-bold text-sm rounded-xl transition-all shadow-xl hover:scale-105 border border-amber-200">
+                    🏛️ Galeria de Artes 3D
+                </button>
+                <button onclick="abrirTourArvoreVirtual()" class="inline-flex items-center gap-2 px-6 py-3.5 bg-[#2D4A27] hover:bg-[#233a1e] text-amber-100 font-serif font-bold text-sm rounded-xl transition-all shadow-xl hover:scale-105 border border-emerald-400/40">
+                    🌳 Sala do Café 3D
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTEÚDO DA EXPOSIÇÃO -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16 flex-1">
+
+        <!-- SEÇÃO: HISTÓRIA -->
+        <section id="historia" class="space-y-6">
+            <div class="border-b-2 border-[#C59B27] pb-3 flex items-center justify-between">
+                <h2 class="text-2xl font-serif font-bold text-[#7A1C1C] dark:text-amber-400 flex items-center gap-2">
+                    📜 História do Paraná
+                </h2>
+                <span class="text-xs text-stone-500 font-medium">Formação & Povoamento</span>
+            </div>
+            <div id="grid-historia" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- SEÇÃO: GEOGRAFIA DO PARANÁ (GALERIA DE IMAGENS) -->
+        <section id="geografia" class="space-y-6">
+            <div class="border-b-2 border-[#C59B27] pb-3 flex items-center justify-between">
+                <h2 class="text-2xl font-serif font-bold text-[#7A1C1C] dark:text-amber-400 flex items-center gap-2">
+                    🌍 Geografia do Paraná
+                </h2>
+                <span class="text-xs text-stone-500 font-medium">Relevo, Clima & Paisagens</span>
+            </div>
+            <div id="grid-geografia" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- SEÇÃO: ACERVO DE LIVROS DIGITAIS (DOIS LILIVRO DE MEMÓRIAS DO PARANÁVROS) -->
+        <section id="secao-livros" class="space-y-6">
+            <div class="border-b-2 border-[#C59B27] pb-3 flex items-center justify-between">
+                <h2 class="text-2xl font-serif font-bold text-[#7A1C1C] dark:text-amber-400 flex items-center gap-2">
+                    📖 Geografia do Paraná
+                </h2>
+                <span class="text-xs text-stone-500 font-medium">Leitura Interativa 3D</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- LIVRO 1: O LIVRO DA SABEDORIA -->
+                <div class="bg-gradient-to-r from-[#3D2314] via-[#4A2E1B] to-[#3D2314] rounded-2xl p-6 md:p-8 text-center text-[#FAF8F5] border-2 border-[#C59B27]/60 shadow-xl relative overflow-hidden group flex flex-col justify-between">
+                    <div class="space-y-4 relative z-10">
+                        <span class="text-5xl block transform group-hover:scale-110 transition-transform duration-300">📜</span>
+                        <h3 class="font-serif font-bold text-2xl text-[#FAF8F5] tracking-wide">
+                            Da Folha Ao Mate
+                        </h3>
+                        <p class="font-serif italic text-xs md:text-sm text-amber-200/90 leading-relaxed">
+                            Aluna: Tayane Zamperon
+                        </p>
+                    </div>
+                    <div class="pt-6">
+                        <button onclick="abrirLeitorLivro('livro1')" class="w-full py-3.5 bg-[#C59B27] hover:bg-amber-400 text-stone-950 font-serif font-bold text-xs md:text-sm rounded-xl shadow-lg transition-all border border-amber-200">
+                            📖 Clique aqui para ler
+                        </button>
+                    </div>
+                </div>
+
+                <!-- LIVRO 2: LIVRO DE MEMÓRIAS DO PARANÁ -->
+                <div class="bg-gradient-to-r from-[#2A160A] via-[#3A1E0D] to-[#2A160A] rounded-2xl p-6 md:p-8 text-center text-[#FAF8F5] border-2 border-[#C59B27]/60 shadow-xl relative overflow-hidden group flex flex-col justify-between">
+                    <div class="space-y-4 relative z-10">
+                        <span class="text-5xl block transform group-hover:scale-110 transition-transform duration-300">📕</span>
+                        <h3 class="font-serif font-bold text-2xl text-[#FAF8F5] tracking-wide">
+                            Da Folha Ao Mate
+                        </h3>
+                        <p class="font-serif italic text-xs md:text-sm text-amber-200/90 leading-relaxed">
+                            Aluna: Sthefanny Tonetto
+                        </p>
+                    </div>
+                    <div class="pt-6">
+                        <button onclick="abrirLeitorLivro('livro2')" class="w-full py-3.5 bg-[#7A1C1C] hover:bg-red-800 text-amber-100 font-serif font-bold text-xs md:text-sm rounded-xl shadow-lg transition-all border border-amber-500/40">
+                            📕 Clique aqui para ler
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SEÇÃO: ARTE -->
+        <section id="arte" class="space-y-6">
+            <div class="border-b-2 border-[#C59B27] pb-3 flex items-center justify-between">
+                <h2 class="text-2xl font-serif font-bold text-[#7A1C1C] dark:text-amber-400 flex items-center gap-2">
+                    🎨 Movimentos Artísticos
+                </h2>
+                <span class="text-xs text-stone-500 font-medium">Cultura & Expressão</span>
+            </div>
+            <div id="grid-arte" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- SEÇÃO: TRABALHOS DOS ALUNOS -->
+        <section id="trabalhos" class="space-y-6">
+            <div class="border-b-2 border-[#C59B27] pb-3 flex items-center justify-between">
+                <h2 class="text-2xl font-serif font-bold text-[#7A1C1C] dark:text-amber-400 flex items-center gap-2">
+                    🎓 Trabalhos dos Alunos
+                </h2>
+                <span class="text-xs text-stone-500 font-medium">Exposição Escolar</span>
+            </div>
+            <div id="grid-trabalhos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="bg-[#3D2314] text-stone-300 py-8 border-t-4 border-[#C59B27] text-center text-xs">
+        <p class="font-serif">© Museu Digital do Paraná • IFA - 2026 - E.E Castelo Branco - Pérola D'Oeste - Paraná - Brasil.  </p>
+    </footer>
+
+    <!-- MODAL EM TELA CHEIA: LEITOR DOS LIVROS -->
+    <div id="modal-leitor-livro" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-300 bg-black/90 backdrop-blur-md flex flex-col justify-between p-4 md:p-6 overflow-y-auto">
+        
+        <div class="max-w-6xl mx-auto w-full flex flex-wrap items-center justify-between gap-4 bg-slate-900/90 border border-amber-700/40 rounded-2xl p-3 md:p-4 shadow-2xl">
+            <div class="flex items-center space-x-3">
+                <span class="text-2xl">📖</span>
+                <div>
+                    <h1 id="headerBookTitle" class="font-serif text-base md:text-lg font-bold tracking-wider text-amber-200 leading-tight">O LIVRO DA </h1>
+                    <p class="text-[11px] text-amber-500/80 hidden sm:block">Leitura 3D Interativa</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/90 border border-amber-700/40 rounded-full px-4 py-1.5 text-xs md:text-sm font-medium text-amber-300 shadow-inner flex items-center space-x-2">
+                <span id="pageIndicatorIcon">📕</span>
+                <span id="pageIndicatorText">Capa Fechada</span>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <button id="btnHome" onclick="goToSpread(-1)" title="Ir para a Capa" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs font-semibold transition text-amber-300 flex items-center gap-1 shadow">
+                    🏠 <span class="hidden sm:inline">Capa</span>
+                </button>
+
+                <button id="btnToc" onclick="openTocModal()" title="Sumário" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs font-semibold transition text-amber-300 flex items-center gap-1 shadow">
+                    📋 <span class="hidden sm:inline">Sumário</span>
+                </button>
+
+                <div class="h-5 w-px bg-amber-900/50 mx-1"></div>
+
+                <button id="btnPrev" onclick="prevSpread()" class="px-3 py-1.5 bg-amber-950/80 hover:bg-amber-900 border border-amber-700/50 rounded-lg text-xs font-semibold transition text-amber-200 flex items-center gap-1 shadow disabled:opacity-40 disabled:cursor-not-allowed">
+                    ◀ <span class="hidden sm:inline">Anterior</span>
+                </button>
+
+                <button id="btnNext" onclick="nextSpread()" class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-500 border border-amber-400/50 rounded-lg text-xs transition text-slate-950 font-bold flex items-center gap-1 shadow">
+                    <span class="hidden sm:inline">Próxima</span> ▶
+                </button>
+
+                <button onclick="toggleAudio()" id="btnAudio" title="Ativar/Desativar Som" class="p-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs transition text-amber-300 ml-1">
+                    🔊
+                </button>
+
+                <button onclick="fecharLeitorLivro()" title="Fechar Leitor (Esc)" class="w-9 h-9 bg-[#7A1C1C] hover:bg-red-800 text-white rounded-lg font-bold text-sm transition flex items-center justify-center ml-2 shadow-lg">
+                    ✕
+                </button>
+            </div>
+        </div>
+
+        <div class="perspective-book max-w-5xl mx-auto w-full my-auto py-4">
+            <div class="bg-[#3D2314] p-3 md:p-6 rounded-2xl shadow-2xl border-4 border-[#C59B27]/60 relative">
+                
+                <div id="livro-container" class="livro-wrapper relative bg-[#FAF8F5] dark:bg-zinc-900 rounded-lg border border-[#D4C4A8] dark:border-zinc-800 min-h-[480px] md:min-h-[540px] shadow-inner flex flex-col md:flex-row overflow-hidden transition-all duration-500">
+                    <div id="livro-pagina-esq" class="w-full md:w-1/2 p-4 md:p-6 flex flex-col justify-center items-center border-b md:border-b-0 md:border-r border-[#D4C4A8] dark:border-zinc-800 bg-[#FAF8F5] dark:bg-zinc-900"></div>
+                    <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-8 -translate-x-1/2 bg-gradient-to-r from-black/15 via-black/5 to-black/15 pointer-events-none z-10"></div>
+                    <div id="livro-pagina-dir" class="w-full md:w-1/2 p-4 md:p-6 flex flex-col justify-center items-center bg-[#F7F3EC] dark:bg-zinc-950"></div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <div id="interactionHint" class="bg-slate-900/90 border border-amber-600/50 px-5 py-2 rounded-full shadow-2xl text-xs md:text-sm text-amber-200 inline-block transition-opacity duration-500">
+                        ✨ <span id="hintText">Clique na capa ou no botão "Próxima" para abrir o livro</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL 1: TOUR VIRTUAL 3D -->
+    <div id="tour-modal" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-300 bg-black">
+        <div id="tour-canvas-container" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+        <div class="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
+            <div class="bg-[#FAF8F5]/90 dark:bg-zinc-900/90 border border-[#D4C4A8] dark:border-zinc-800 px-4 py-2 rounded-xl backdrop-blur-md shadow-xl pointer-events-auto flex items-center gap-3">
+                <span class="text-lg">🏛️</span>
+                <div>
+                    <h3 class="font-serif font-bold text-xs text-[#3D2314] dark:text-stone-100">Galeria Clássica Virtual</h3>
+                    <p class="text-[10px] text-stone-500">Clique e arraste para olhar em volta • Clique na obra para ampliar</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 pointer-events-auto">
+                <button onclick="focarObraMaisProxima()" class="px-3 py-2 bg-[#C59B27] hover:bg-[#a6811f] text-stone-950 font-serif font-bold text-xs rounded-xl shadow-lg transition-all flex items-center gap-1.5">
+                    🔍 Focar Obra
+                </button>
+                <button onclick="fecharTourVirtual()" class="w-10 h-10 bg-[#7A1C1C] hover:bg-red-800 text-white rounded-xl shadow-lg transition-all flex items-center justify-center font-bold">
+                    ✕
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ÁRVORE DAS ARTES 3D -->
+    <div id="arvore-modal" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-300 bg-black">
+        <div id="arvore-canvas-container" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+        
+        <div class="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
+            <div class="bg-[#FAF8F5]/90 dark:bg-zinc-900/90 border border-[#D4C4A8] dark:border-zinc-800 px-4 py-2 rounded-xl backdrop-blur-md shadow-xl pointer-events-auto flex items-center gap-3">
+                <span class="text-lg">🌳</span>
+                <div>
+                    <h3 class="font-serif font-bold text-xs text-[#3D2314] dark:text-stone-100">Sala do Café
+                    </h3>
+                    <p class="text-[10px] text-stone-500">Arraste para girar • Clique nas obras ou na placa para ver detalhes</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 pointer-events-auto">
+                <button onclick="fecharTourArvoreVirtual()" class="w-10 h-10 bg-[#7A1C1C] hover:bg-red-800 text-white rounded-xl shadow-lg transition-all flex items-center justify-center font-bold">
+                    ✕
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: SUMÁRIO DO LIVRO (TOC) -->
+    <div id="modalToc" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="bg-slate-900 border border-amber-600/50 rounded-2xl p-6 max-w-lg w-full shadow-2xl text-amber-100 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-lg text-amber-300 flex items-center gap-2">📋 Sumário do Livro</h3>
+                <button onclick="closeModal('modalToc')" class="text-slate-400 hover:text-white font-bold text-lg">✕</button>
+            </div>
+            <div id="tocContainer" class="space-y-2.5 my-4 max-h-80 overflow-y-auto"></div>
+            <div class="flex justify-end pt-3 border-t border-slate-800">
+                <button type="button" onclick="closeModal('modalToc')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 text-xs font-semibold">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: LIGHTBOX / APRESENTAÇÃO DE SLIDES EXPANDIDO -->
+    <div id="lightbox" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-stone-950/95 backdrop-blur-md">
+        <div id="lightbox-container" class="relative w-full max-w-[96vw] h-[94vh] max-h-[96vh] bg-[#FAF8F5] dark:bg-zinc-900 border border-[#D4C4A8] dark:border-zinc-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row transition-all duration-300">
+         
+            <div class="absolute top-4 right-4 z-30 flex items-center gap-2">
+                <button onclick="alternarTelaCheia()" title="Alternar Tela Cheia (F)" class="px-3 py-2 rounded-xl bg-stone-900/80 hover:bg-[#C59B27] hover:text-stone-950 text-white flex items-center gap-1.5 transition-all shadow-lg border border-stone-700 text-xs font-serif font-bold">
+                    <span>🖥️</span>
+                    <span class="hidden sm:inline">Tela Cheia</span>
+                </button>
+                <button onclick="fecharLightbox()" title="Fechar Apresentação (Esc)" class="w-10 h-10 rounded-xl bg-stone-900/80 hover:bg-[#7A1C1C] text-white flex items-center justify-center transition-all shadow-lg border border-stone-700 font-bold text-lg">
+                    ✕
+                </button>
+            </div>
+
+            <div class="relative w-full md:w-2/3 lg:w-3/4 bg-[#120B06] flex items-center justify-center p-4 md:p-8 select-none h-[55%] md:h-full border-b md:border-b-0 md:border-r border-[#D4C4A8] dark:border-zinc-800">
+                <button id="btn-prev-slide" onclick="mudarSlide(-1)" title="Slide Anterior (←)" class="absolute left-4 z-20 w-12 h-12 md:w-16 md:h-16 rounded-full bg-stone-900/80 hover:bg-[#C59B27] hover:text-stone-950 text-white flex items-center justify-center text-2xl md:text-3xl font-bold transition-all shadow-2xl border border-white/20 hover:scale-110">
+                    ❮
+                </button>
+
+                <div class="w-full h-full flex items-center justify-center overflow-hidden p-2">
+                    <img id="lightbox-img" src="" alt="Slide Exibição" class="max-h-[78vh] max-w-full object-contain rounded-md shadow-2xl transition-all duration-300 transform scale-100">
+                </div>
+
+                <button id="btn-next-slide" onclick="mudarSlide(1)" title="Próximo Slide (→)" class="absolute right-4 z-20 w-12 h-12 md:w-16 md:h-16 rounded-full bg-stone-900/80 hover:bg-[#C59B27] hover:text-stone-950 text-white flex items-center justify-center text-2xl md:text-3xl font-bold transition-all shadow-2xl border border-white/20 hover:scale-110">
+                    ❯
+                </button>
+
+                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-stone-900/90 text-[#C59B27] border border-[#C59B27]/40 text-xs md:text-sm px-6 py-2 rounded-full font-serif font-bold shadow-2xl flex items-center gap-2 z-20 backdrop-blur-md">
+                    <span>📖</span>
+                    <span id="lightbox-contador">1 / 1</span>
+                    <span class="text-stone-400 text-[10px] hidden md:inline ml-2">• Use as setas ⬅️ ➡️ no teclado</span>
+                </div>
+            </div>
+
+            <div class="w-full md:w-1/3 lg:w-1/4 p-6 md:p-8 flex flex-col justify-between overflow-y-auto bg-[#FAF8F5] dark:bg-zinc-900 h-[45%] md:h-full">
+                <div class="space-y-4">
+                    <span id="lightbox-tag" class="inline-block px-4 py-1.5 bg-[#7A1C1C]/10 border border-[#7A1C1C]/30 text-[#7A1C1C] dark:text-amber-400 text-xs md:text-sm font-serif font-bold rounded-full uppercase tracking-wider"></span>
+                    <h3 id="lightbox-title" class="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-stone-900 dark:text-stone-100 leading-tight"></h3>
+                    <div class="border-t border-[#E2D8C3] dark:border-zinc-800 pt-4">
+                        <p id="lightbox-desc" class="text-sm md:text-base lg:text-lg text-stone-700 dark:text-stone-300 leading-relaxed font-sans"></p>
+                    </div>
+                </div>
+
+                <div class="pt-6 mt-6 border-t border-[#E2D8C3] dark:border-zinc-800 space-y-4">
+                    <div>
+                        <p class="text-xs font-serif font-bold text-stone-500 uppercase tracking-wider mb-2">Outras páginas / fotos do slide:</p>
+                        <div id="lightbox-thumbs" class="flex gap-2 overflow-x-auto pb-2 scrollbar-thin"></div>
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs md:text-sm text-[#4A2E1B] dark:text-amber-300 font-serif font-bold pt-2 border-t border-[#E2D8C3]/60 dark:border-zinc-800/60">
+                        <span id="lightbox-autor"></span>
+                        <span class="text-[11px] text-stone-400 dark:text-stone-500 font-sans font-normal">Apresentação Museu</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE INFORMAÇÕES DA PLACA DA ÁRVORE -->
+    <div id="modal-info-placa" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+        <div class="bg-[#FAF8F5] dark:bg-zinc-900 border-2 border-[#C59B27] rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 text-center">
+            <div class="w-12 h-12 mx-auto rounded-full bg-[#7A1C1C]/10 border border-[#7A1C1C]/30 text-[#7A1C1C] dark:text-amber-400 flex items-center justify-center text-2xl font-serif">
+                ☕
+            </div>
+            <div>
+                <h3 id="info-placa-titulo" class="font-serif font-bold text-xl text-[#3D2314] dark:text-amber-100">
+                    Pé de Café
+                </h3>
+                <p class="text-xs text-[#7A1C1C] dark:text-amber-400 font-serif uppercase tracking-wider mt-1">
+                    Patrimônio Agrícola & Cultural
+                </p>
+            </div>
+            <div class="border-t border-[#E2D8C3] dark:border-zinc-800 pt-4">
+                <p id="info-placa-desc" class="text-sm text-stone-700 dark:text-stone-300 leading-relaxed font-sans">
+                    Coffea arabica • Símbolo fundamental da riqueza agrícola, povoamento e desenvolvimento histórico do estado do Paraná.
+                </p>
+            </div>
+            <div class="pt-2">
+                <button onclick="fecharModalInfoPlaca()" class="w-full py-2.5 bg-[#C59B27] hover:bg-[#a6811f] text-stone-950 font-serif font-bold text-xs rounded-xl shadow-md transition-all">
+                    Fechar Informações
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
