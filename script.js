@@ -665,11 +665,12 @@ function renderizarPaginaLivro() {
     const imgEsq = item.imagemEsq || item.imagem || '';
     const imgDir = item.imagemDir || item.imagem || '';
 
+    // Render Página Esquerda (Ajustada para Mobile e Desktop)
     pagEsq.innerHTML = `
-        <div class="flex-1 flex flex-col justify-center items-center h-full w-full">
-            <div class="w-full h-full border-2 border-[#C59B27]/60 p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgEsq}'], 'Livro Interativo', '', 'Acervo Digital', 'Leitura')">
-                <div class="w-full h-full aspect-[4/3] md:aspect-[3/4] overflow-hidden rounded-lg relative flex items-center justify-center bg-stone-100 dark:bg-zinc-800">
-                    <img src="${imgEsq}" alt="Ilustração Esquerda" class="w-full h-full object-cover img-zoom filter sepia-[0.08] contrast-105">
+        <div class="w-full h-full flex flex-col justify-center items-center">
+            <div class="w-full h-full max-h-[42vh] md:max-h-none border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgEsq}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
+                <div class="w-full h-full overflow-hidden rounded-lg relative flex items-center justify-center bg-stone-100 dark:bg-zinc-800">
+                    <img src="${imgEsq}" alt="Ilustração Esquerda" class="max-w-full max-h-[38vh] md:max-h-[65vh] w-auto h-auto object-contain img-zoom filter sepia-[0.08] contrast-105">
                     <span class="absolute bottom-2 right-2 bg-[#3D2314]/90 text-[#C59B27] text-[10px] font-serif px-2.5 py-1 rounded-md border border-[#C59B27]/40 shadow-md">
                         🔍 Ampliar
                     </span>
@@ -678,11 +679,12 @@ function renderizarPaginaLivro() {
         </div>
     `;
 
+    // Render Página Direita (Ajustada para Mobile e Desktop)
     pagDir.innerHTML = `
-        <div class="flex-1 flex flex-col justify-center items-center h-full w-full">
-            <div class="w-full h-full border-2 border-[#C59B27]/60 p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgDir}'], 'Livro Interativo', '', 'Acervo Digital', 'Leitura')">
-                <div class="w-full h-full aspect-[4/3] md:aspect-[3/4] overflow-hidden rounded-lg relative flex items-center justify-center bg-stone-100 dark:bg-zinc-800">
-                    <img src="${imgDir}" alt="Ilustração Direita" class="w-full h-full object-cover img-zoom filter sepia-[0.08] contrast-105">
+        <div class="w-full h-full flex flex-col justify-center items-center">
+            <div class="w-full h-full max-h-[42vh] md:max-h-none border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgDir}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
+                <div class="w-full h-full overflow-hidden rounded-lg relative flex items-center justify-center bg-stone-100 dark:bg-zinc-800">
+                    <img src="${imgDir}" alt="Ilustração Direita" class="max-w-full max-h-[38vh] md:max-h-[65vh] w-auto h-auto object-contain img-zoom filter sepia-[0.08] contrast-105">
                     <span class="absolute bottom-2 right-2 bg-[#3D2314]/90 text-[#C59B27] text-[10px] font-serif px-2.5 py-1 rounded-md border border-[#C59B27]/40 shadow-md">
                         🔍 Ampliar
                     </span>
