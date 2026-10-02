@@ -1,0 +1,75 @@
+/* ===================================================================
+* MUSEU DIGITAL DO PARANÁ - ESTILOS PERSONALIZADOS E OTIMIZAÇÕES
+* =================================================================== */
+
+/* Otimização global de renderização de conteúdo */
+main {
+    contain: content;
+}
+
+/* Perspective 3D para o Livro */
+.perspective-book {
+    perspective: 1600px;
+}
+
+/* Transição com aceleração de GPU */
+.livro-wrapper {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    transition: transform 0.4s ease-in-out, opacity 0.3s ease;
+}
+
+.animar-virada {
+    animation: virarPagina 0.45s ease-in-out;
+}
+
+@keyframes virarPagina {
+    0% {
+        transform: rotateY(0deg) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: rotateY(-8deg) scale(0.98);
+        opacity: 0.7;
+    }
+    100% {
+        transform: rotateY(0deg) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Animação de Zoom suave nas Imagens */
+.img-zoom-container {
+    overflow: hidden;
+    contain: strict;
+}
+
+.img-zoom {
+    will-change: transform;
+    transition: transform 0.3s ease-out;
+}
+
+.img-zoom-container:hover .img-zoom {
+    transform: scale(1.06);
+}
+
+/* Custom Scrollbar */
+.scrollbar-thin::-webkit-scrollbar {
+    height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #C59B27;
+    border-radius: 4px;
+}
+
+#tour-canvas-container canvas,
+#arvore-canvas-container canvas {
+    outline: none;
+    display: block;
+}
