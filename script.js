@@ -672,8 +672,8 @@ function renderizarPaginaLivro() {
     pagEsq.innerHTML = `
         <div class="w-full h-full flex flex-col justify-center items-center">
             <div class="w-full border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgEsq}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
-                <div class="w-full flex items-center justify-center bg-stone-100 dark:bg-zinc-800 rounded-lg overflow-hidden relative min-h-[220px] sm:min-h-[320px]">
-                    <img src="${imgEsq}" alt="Página Esquerda" class="w-full h-auto max-h-[50vh] md:max-h-[65vh] object-contain img-zoom filter sepia-[0.08] contrast-105">
+                <div class="w-full flex items-center justify-center bg-stone-100 dark:bg-zinc-800 rounded-lg overflow-hidden relative min-h-[200px] sm:min-h-[300px]">
+                    <img src="${imgEsq}" alt="Página Esquerda" class="w-full h-auto max-h-[45vh] md:max-h-[65vh] object-contain img-zoom filter sepia-[0.08] contrast-105">
                     <span class="absolute bottom-2 right-2 bg-[#3D2314]/90 text-[#C59B27] text-[10px] font-serif px-2.5 py-1 rounded-md border border-[#C59B27]/40 shadow-md pointer-events-none">
                         🔍 Ampliar
                     </span>
@@ -686,46 +686,9 @@ function renderizarPaginaLivro() {
     pagDir.innerHTML = `
         <div class="w-full h-full flex flex-col justify-center items-center">
             <div class="w-full border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgDir}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
-                <div class="w-full flex items-center justify-center bg-stone-100 dark:bg-zinc-800 rounded-lg overflow-hidden relative min-h-[220px] sm:min-h-[320px]">
-                    <img src="${imgDir}" alt="Página Direita" class="w-full h-auto max-h-[50vh] md:max-h-[65vh] object-contain img-zoom filter sepia-[0.08] contrast-105">
+                <div class="w-full flex items-center justify-center bg-stone-100 dark:bg-zinc-800 rounded-lg overflow-hidden relative min-h-[200px] sm:min-h-[300px]">
+                    <img src="${imgDir}" alt="Página Direita" class="w-full h-auto max-h-[45vh] md:max-h-[65vh] object-contain img-zoom filter sepia-[0.08] contrast-105">
                     <span class="absolute bottom-2 right-2 bg-[#3D2314]/90 text-[#C59B27] text-[10px] font-serif px-2.5 py-1 rounded-md border border-[#C59B27]/40 shadow-md pointer-events-none">
-                        🔍 Ampliar
-                    </span>
-                </div>
-            </div>
-        </div>
-    `;
-
-    atualizarIndicadoresLivro();
-}
-
-    const item = listaDados[paginaLivroAtual];
-    if (!item) return;
-
-    const imgEsq = item.imagemEsq || item.imagem || '';
-    const imgDir = item.imagemDir || item.imagem || '';
-
-    // Render Página Esquerda (Ajustada para Mobile e Desktop)
-    pagEsq.innerHTML = `
-        <div class="w-full h-full flex flex-col justify-center items-center">
-            <div class="w-full h-full max-h-[42vh] md:max-h-none border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgEsq}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
-                <div class="w-full h-full overflow-hidden rounded-lg relative flex items-center justify-center bg-stone-100 dark:bg-zinc-800">
-                    <img src="${imgEsq}" alt="Ilustração Esquerda" class="max-w-full max-h-[38vh] md:max-h-[65vh] w-auto h-auto object-contain img-zoom filter sepia-[0.08] contrast-105">
-                    <span class="absolute bottom-2 right-2 bg-[#3D2314]/90 text-[#C59B27] text-[10px] font-serif px-2.5 py-1 rounded-md border border-[#C59B27]/40 shadow-md">
-                        🔍 Ampliar
-                    </span>
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Render Página Direita (Ajustada para Mobile e Desktop)
-    pagDir.innerHTML = `
-        <div class="w-full h-full flex flex-col justify-center items-center">
-            <div class="w-full h-full max-h-[42vh] md:max-h-none border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgDir}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
-                <div class="w-full h-full overflow-hidden rounded-lg relative flex items-center justify-center bg-stone-100 dark:bg-zinc-800">
-                    <img src="${imgDir}" alt="Ilustração Direita" class="max-w-full max-h-[38vh] md:max-h-[65vh] w-auto h-auto object-contain img-zoom filter sepia-[0.08] contrast-105">
-                    <span class="absolute bottom-2 right-2 bg-[#3D2314]/90 text-[#C59B27] text-[10px] font-serif px-2.5 py-1 rounded-md border border-[#C59B27]/40 shadow-md">
                         🔍 Ampliar
                     </span>
                 </div>
@@ -889,8 +852,8 @@ function criarCardHtml(item, tag, categoria, index) {
 
     return `
         <div class="bg-white dark:bg-zinc-900 border border-[#D4C4A8] dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-            <div class="img-zoom-container relative aspect-video cursor-pointer" onclick="abrirGaleriaPorIndice('${categoria}', ${index})">
-                <img src="${listaImagens[0]}" alt="${item.titulo}" class="w-full h-full object-cover img-zoom" loading="lazy">
+            <div class="img-zoom-container relative aspect-video cursor-pointer bg-stone-100 dark:bg-zinc-800 flex items-center justify-center p-2" onclick="abrirGaleriaPorIndice('${categoria}', ${index})">
+                <img src="${listaImagens[0]}" alt="${item.titulo}" class="w-full h-full object-contain img-zoom" loading="lazy">
                 ${qtdFotos > 1 ? `
                     <span class="absolute bottom-2 right-2 bg-stone-900/80 text-[#C59B27] text-[10px] font-serif font-bold px-2 py-1 rounded-md border border-[#C59B27]/30 shadow">
                         📷 ${qtdFotos} fotos
@@ -1234,7 +1197,7 @@ function initSala3D() {
         }
     });
 
-    // EVENTOS DE TOUCH (CELULARES / TCLAS INTERATIVAS)
+    // EVENTOS DE TOUCH (CELULARES / TELAS TOUCH)
     container.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
             interagindo = true;
@@ -1380,7 +1343,7 @@ function noRedimensionamento() {
     const altura = container.clientHeight;
     
     camera.aspect = largura / altura;
-    camera.fov = largura < 768 ? 85 : 65; // Ajuste dinâmico de FOV para mobile
+    camera.fov = largura < 768 ? 85 : 65;
     camera.updateProjectionMatrix();
     
     renderizador.setSize(largura, altura);
@@ -1664,7 +1627,7 @@ function initSalaArvore3D() {
     container.addEventListener('touchmove', (e) => {
         if (interagindoArvore && e.touches.length === 1) {
             lonAlvoArvore = (mouseXArvore - e.touches[0].clientX) * 0.2 + lonOnDownArvore;
-            latAlvoArvore = (e.touches[0].clientY - mouseYArvore) * 0.2 + latOnDownArvore;
+            latAlvoArvore = (e.clientY - mouseYArvore) * 0.2 + latOnDownArvore;
         }
     }, { passive: true });
 

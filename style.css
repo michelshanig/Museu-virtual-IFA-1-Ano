@@ -41,7 +41,7 @@ main {
 /* Animação de Zoom suave nas Imagens */
 .img-zoom-container {
     overflow: hidden;
-    contain: strict;
+    contain: paint;
 }
 
 .img-zoom {
