@@ -54,22 +54,32 @@ function descarteMaterial(mat) {
     mat.dispose();
 }
 
-function limparRecursos3D(objeto) {
-    if (!objeto) return;
-    objeto.traverse((child) => {
-        if (child.isMesh) {
-            if (child.geometry) child.geometry.dispose();
-            if (child.material) {
-                if (Array.isArray(child.material)) {
-                    child.material.forEach(mat => descarteMaterial(mat));
+// Variáveis Globais de Controlo dos Loops 3D
+let loopGaleriaId = null;
+let loopArvoreId = null;
+
+// Função para libertar memória GPU e evitar Tela Preta (Context Lost)
+function limparRecursos3D(cenaTarget, renderizadorTarget) {
+    if (cenaTarget) {
+        cenaTarget.traverse((objeto) => {
+            if (objeto.geometry) objeto.geometry.dispose();
+            if (objeto.material) {
+                if (Array.isArray(objeto.material)) {
+                    objeto.material.forEach(mat => {
+                        if (mat.map) mat.map.dispose();
+                        mat.dispose();
+                    });
                 } else {
-                    descarteMaterial(child.material);
+                    if (objeto.material.map) objeto.material.map.dispose();
+                    objeto.material.dispose();
                 }
             }
-        }
-    });
-    while (objeto.children.length > 0) {
-        objeto.remove(objeto.children[0]);
+        });
+    }
+    if (renderizadorTarget) {
+        renderizadorTarget.dispose();
+        renderizadorTarget.forceContextLoss();
+        renderizadorTarget.domElement = null;
     }
 }
 
@@ -1104,65 +1114,54 @@ function initSala3D() {
     const container = document.getElementById('tour-canvas-container');
     if (!container) return;
 
-    if (renderizador) {
-        noRedimensionamento();
-        return;
-    }
+    pararAnimacoes3D();
+    container.innerHTML = '';
 
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
     cena = new THREE.Scene();
 
-    camera = new THREE.PerspectiveCamera(fovAlvo, container.clientWidth / container.clientHeight, 1, 2000);
+    camera = new THREE.PerspectiveCamera(fovAlvo, container.clientWidth / container.clientHeight, 1, 1500);
     camera.target = new THREE.Vector3(0, 0, 0);
 
-    // Otimização de Resolução para Celulares
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const pixelRatioTarget = isMobile ? 1.0 : Math.min(window.devicePixelRatio, 1.5);
 
-    renderizador = new THREE.WebGLRenderer({ antialias: !isMobile, powerPreference: "high-performance" });
-    renderizador.setPixelRatio(pixelRatioTarget);
-    renderizador.setSize(container.clientWidth, container.clientHeight);
+    renderizador = new THREE.WebGLRenderer({ 
+        antialias: false, 
+        precision: isMobile ? "mediump" : "highp",
+        powerPreference: "low-power",
+        alpha: false 
+    });
     
-    renderizador.shadowMap.enabled = !isMobile;
-    renderizador.shadowMap.type = THREE.BasicShadowMap;
+    renderizador.setPixelRatio(isMobile ? 0.85 : Math.min(window.devicePixelRatio, 1.25));
+    renderizador.setSize(container.clientWidth, container.clientHeight);
+    renderizador.shadowMap.enabled = false;
     renderizador.toneMapping = THREE.ACESFilmicToneMapping;
-    renderizador.toneMappingExposure = 0.9;
+    renderizador.toneMappingExposure = 0.95;
     container.appendChild(renderizador.domElement);
 
-    const luzAmbiente = new THREE.AmbientLight(0xfff5e6, 0.5);
-    cena.add(luzAmbiente);
+    renderizador.domElement.addEventListener('webglcontextlost', (e) => {
+        e.preventDefault();
+        pararAnimacoes3D();
+    }, false);
 
-    const luzTeto = new THREE.HemisphereLight(0xffffff, 0x332211, 0.55);
-    cena.add(luzTeto);
+    const luzAmbiente = new THREE.AmbientLight(0xfff5e6, 0.9);
+    cena.add(luzAmbiente);
 
     const largura = 800, altura = 300, profundidade = 800;
 
     const geoPiso = new THREE.PlaneGeometry(largura, profundidade);
-    const matPiso = new THREE.MeshStandardMaterial({
-        map: criarTexturaPiso(),
-        roughness: 0.3,
-        metalness: 0.1
-    });
+    const matPiso = new THREE.MeshBasicMaterial({ color: 0x3D2314 });
     const piso = new THREE.Mesh(geoPiso, matPiso);
     piso.rotation.x = -Math.PI / 2;
     piso.position.y = -altura / 2;
-    piso.receiveShadow = !isMobile;
     cena.add(piso);
 
-    const geoTeto = new THREE.PlaneGeometry(largura, profundidade);
-    const matTeto = new THREE.MeshStandardMaterial({ color: 0xF5F2EB, roughness: 0.9 });
-    const teto = new THREE.Mesh(geoTeto, matTeto);
-    teto.rotation.x = Math.PI / 2;
-    teto.position.y = altura / 2;
-    cena.add(teto);
-
-    const matParede = new THREE.MeshStandardMaterial({ color: 0xE5DFD3, roughness: 0.85 });
+    const matParede = new THREE.MeshLambertMaterial({ color: 0xE5DFD3 });
     const criarParede = (w, h, x, y, z, rotY) => {
         const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, h), matParede);
         mesh.position.set(x, y, z);
         mesh.rotation.y = rotY;
-        mesh.receiveShadow = !isMobile;
         cena.add(mesh);
     };
 
@@ -1171,39 +1170,11 @@ function initSala3D() {
     criarParede(profundidade, altura, -largura / 2, 0, 0, Math.PI / 2);
     criarParede(profundidade, altura, largura / 2, 0, 0, -Math.PI / 2);
 
-    const matRodape = new THREE.MeshStandardMaterial({ color: 0x3D2314, roughness: 0.4 });
-    const geoRodapeL = new THREE.BoxGeometry(largura, 12, 4);
-    const r1 = new THREE.Mesh(geoRodapeL, matRodape); r1.position.set(0, -altura/2 + 6, -profundidade/2 + 2); cena.add(r1);
-    const r2 = new THREE.Mesh(geoRodapeL, matRodape); r2.position.set(0, -altura/2 + 6, profundidade/2 - 2); cena.add(r2);
-
     grupoQuadros = new THREE.Group();
     cena.add(grupoQuadros);
+    montarObrasEPlacas3D();
 
-    // EVENTOS DE MOUSE
-    container.addEventListener('mousedown', (e) => {
-        interagindo = true;
-        mouseX = e.clientX; mouseY = e.clientY;
-        startX = e.clientX; startY = e.clientY;
-        lonOnDown = lon; latOnDown = lat;
-    });
-
-    container.addEventListener('mousemove', (e) => {
-        if (interagindo) {
-            lonAlvo = (mouseX - e.clientX) * 0.15 + lonOnDown;
-            latAlvo = (e.clientY - mouseY) * 0.15 + latOnDown;
-        }
-    });
-
-    window.addEventListener('mouseup', (e) => {
-        if (interagindo) {
-            interagindo = false;
-            if (Math.hypot(e.clientX - startX, e.clientY - startY) < 8) {
-                checarCliqueObra(e);
-            }
-        }
-    });
-
-    // EVENTOS DE TOUCH (CELULARES)
+    // Eventos de Toque no Telemóvel
     container.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
             interagindo = true;
@@ -1235,10 +1206,25 @@ function initSala3D() {
         }
     });
 
-    window.addEventListener('resize', noRedimensionamento);
-    window.addEventListener('orientationchange', () => setTimeout(noRedimensionamento, 200));
+    function animarGaleria() {
+        loopGaleriaId = requestAnimationFrame(animarGaleria);
 
-    montarObrasEPlacas3D();
+        lon += (lonAlvo - lon) * 0.08;
+        lat += (latAlvo - lat) * 0.08;
+        lat = Math.max(-85, Math.min(85, lat));
+
+        const phi = THREE.MathUtils.degToRad(90 - lat);
+        const theta = THREE.MathUtils.degToRad(lon);
+
+        camera.target.x = 500 * Math.sin(phi) * Math.cos(theta);
+        camera.target.y = 500 * Math.cos(phi);
+        camera.target.z = 500 * Math.sin(phi) * Math.sin(theta);
+
+        camera.lookAt(camera.target);
+        renderizador.render(cena, camera);
+    }
+
+    animarGaleria();
 }
 
 function montarObrasEPlacas3D() {
@@ -1425,7 +1411,11 @@ function fecharTourVirtual() {
 
     document.body.style.overflow = 'auto';
 }
-
+function fecharModalTour() {
+    pararAnimacoes3D();
+    const modal = document.getElementById('modal-tour');
+    if (modal) modal.classList.add('hidden');
+}
 // ==========================================
 // 7. SALA VIRTUAL 3D: GALERIA COM ÁRVORE DAS ARTES
 // ==========================================
@@ -1554,45 +1544,44 @@ function initSalaArvore3D() {
     const container = document.getElementById('arvore-canvas-container');
     if (!container) return;
 
-    if (renderizadorArvore) {
-        noRedimensionamentoArvore();
-        return;
-    }
+    // Cancela qualquer loop 3D anterior
+    pararAnimacoes3D();
+    container.innerHTML = '';
 
     raycasterArvore = new THREE.Raycaster();
     mouseArvore = new THREE.Vector2();
     cenaArvore = new THREE.Scene();
-
-    // Suavização do Fog para evitar escurecimento
     cenaArvore.fog = new THREE.FogExp2(0x111815, 0.0005);
 
-    cameraArvore = new THREE.PerspectiveCamera(fovAlvoArvore, container.clientWidth / container.clientHeight, 1, 2000);
+    cameraArvore = new THREE.PerspectiveCamera(fovAlvoArvore, container.clientWidth / container.clientHeight, 1, 1500);
     cameraArvore.target = new THREE.Vector3(0, 40, 0);
 
-    // Otimização de Performance para Celulares
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const pixelRatioTarget = isMobile ? 1.0 : Math.min(window.devicePixelRatio, 1.5);
 
-    renderizadorArvore = new THREE.WebGLRenderer({ antialias: !isMobile, powerPreference: "high-performance" });
-    renderizadorArvore.setPixelRatio(pixelRatioTarget);
-    renderizadorArvore.setSize(container.clientWidth, container.clientHeight);
+    // Renderizador ultraleve para evitar estouro de memória GPU (Tela Preta)
+    renderizadorArvore = new THREE.WebGLRenderer({ 
+        antialias: false, 
+        precision: isMobile ? "mediump" : "highp",
+        powerPreference: "low-power",
+        alpha: false 
+    });
     
-    // Desativa cálculo pesado de sombras em celulares para eliminar travamentos
-    renderizadorArvore.shadowMap.enabled = !isMobile;
-    renderizadorArvore.shadowMap.type = THREE.BasicShadowMap;
+    renderizadorArvore.setPixelRatio(isMobile ? 0.85 : Math.min(window.devicePixelRatio, 1.25));
+    renderizadorArvore.setSize(container.clientWidth, container.clientHeight);
+    renderizadorArvore.shadowMap.enabled = false;
     renderizadorArvore.toneMapping = THREE.ACESFilmicToneMapping;
     renderizadorArvore.toneMappingExposure = 1.15;
     container.appendChild(renderizadorArvore.domElement);
 
-    // Luz ambiente elevada para manter claridade constante ao girar
-    const luzAmbiente = new THREE.AmbientLight(0xFFE8C5, 0.9);
-    cenaArvore.add(luzAmbiente);
+    // Proteção contra perda de contexto WebGL
+    renderizadorArvore.domElement.addEventListener('webglcontextlost', (e) => {
+        e.preventDefault();
+        pararAnimacoes3D();
+    }, false);
 
-    // CORREÇÃO DO ESCURECIMENTO: castShadow desativado no PointLight
-    const luzLustreCentral = new THREE.PointLight(CONFIG_GALERIA_CLASSICA.corLuzGaleria, 1.5, 900);
-    luzLustreCentral.position.set(0, CONFIG_GALERIA_CLASSICA.alturaSala - 120, 0);
-    luzLustreCentral.castShadow = false; // Desativado para evitar queda de iluminação ao interagir
-    cenaArvore.add(luzLustreCentral);
+    // Luz ambiente constante (impede escurecimento ao girar)
+    const luzAmbiente = new THREE.AmbientLight(0xFFE8C5, 1.2);
+    cenaArvore.add(luzAmbiente);
 
     grupoArvore = new THREE.Group();
     cenaArvore.add(grupoArvore);
@@ -1602,31 +1591,7 @@ function initSalaArvore3D() {
     construirPlacaCafeStand();
     montarObrasNasPontas();
 
-    // EVENTOS DE MOUSE
-    container.addEventListener('mousedown', (e) => {
-        interagindoArvore = true;
-        mouseXArvore = e.clientX; mouseYArvore = e.clientY;
-        startXArvore = e.clientX; startYArvore = e.clientY;
-        lonOnDownArvore = lonArvore; latOnDownArvore = latArvore;
-    });
-
-    container.addEventListener('mousemove', (e) => {
-        if (interagindoArvore) {
-            lonAlvoArvore = (mouseXArvore - e.clientX) * 0.15 + lonOnDownArvore;
-            latAlvoArvore = (e.clientY - mouseYArvore) * 0.15 + latOnDownArvore;
-        }
-    });
-
-    window.addEventListener('mouseup', (e) => {
-        if (interagindoArvore) {
-            interagindoArvore = false;
-            if (Math.hypot(e.clientX - startXArvore, e.clientY - startYArvore) < 8) {
-                checarCliqueObraArvore(e);
-            }
-        }
-    });
-
-    // EVENTOS DE TOUCH (CELULARES)
+    // Eventos de Toque no Telemóvel
     container.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
             interagindoArvore = true;
@@ -1658,8 +1623,26 @@ function initSalaArvore3D() {
         }
     });
 
-    window.addEventListener('resize', noRedimensionamentoArvore);
-    window.addEventListener('orientationchange', () => setTimeout(noRedimensionamentoArvore, 200));
+    // Loop de Animação Otimizado
+    function animarArvore() {
+        loopArvoreId = requestAnimationFrame(animarArvore);
+
+        lonArvore += (lonAlvoArvore - lonArvore) * 0.08;
+        latArvore += (latAlvoArvore - latArvore) * 0.08;
+        latArvore = Math.max(-85, Math.min(85, latArvore));
+
+        const phi = THREE.MathUtils.degToRad(90 - latArvore);
+        const theta = THREE.MathUtils.degToRad(lonArvore);
+
+        cameraArvore.target.x = 500 * Math.sin(phi) * Math.cos(theta);
+        cameraArvore.target.y = 500 * Math.cos(phi);
+        cameraArvore.target.z = 500 * Math.sin(phi) * Math.sin(theta);
+
+        cameraArvore.lookAt(cameraArvore.target);
+        renderizadorArvore.render(cenaArvore, cameraArvore);
+    }
+
+    animarArvore();
 }
 
 function construirRecintoElegante() {
