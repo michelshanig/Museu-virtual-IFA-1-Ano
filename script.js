@@ -672,8 +672,8 @@ function renderizarPaginaLivro() {
     pagEsq.innerHTML = `
         <div class="w-full h-full flex flex-col justify-center items-center">
             <div class="w-full border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgEsq}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
-                <div class="w-full flex items-center justify-center bg-stone-100 dark:bg-zinc-800 rounded-lg overflow-hidden relative p-1">
-                    <img src="${imgEsq}" alt="Página Esquerda" class="max-w-full max-h-[38vh] md:max-h-[65vh] w-auto h-auto object-contain img-zoom filter sepia-[0.08] contrast-105">
+                <div class="w-full flex items-center justify-center bg-stone-100 dark:bg-zinc-800 rounded-lg overflow-hidden relative p-1 min-h-[200px] sm:min-h-[300px]">
+                    <img src="${imgEsq}" alt="Página Esquerda" class="max-w-full max-h-[42vh] md:max-h-[62vh] w-auto h-auto object-contain img-zoom filter sepia-[0.08] contrast-105">
                     <span class="absolute bottom-2 right-2 bg-[#3D2314]/90 text-[#C59B27] text-[10px] font-serif px-2.5 py-1 rounded-md border border-[#C59B27]/40 shadow-md pointer-events-none">
                         🔍 Ampliar
                     </span>
@@ -686,8 +686,8 @@ function renderizarPaginaLivro() {
     pagDir.innerHTML = `
         <div class="w-full h-full flex flex-col justify-center items-center">
             <div class="w-full border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgDir}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
-                <div class="w-full flex items-center justify-center bg-stone-100 dark:bg-zinc-800 rounded-lg overflow-hidden relative p-1">
-                    <img src="${imgDir}" alt="Página Direita" class="max-w-full max-h-[38vh] md:max-h-[65vh] w-auto h-auto object-contain img-zoom filter sepia-[0.08] contrast-105">
+                <div class="w-full flex items-center justify-center bg-stone-100 dark:bg-zinc-800 rounded-lg overflow-hidden relative p-1 min-h-[200px] sm:min-h-[300px]">
+                    <img src="${imgDir}" alt="Página Direita" class="max-w-full max-h-[42vh] md:max-h-[62vh] w-auto h-auto object-contain img-zoom filter sepia-[0.08] contrast-105">
                     <span class="absolute bottom-2 right-2 bg-[#3D2314]/90 text-[#C59B27] text-[10px] font-serif px-2.5 py-1 rounded-md border border-[#C59B27]/40 shadow-md pointer-events-none">
                         🔍 Ampliar
                     </span>
@@ -846,13 +846,14 @@ const colecaoDados = {
     trabalhos: { dados: trabalhosAlunos, tag: 'Trabalho de Aluno' }
 };
 
+// Renderização dos Cards com container adaptável
 function criarCardHtml(item, tag, categoria, index) {
     const listaImagens = (item.imagens && item.imagens.length > 0) ? item.imagens : [item.imagem || "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80"];
     const qtdFotos = listaImagens.length;
 
     return `
         <div class="bg-white dark:bg-zinc-900 border border-[#D4C4A8] dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-            <div class="img-zoom-container relative h-64 sm:h-72 w-full cursor-pointer bg-stone-100 dark:bg-zinc-800 flex items-center justify-center p-2" onclick="abrirGaleriaPorIndice('${categoria}', ${index})">
+            <div class="img-zoom-container relative h-56 sm:h-64 md:h-72 w-full cursor-pointer bg-stone-100 dark:bg-zinc-800 flex items-center justify-center p-2" onclick="abrirGaleriaPorIndice('${categoria}', ${index})">
                 <img src="${listaImagens[0]}" alt="${item.titulo}" class="max-w-full max-h-full w-auto h-auto object-contain img-zoom filter contrast-105" loading="lazy">
                 ${qtdFotos > 1 ? `
                     <span class="absolute bottom-2 right-2 bg-stone-900/80 text-[#C59B27] text-[10px] font-serif font-bold px-2 py-1 rounded-md border border-[#C59B27]/30 shadow pointer-events-none">
