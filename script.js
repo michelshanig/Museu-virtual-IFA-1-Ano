@@ -1116,19 +1116,24 @@ function initSala3D() {
     camera = new THREE.PerspectiveCamera(fovAlvo, container.clientWidth / container.clientHeight, 1, 2000);
     camera.target = new THREE.Vector3(0, 0, 0);
 
-    renderizador = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-    renderizador.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Otimização de Resolução para Celulares
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const pixelRatioTarget = isMobile ? 1.0 : Math.min(window.devicePixelRatio, 1.5);
+
+    renderizador = new THREE.WebGLRenderer({ antialias: !isMobile, powerPreference: "high-performance" });
+    renderizador.setPixelRatio(pixelRatioTarget);
     renderizador.setSize(container.clientWidth, container.clientHeight);
-    renderizador.shadowMap.enabled = true;
-    renderizador.shadowMap.type = THREE.PCFSoftShadowMap;
+    
+    renderizador.shadowMap.enabled = !isMobile;
+    renderizador.shadowMap.type = THREE.BasicShadowMap;
     renderizador.toneMapping = THREE.ACESFilmicToneMapping;
-    renderizador.toneMappingExposure = 0.85;
+    renderizador.toneMappingExposure = 0.9;
     container.appendChild(renderizador.domElement);
 
-    const luzAmbiente = new THREE.AmbientLight(0xfff5e6, 0.35);
+    const luzAmbiente = new THREE.AmbientLight(0xfff5e6, 0.5);
     cena.add(luzAmbiente);
 
-    const luzTeto = new THREE.HemisphereLight(0xffffff, 0x332211, 0.45);
+    const luzTeto = new THREE.HemisphereLight(0xffffff, 0x332211, 0.55);
     cena.add(luzTeto);
 
     const largura = 800, altura = 300, profundidade = 800;
@@ -1136,13 +1141,13 @@ function initSala3D() {
     const geoPiso = new THREE.PlaneGeometry(largura, profundidade);
     const matPiso = new THREE.MeshStandardMaterial({
         map: criarTexturaPiso(),
-        roughness: 0.25,
+        roughness: 0.3,
         metalness: 0.1
     });
     const piso = new THREE.Mesh(geoPiso, matPiso);
     piso.rotation.x = -Math.PI / 2;
     piso.position.y = -altura / 2;
-    piso.receiveShadow = true;
+    piso.receiveShadow = !isMobile;
     cena.add(piso);
 
     const geoTeto = new THREE.PlaneGeometry(largura, profundidade);
@@ -1157,7 +1162,7 @@ function initSala3D() {
         const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, h), matParede);
         mesh.position.set(x, y, z);
         mesh.rotation.y = rotY;
-        mesh.receiveShadow = true;
+        mesh.receiveShadow = !isMobile;
         cena.add(mesh);
     };
 
@@ -1198,7 +1203,7 @@ function initSala3D() {
         }
     });
 
-    // EVENTOS DE TOUCH (CELULARES / TELAS TOUCH)
+    // EVENTOS DE TOUCH (CELULARES)
     container.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
             interagindo = true;
@@ -1558,26 +1563,35 @@ function initSalaArvore3D() {
     mouseArvore = new THREE.Vector2();
     cenaArvore = new THREE.Scene();
 
-    cenaArvore.fog = new THREE.FogExp2(0x111815, 0.0008);
+    // Suavização do Fog para evitar escurecimento
+    cenaArvore.fog = new THREE.FogExp2(0x111815, 0.0005);
 
     cameraArvore = new THREE.PerspectiveCamera(fovAlvoArvore, container.clientWidth / container.clientHeight, 1, 2000);
     cameraArvore.target = new THREE.Vector3(0, 40, 0);
 
-    renderizadorArvore = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-    renderizadorArvore.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Otimização de Performance para Celulares
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const pixelRatioTarget = isMobile ? 1.0 : Math.min(window.devicePixelRatio, 1.5);
+
+    renderizadorArvore = new THREE.WebGLRenderer({ antialias: !isMobile, powerPreference: "high-performance" });
+    renderizadorArvore.setPixelRatio(pixelRatioTarget);
     renderizadorArvore.setSize(container.clientWidth, container.clientHeight);
-    renderizadorArvore.shadowMap.enabled = true;
-    renderizadorArvore.shadowMap.type = THREE.PCFSoftShadowMap;
+    
+    // Desativa cálculo pesado de sombras em celulares para eliminar travamentos
+    renderizadorArvore.shadowMap.enabled = !isMobile;
+    renderizadorArvore.shadowMap.type = THREE.BasicShadowMap;
     renderizadorArvore.toneMapping = THREE.ACESFilmicToneMapping;
-    renderizadorArvore.toneMappingExposure = 1.1;
+    renderizadorArvore.toneMappingExposure = 1.15;
     container.appendChild(renderizadorArvore.domElement);
 
-    const luzAmbiente = new THREE.AmbientLight(0xFFE8C5, 0.7);
+    // Luz ambiente elevada para manter claridade constante ao girar
+    const luzAmbiente = new THREE.AmbientLight(0xFFE8C5, 0.9);
     cenaArvore.add(luzAmbiente);
 
-    const luzLustreCentral = new THREE.PointLight(CONFIG_GALERIA_CLASSICA.corLuzGaleria, 1.8, 800);
+    // CORREÇÃO DO ESCURECIMENTO: castShadow desativado no PointLight
+    const luzLustreCentral = new THREE.PointLight(CONFIG_GALERIA_CLASSICA.corLuzGaleria, 1.5, 900);
     luzLustreCentral.position.set(0, CONFIG_GALERIA_CLASSICA.alturaSala - 120, 0);
-    luzLustreCentral.castShadow = true;
+    luzLustreCentral.castShadow = false; // Desativado para evitar queda de iluminação ao interagir
     cenaArvore.add(luzLustreCentral);
 
     grupoArvore = new THREE.Group();
@@ -1612,7 +1626,7 @@ function initSalaArvore3D() {
         }
     });
 
-    // EVENTOS DE TOUCH (CELULARES / TELAS TOUCH)
+    // EVENTOS DE TOUCH (CELULARES)
     container.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
             interagindoArvore = true;
@@ -1628,7 +1642,7 @@ function initSalaArvore3D() {
     container.addEventListener('touchmove', (e) => {
         if (interagindoArvore && e.touches.length === 1) {
             lonAlvoArvore = (mouseXArvore - e.touches[0].clientX) * 0.2 + lonOnDownArvore;
-            latAlvoArvore = (e.clientY - mouseYArvore) * 0.2 + latOnDownArvore;
+            latAlvoArvore = (e.touches[0].clientY - mouseYArvore) * 0.2 + latOnDownArvore;
         }
     }, { passive: true });
 
