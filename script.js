@@ -1137,7 +1137,7 @@ function initSala3D() {
     renderizador.setSize(container.clientWidth, container.clientHeight);
     renderizador.shadowMap.enabled = false;
     renderizador.toneMapping = THREE.ACESFilmicToneMapping;
-    renderizador.toneMappingExposure = 0.95;
+    renderizador.toneMappingExposure = 1.4;
     container.appendChild(renderizador.domElement);
 
     renderizador.domElement.addEventListener('webglcontextlost', (e) => {
@@ -1145,8 +1145,12 @@ function initSala3D() {
         pararAnimacoes3D();
     }, false);
 
-    const luzAmbiente = new THREE.AmbientLight(0xfff5e6, 0.9);
+    const luzAmbiente = new THREE.AmbientLight(0xFFFFFF, 1.1);
     cena.add(luzAmbiente);
+
+    const luzTeto = new THREE.HemisphereLight(0xFFFFFF, 0x555555, 0.9);
+    luzTeto.position.set(0, 250, 0);
+    cena.add(luzTeto);
 
     const largura = 800, altura = 300, profundidade = 800;
 
@@ -1551,7 +1555,7 @@ function initSalaArvore3D() {
     raycasterArvore = new THREE.Raycaster();
     mouseArvore = new THREE.Vector2();
     cenaArvore = new THREE.Scene();
-    cenaArvore.fog = new THREE.FogExp2(0x111815, 0.0005);
+    cenaArvore.fog = null;
 
     cameraArvore = new THREE.PerspectiveCamera(fovAlvoArvore, container.clientWidth / container.clientHeight, 1, 1500);
     cameraArvore.target = new THREE.Vector3(0, 40, 0);
@@ -1570,7 +1574,7 @@ function initSalaArvore3D() {
     renderizadorArvore.setSize(container.clientWidth, container.clientHeight);
     renderizadorArvore.shadowMap.enabled = false;
     renderizadorArvore.toneMapping = THREE.ACESFilmicToneMapping;
-    renderizadorArvore.toneMappingExposure = 1.15;
+    renderizadorArvore.toneMappingExposure = 1.4;
     container.appendChild(renderizadorArvore.domElement);
 
     // Proteção contra perda de contexto WebGL
@@ -1580,8 +1584,12 @@ function initSalaArvore3D() {
     }, false);
 
     // Luz ambiente constante (impede escurecimento ao girar)
-    const luzAmbiente = new THREE.AmbientLight(0xFFE8C5, 1.2);
+    const luzAmbiente = new THREE.AmbientLight(0xFFF5E6, 1.2);
     cenaArvore.add(luzAmbiente);
+    
+    const luzHemisferica = new THREE.HemisphereLight(0xFFFFFF, 0x444444, 0.8);
+    luzHemisferica.position.set(0, 200, 0);
+    cenaArvore.add(luzHemisferica);
 
     grupoArvore = new THREE.Group();
     cenaArvore.add(grupoArvore);
