@@ -747,7 +747,7 @@ function initSala3D() {
         alpha: false 
     });
 
-    renderizador.setPixelRatio(isMobile ? 0.9 : Math.min(window.devicePixelRatio, 1.5));
+    renderizador.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio, 1.5) : Math.min(window.devicePixelRatio, 2.0));
     renderizador.setSize(container.clientWidth, container.clientHeight);
     renderizador.shadowMap.enabled = true;
     renderizador.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -919,6 +919,7 @@ function initSala3D() {
     }
 
     animarGaleria();
+    window.addEventListener('resize', noRedimensionamento);
 }
 
 function montarObrasEPlacas3D() {
@@ -957,11 +958,11 @@ function montarObrasEPlacas3D() {
         const meshPaspatur = new THREE.Mesh(geoPaspatur, matPaspatur);
         meshPaspatur.position.z = 4.6;
 
-        // 4. Tela de Pintura Principal
+        // 4. Tela de Pintura Principal (FrontSide e z-offset adequado para evitar Z-Fighting no celular)
         const geoTela = new THREE.PlaneGeometry(92, 62);
-        const matTela = new THREE.MeshStandardMaterial({ side: THREE.DoubleSide, roughness: 0.2 });
+        const matTela = new THREE.MeshStandardMaterial({ side: THREE.FrontSide, roughness: 0.2 });
         const meshTela = new THREE.Mesh(geoTela, matTela);
-        meshTela.position.z = 4.8;
+        meshTela.position.z = 5.8;
 
         // 5. Luminária Individual de Latão para o Quadro (Museum Picture Light)
         const grupoLuminaria = new THREE.Group();
@@ -1021,9 +1022,30 @@ function montarObrasEPlacas3D() {
         grupoQuadros.add(grupoArte);
 
         const urlImagem3D = (item.imagens && item.imagens.length > 0) ? item.imagens[0] : item.imagem;
-        loader.load(urlImagem3D, (tex) => {
+        const urlSegura = encodeURI(urlImagem3D);
+        loader.load(urlSegura, (tex) => {
+            if (THREE.SRGBColorSpace) {
+                tex.colorSpace = THREE.SRGBColorSpace;
+            } else if (THREE.sRGBEncoding) {
+                tex.encoding = THREE.sRGBEncoding;
+            }
+            tex.generateMipmaps = true;
+            tex.minFilter = THREE.LinearMipmapLinearFilter;
+            tex.magFilter = THREE.LinearFilter;
+
+            if (tex.image && tex.image.width && tex.image.height) {
+                const imgAspect = tex.image.width / tex.image.height;
+                const planeAspect = 92 / 62;
+                if (imgAspect > planeAspect) {
+                    meshTela.scale.set(1, planeAspect / imgAspect, 1);
+                } else {
+                    meshTela.scale.set(imgAspect / planeAspect, 1, 1);
+                }
+            }
             matTela.map = tex;
             matTela.needsUpdate = true;
+        }, undefined, (err) => {
+            console.warn("Aviso ao carregar imagem 3D da galeria:", urlImagem3D, err);
         });
     });
 }
@@ -1051,8 +1073,19 @@ function checarCliqueObra(e) {
     if (!container || !camera || !grupoQuadros) return;
     const rect = container.getBoundingClientRect();
 
-    const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-    const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+    let clientX = e.clientX;
+    let clientY = e.clientY;
+    if (clientX === undefined) {
+        if (e.changedTouches && e.changedTouches.length > 0) {
+            clientX = e.changedTouches[0].clientX;
+            clientY = e.changedTouches[0].clientY;
+        } else if (e.touches && e.touches[0]) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = 0; clientY = 0;
+        }
+    }
 
     mouse.x = ((clientX - rect.left) / container.clientWidth) * 2 - 1;
     mouse.y = -((clientY - rect.top) / container.clientHeight) * 2 + 1;
@@ -1137,6 +1170,7 @@ function fecharTourVirtual() {
             if (renderizador.domElement) renderizador.domElement.remove();
             renderizador = null;
         }
+        window.removeEventListener('resize', noRedimensionamento);
         camera = null;
         grupoQuadros = null;
     }, 300);
@@ -1294,7 +1328,7 @@ function initSalaArvore3D() {
         alpha: false 
     });
 
-    renderizadorArvore.setPixelRatio(isMobile ? 0.9 : Math.min(window.devicePixelRatio, 1.5));
+    renderizadorArvore.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio, 1.5) : Math.min(window.devicePixelRatio, 2.0));
     renderizadorArvore.setSize(container.clientWidth, container.clientHeight);
     renderizadorArvore.shadowMap.enabled = true;
     renderizadorArvore.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -1407,6 +1441,7 @@ function initSalaArvore3D() {
     }
 
     animarArvore();
+    window.addEventListener('resize', noRedimensionamentoArvore);
 }
 
 function construirRecintoElegante() {
@@ -1682,12 +1717,12 @@ function montarObrasNasPontas() {
         const geoPaspatur = new THREE.PlaneGeometry(62, 46);
         const matPaspatur = new THREE.MeshStandardMaterial({ color: 0xFAF8F5, roughness: 0.8 });
         const meshPaspatur = new THREE.Mesh(geoPaspatur, matPaspatur);
-        meshPaspatur.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 2.1);
+        meshPaspatur.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 2.2);
 
         const geoTela = new THREE.PlaneGeometry(56, 40);
-        const matTela = new THREE.MeshStandardMaterial({ side: THREE.DoubleSide, roughness: 0.2 });
+        const matTela = new THREE.MeshStandardMaterial({ side: THREE.FrontSide, roughness: 0.2 });
         const meshTela = new THREE.Mesh(geoTela, matTela);
-        meshTela.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 2.2);
+        meshTela.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 3.2);
 
         meshMoldura.userData = item;
         meshTela.userData = item;
@@ -1707,9 +1742,30 @@ function montarObrasNasPontas() {
         });
 
         const urlImg = (item.imagens && item.imagens.length > 0) ? item.imagens[0] : item.imagem;
-        loader.load(urlImg, (tex) => {
+        const urlSegura = encodeURI(urlImg);
+        loader.load(urlSegura, (tex) => {
+            if (THREE.SRGBColorSpace) {
+                tex.colorSpace = THREE.SRGBColorSpace;
+            } else if (THREE.sRGBEncoding) {
+                tex.encoding = THREE.sRGBEncoding;
+            }
+            tex.generateMipmaps = true;
+            tex.minFilter = THREE.LinearMipmapLinearFilter;
+            tex.magFilter = THREE.LinearFilter;
+
+            if (tex.image && tex.image.width && tex.image.height) {
+                const imgAspect = tex.image.width / tex.image.height;
+                const planeAspect = 56 / 40;
+                if (imgAspect > planeAspect) {
+                    meshTela.scale.set(1, planeAspect / imgAspect, 1);
+                } else {
+                    meshTela.scale.set(imgAspect / planeAspect, 1, 1);
+                }
+            }
             matTela.map = tex;
             matTela.needsUpdate = true;
+        }, undefined, (err) => {
+            console.warn("Aviso ao carregar imagem 3D da sala do café:", urlImg, err);
         });
     });
 }
@@ -1761,8 +1817,19 @@ function checarCliqueObraArvore(e) {
     if (!container || !cameraArvore || !grupoArvore) return;
 
     const rect = container.getBoundingClientRect();
-    const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-    const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+    let clientX = e.clientX;
+    let clientY = e.clientY;
+    if (clientX === undefined) {
+        if (e.changedTouches && e.changedTouches.length > 0) {
+            clientX = e.changedTouches[0].clientX;
+            clientY = e.changedTouches[0].clientY;
+        } else if (e.touches && e.touches[0]) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = 0; clientY = 0;
+        }
+    }
 
     mouseArvore.x = ((clientX - rect.left) / container.clientWidth) * 2 - 1;
     mouseArvore.y = -((clientY - rect.top) / container.clientHeight) * 2 + 1;
@@ -1833,6 +1900,7 @@ function fecharTourArvoreVirtual() {
         }
         cameraArvore = null;
         grupoArvore = null;
+        window.removeEventListener('resize', noRedimensionamentoArvore);
         quadrosPendurados = [];
         meshTelaPlacaCafe = null;
     }, 300);
