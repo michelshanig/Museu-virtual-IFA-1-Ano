@@ -749,7 +749,7 @@ function initSala3D() {
 
     renderizador.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio, 1.5) : Math.min(window.devicePixelRatio, 2.0));
     renderizador.setSize(container.clientWidth, container.clientHeight);
-    renderizador.shadowMap.enabled = true;
+    renderizador.shadowMap.enabled = !isMobile;
     renderizador.shadowMap.type = THREE.PCFSoftShadowMap;
     renderizador.toneMapping = THREE.ACESFilmicToneMapping;
     renderizador.toneMappingExposure = 1.25;
@@ -760,13 +760,21 @@ function initSala3D() {
         pararAnimacoes3D();
     }, false);
 
-    // Iluminação Aquecida de Museu Clássico
-    const luzAmbiente = new THREE.AmbientLight(0xFFF6EA, 0.6);
+    // Iluminação Aquecida de Museu Clássico (Otimizada para Mobile/Desktop)
+    const luzAmbiente = new THREE.AmbientLight(0xFFF6EA, 0.85);
     cena.add(luzAmbiente);
 
-    const luzHemisferica = new THREE.HemisphereLight(0xFFFAEE, 0x221810, 0.7);
+    const luzHemisferica = new THREE.HemisphereLight(0xFFFAEE, 0x221810, 0.8);
     luzHemisferica.position.set(0, 280, 0);
     cena.add(luzHemisferica);
+
+    // 4 Pontos de Luz Suaves de Teto (Evita estourar o limite de WebGL SpotLights no Celular)
+    const angulosLuz = [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2];
+    angulosLuz.forEach(ang => {
+        const luzTeto = new THREE.PointLight(0xFFE8B3, 1.1, 750);
+        luzTeto.position.set(320 * Math.sin(ang), 120, 320 * Math.cos(ang));
+        cena.add(luzTeto);
+    });
 
     const largura = 950, altura = 360, profundidade = 950;
 
@@ -981,14 +989,7 @@ function montarObrasEPlacas3D() {
         grupoLuminaria.add(meshHasteLuz);
         grupoLuminaria.add(meshRefletor);
 
-        // Spot de Luz Direcionado para a Tela
-        const spotFoco = new THREE.SpotLight(0xFFE8B3, 1.8);
-        spotFoco.position.set(0, 50, 25);
-        spotFoco.target = meshTela;
-        spotFoco.angle = Math.PI / 5;
-        spotFoco.penumbra = 0.35;
-        spotFoco.distance = 180;
-        grupoArte.add(spotFoco);
+        // Luz individual desativada para manter alta performance em dispositivos móveis
 
         // 6. Placa Explicativa de Latão com Texto Renderizado
         const geoPlaca = new THREE.BoxGeometry(42, 18, 2);
@@ -1108,36 +1109,23 @@ function noRedimensionamento() {
 
     const largura = container.clientWidth;
     const altura = container.clientHeight;
+    const aspect = largura / altura;
 
-    camera.aspect = largura / altura;
-    camera.fov = largura < 768 ? 85 : 65;
+    camera.aspect = aspect;
+    if (aspect < 1) { // Celular na vertical (Portrait)
+        fovAlvo = 88;
+    } else if (largura < 768) { // Celular na horizontal / Tablet pequeno
+        fovAlvo = 78;
+    } else {
+        fovAlvo = 65;
+    }
+    camera.fov = fovAlvo;
     camera.updateProjectionMatrix();
 
     renderizador.setSize(largura, altura);
 }
 
-function animar3D() {
-    animacaoId = requestAnimationFrame(animar3D);
-
-    if (!interagindo) lonAlvo += 0.04;
-
-    lon += (lonAlvo - lon) * 0.05;
-    lat += (latAlvo - lat) * 0.05;
-    camera.fov += (fovAlvo - camera.fov) * 0.05;
-    camera.updateProjectionMatrix();
-
-    lat = Math.max(-45, Math.min(45, lat));
-
-    const phi = THREE.MathUtils.degToRad(90 - lat);
-    const theta = THREE.MathUtils.degToRad(lon);
-
-    camera.target.x = 500 * Math.sin(phi) * Math.cos(theta);
-    camera.target.y = 500 * Math.cos(phi);
-    camera.target.z = 500 * Math.sin(phi) * Math.sin(theta);
-    camera.lookAt(camera.target);
-
-    renderizador.render(cena, camera);
-}
+// Função de animação duplicada removida para otimização mobile
 
 function abrirTourVirtual() {
     const modal = document.getElementById('tour-modal');
@@ -1148,7 +1136,6 @@ function abrirTourVirtual() {
         modal.classList.add('opacity-100');
         initSala3D();
         noRedimensionamento();
-        if (!animacaoId) animar3D();
     }, 50);
     document.body.style.overflow = 'hidden';
 }
