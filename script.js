@@ -93,6 +93,83 @@ function limparRecursos3D(cenaTarget, renderizadorTarget) {
     }
 }
 
+
+// ==========================================
+// UTILITÁRIO DE TRATAMENTO E RESOLUÇÃO DE IMAGENS
+// ==========================================
+function formatarUrlImagem(url) {
+    if (!url) return 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+        return url;
+    }
+    return encodeURI(url);
+}
+
+function tratarErroImagem(img) {
+    if (!img) return;
+    const tentativa = parseInt(img.dataset.tentativa || '0', 10);
+    let srcOriginal = img.dataset.srcOriginal || img.getAttribute('src') || '';
+    if (!img.dataset.srcOriginal) {
+        img.dataset.srcOriginal = srcOriginal;
+    }
+
+    // Normaliza nome do arquivo tirando possíveis subpastas prévias
+    srcOriginal = decodeURIComponent(srcOriginal).replace(/^(\.\/|img\/|assets\/|imagens\/)/, '');
+
+    if (tentativa === 0) {
+        img.dataset.tentativa = '1';
+        img.src = encodeURI('img/' + srcOriginal);
+    } else if (tentativa === 1) {
+        img.dataset.tentativa = '2';
+        img.src = encodeURI('assets/' + srcOriginal);
+    } else if (tentativa === 2) {
+        img.dataset.tentativa = '3';
+        img.src = encodeURI('imagens/' + srcOriginal);
+    } else {
+        img.onerror = null;
+        img.src = 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80';
+    }
+}
+
+function carregarTexturaComFallback(loader, urlOriginal, onSuccess, onError) {
+    if (!urlOriginal) {
+        if (onError) onError();
+        return;
+    }
+    const nomeArquivo = decodeURIComponent(urlOriginal).replace(/^(\.\/|img\/|assets\/|imagens\/)/, '');
+
+    const candidatos = [
+        encodeURI(nomeArquivo),
+        encodeURI('img/' + nomeArquivo),
+        encodeURI('assets/' + nomeArquivo),
+        encodeURI('imagens/' + nomeArquivo),
+        'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80'
+    ];
+
+    let i = 0;
+    function tentar() {
+        if (i >= candidatos.length) {
+            if (onError) onError();
+            return;
+        }
+        const urlAtual = candidatos[i++];
+        loader.load(urlAtual, (tex) => {
+            if (THREE.SRGBColorSpace) {
+                tex.colorSpace = THREE.SRGBColorSpace;
+            } else if (THREE.sRGBEncoding) {
+                tex.encoding = THREE.sRGBEncoding;
+            }
+            tex.generateMipmaps = true;
+            tex.minFilter = THREE.LinearMipmapLinearFilter;
+            tex.magFilter = THREE.LinearFilter;
+            if (onSuccess) onSuccess(tex);
+        }, undefined, () => {
+            tentar();
+        });
+    }
+    tentar();
+}
+
 // ==========================================
 // 2. BANCO DE DADOS DA EXPOSIÇÃO
 // ==========================================
@@ -273,11 +350,14 @@ function renderizarPaginaLivro() {
     const imgEsq = item.imagemEsq || item.imagem || '';
     const imgDir = item.imagemDir || item.imagem || '';
 
+    const urlEsqFormatada = formatarUrlImagem(imgEsq);
+    const urlDirFormatada = formatarUrlImagem(imgDir);
+
     pagEsq.innerHTML = `
         <div class="w-full h-full flex flex-col justify-center items-center">
-            <div class="w-full border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgEsq}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
+            <div class="w-full border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgEsq.replace(/'/g, "\\'")}'], '${livroObj.titulo.replace(/'/g, "\\'")}', '', '${livroObj.titulo.replace(/'/g, "\\'")}', '${livroObj.titulo.replace(/'/g, "\\'")}')">
                 <div class="w-full flex items-center justify-center bg-stone-100 dark:bg-zinc-800 rounded-lg overflow-hidden relative p-1 min-h-[200px] sm:min-h-[300px]">
-                    <img src="${imgEsq}" alt="Página Esquerda" class="max-w-full max-h-[42vh] md:max-h-[62vh] w-auto h-auto object-contain img-zoom filter sepia-[0.08] contrast-105">
+                    <img src="${urlEsqFormatada}" alt="Página Esquerda" class="max-w-full max-h-[42vh] md:max-h-[62vh] w-auto h-auto object-contain img-zoom filter sepia-[0.08] contrast-105" onerror="tratarErroImagem(this)">
                     <span class="absolute bottom-2 right-2 bg-[#3D2314]/90 text-[#C59B27] text-[10px] font-serif px-2.5 py-1 rounded-md border border-[#C59B27]/40 shadow-md pointer-events-none">
                         🔍 Ampliar
                     </span>
@@ -288,9 +368,9 @@ function renderizarPaginaLivro() {
 
     pagDir.innerHTML = `
         <div class="w-full h-full flex flex-col justify-center items-center">
-            <div class="w-full border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgDir}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
+            <div class="w-full border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgDir.replace(/'/g, "\\'")}'], '${livroObj.titulo.replace(/'/g, "\\'")}', '', '${livroObj.titulo.replace(/'/g, "\\'")}', '${livroObj.titulo.replace(/'/g, "\\'")}')">
                 <div class="w-full flex items-center justify-center bg-stone-100 dark:bg-zinc-800 rounded-lg overflow-hidden relative p-1 min-h-[200px] sm:min-h-[300px]">
-                    <img src="${imgDir}" alt="Página Direita" class="max-w-full max-h-[42vh] md:max-h-[62vh] w-auto h-auto object-contain img-zoom filter sepia-[0.08] contrast-105">
+                    <img src="${urlDirFormatada}" alt="Página Direita" class="max-w-full max-h-[42vh] md:max-h-[62vh] w-auto h-auto object-contain img-zoom filter sepia-[0.08] contrast-105" onerror="tratarErroImagem(this)">
                     <span class="absolute bottom-2 right-2 bg-[#3D2314]/90 text-[#C59B27] text-[10px] font-serif px-2.5 py-1 rounded-md border border-[#C59B27]/40 shadow-md pointer-events-none">
                         🔍 Ampliar
                     </span>
@@ -417,11 +497,12 @@ const colecaoDados = {
 function criarCardHtml(item, tag, categoria, index) {
     const listaImagens = (item.imagens && item.imagens.length > 0) ? item.imagens : [item.imagem || "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80"];
     const qtdFotos = listaImagens.length;
+    const urlCapaFormatada = formatarUrlImagem(listaImagens[0]);
 
     return `
         <div class="bg-white dark:bg-zinc-900 border border-[#D4C4A8] dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
             <div class="img-zoom-container relative h-56 sm:h-64 md:h-72 w-full cursor-pointer bg-stone-100 dark:bg-zinc-800 flex items-center justify-center p-2" onclick="abrirGaleriaPorIndice('${categoria}', ${index})">
-                <img src="${listaImagens[0]}" alt="${item.titulo}" class="max-w-full max-h-full w-auto h-auto object-contain img-zoom filter contrast-105" loading="lazy">
+                <img src="${urlCapaFormatada}" alt="${item.titulo}" class="max-w-full max-h-full w-auto h-auto object-contain img-zoom filter contrast-105" loading="lazy" onerror="tratarErroImagem(this)">
                 ${qtdFotos > 1 ? `
                     <span class="absolute bottom-2 right-2 bg-stone-900/80 text-[#C59B27] text-[10px] font-serif font-bold px-2 py-1 rounded-md border border-[#C59B27]/30 shadow pointer-events-none">
                         📷 ${qtdFotos} fotos
@@ -548,7 +629,7 @@ function renderizarThumbnails() {
     containerThumbs.parentElement.classList.remove('hidden');
     containerThumbs.innerHTML = galeriaImagensAtual.map((imgSrc, idx) => `
         <button onclick="irParaSlide(${idx})" class="w-14 h-14 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${idx === indiceSlideAtual ? 'border-[#C59B27] scale-105 shadow-md ring-2 ring-[#C59B27]/50' : 'border-transparent opacity-60 hover:opacity-100'}">
-            <img src="${imgSrc}" class="w-full h-full object-cover">
+            <img src="${formatarUrlImagem(imgSrc)}" class="w-full h-full object-cover" onerror="tratarErroImagem(this)">
         </button>
     `).join('');
 }
@@ -560,7 +641,8 @@ function atualizarExibicaoSlide() {
     if (imgEl && galeriaImagensAtual.length > 0) {
         imgEl.style.opacity = '0.3';
         setTimeout(() => {
-            imgEl.src = galeriaImagensAtual[indiceSlideAtual];
+            imgEl.onerror = function() { tratarErroImagem(this); };
+            imgEl.src = formatarUrlImagem(galeriaImagensAtual[indiceSlideAtual]);
             imgEl.style.opacity = '1';
         }, 150);
     }
@@ -1023,17 +1105,7 @@ function montarObrasEPlacas3D() {
         grupoQuadros.add(grupoArte);
 
         const urlImagem3D = (item.imagens && item.imagens.length > 0) ? item.imagens[0] : item.imagem;
-        const urlSegura = encodeURI(urlImagem3D);
-        loader.load(urlSegura, (tex) => {
-            if (THREE.SRGBColorSpace) {
-                tex.colorSpace = THREE.SRGBColorSpace;
-            } else if (THREE.sRGBEncoding) {
-                tex.encoding = THREE.sRGBEncoding;
-            }
-            tex.generateMipmaps = true;
-            tex.minFilter = THREE.LinearMipmapLinearFilter;
-            tex.magFilter = THREE.LinearFilter;
-
+        carregarTexturaComFallback(loader, urlImagem3D, (tex) => {
             if (tex.image && tex.image.width && tex.image.height) {
                 const imgAspect = tex.image.width / tex.image.height;
                 const planeAspect = 92 / 62;
@@ -1045,8 +1117,8 @@ function montarObrasEPlacas3D() {
             }
             matTela.map = tex;
             matTela.needsUpdate = true;
-        }, undefined, (err) => {
-            console.warn("Aviso ao carregar imagem 3D da galeria:", urlImagem3D, err);
+        }, () => {
+            console.warn("Aviso: Falha ao carregar imagem 3D da galeria:", urlImagem3D);
         });
     });
 }
@@ -1729,17 +1801,7 @@ function montarObrasNasPontas() {
         });
 
         const urlImg = (item.imagens && item.imagens.length > 0) ? item.imagens[0] : item.imagem;
-        const urlSegura = encodeURI(urlImg);
-        loader.load(urlSegura, (tex) => {
-            if (THREE.SRGBColorSpace) {
-                tex.colorSpace = THREE.SRGBColorSpace;
-            } else if (THREE.sRGBEncoding) {
-                tex.encoding = THREE.sRGBEncoding;
-            }
-            tex.generateMipmaps = true;
-            tex.minFilter = THREE.LinearMipmapLinearFilter;
-            tex.magFilter = THREE.LinearFilter;
-
+        carregarTexturaComFallback(loader, urlImg, (tex) => {
             if (tex.image && tex.image.width && tex.image.height) {
                 const imgAspect = tex.image.width / tex.image.height;
                 const planeAspect = 56 / 40;
@@ -1751,8 +1813,8 @@ function montarObrasNasPontas() {
             }
             matTela.map = tex;
             matTela.needsUpdate = true;
-        }, undefined, (err) => {
-            console.warn("Aviso ao carregar imagem 3D da sala do café:", urlImg, err);
+        }, () => {
+            console.warn("Aviso: Falha ao carregar imagem 3D da sala do café:", urlImg);
         });
     });
 }
