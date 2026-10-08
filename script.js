@@ -1,8 +1,11 @@
 /**
  * ===================================================================
- * MUSEU DIGITAL DO PARANÁ - SCRIPT PRINCIPAL E INTERATIVIDADE
+ * MUSEU DIGITAL DO PARANÁ - SCRIPT PRINCIPAL E INTERATIVIDADE (v2)
  * =================================================================== 
- */
+ * Arquivo totalmente otimizado e aprimorado com Salas Virtuais 3D de 
+ * altíssima qualidade visual, iluminação de museu, texturas procedurais,
+ * molduras detalhadas, suporte a mouse, touch e zoom via scroll.
+ * =================================================================== */
 
 // ==========================================
 // 1. ACESSIBILIDADE E TEMAS
@@ -41,8 +44,20 @@ function alternarTema() {
 }
 
 // ==========================================
-// UTILITÁRIO: LIMPEZA DE MEMÓRIA THREE.JS
+// UTILITÁRIO: LIMPEZA DE MEMÓRIA THREE.JS E CONTROLE DE ANIMAÇÕES
 // ==========================================
+let loopGaleriaId = null;
+let loopArvoreId = null;
+let animacaoId = null;
+let animacaoIdArvore = null;
+
+function pararAnimacoes3D() {
+    if (loopGaleriaId) { cancelAnimationFrame(loopGaleriaId); loopGaleriaId = null; }
+    if (loopArvoreId) { cancelAnimationFrame(loopArvoreId); loopArvoreId = null; }
+    if (animacaoId) { cancelAnimationFrame(animacaoId); animacaoId = null; }
+    if (animacaoIdArvore) { cancelAnimationFrame(animacaoIdArvore); animacaoIdArvore = null; }
+}
+
 function descarteMaterial(mat) {
     if (!mat) return;
     if (mat.map) mat.map.dispose();
@@ -54,11 +69,6 @@ function descarteMaterial(mat) {
     mat.dispose();
 }
 
-// Variáveis Globais de Controlo dos Loops 3D
-let loopGaleriaId = null;
-let loopArvoreId = null;
-
-// Função para libertar memória GPU e evitar Tela Preta (Context Lost)
 function limparRecursos3D(cenaTarget, renderizadorTarget) {
     if (cenaTarget) {
         cenaTarget.traverse((objeto) => {
@@ -86,462 +96,59 @@ function limparRecursos3D(cenaTarget, renderizadorTarget) {
 // ==========================================
 // 2. BANCO DE DADOS DA EXPOSIÇÃO
 // ==========================================
-
 const dadosHistoria = [
-    {
-        titulo: "Cerco da Lapa",
-        descricao: "Jornal do dia 16 de Fevereiro de 1894.",
-        descricaoDetalhada: "Essa é uma representação de jornal da época da revolução federalista, que retrata informações sobre a história e acontecimentos do Cerco da Lapa.",
-        imagens: [
-            "cerco da lapa-michel (1).webp", "cerco da lapa-michel (2).webp"
-        ],
-        autor: "Luiza, Maisa e Rafael Huber."
-    },
-    {
-        titulo: "Barão do Cerro Azul",
-        descricao: "Jornal do dia 20 de maio de 1894.",
-        descricaoDetalhada: "Essa é uma representação de jornal da época da revolução federalista, que retrata informações sobre a história e vida de Ildefonso Pereira Correia, o Barão do Cerro Azul.",
-        imagens: [
-            "jornal barão do serro azul-michel (1).webp", "jornal barão do serro azul-michel (2).webp"
-        ],
-        autor: "Pesquisa Escolar"
-    },
-    {
-        titulo: "Guerra do Contestado",
-        descricao: "Slide sobre os principais acontecimentos e contextualização desse evento tão importante para o povo Paranaense.",
-        descricaoDetalhada: "Esta proposta de pesquisa traz para nós uma breve volta ao passado e aos conflitos que moldaram a nossa sociedade e o povo Paranaense.",
-        imagens: [
-            "contestado (1).webp", "contestado (2).webp", "contestado (3).webp",
-            "contestado (4).webp", "contestado (5).webp", "contestado (6).webp",
-            "contestado (8).webp", "contestado (9).webp",
-            "contestado (10).webp", "contestado (11).webp"
-        ],
-        autor: "Ana T., Henry Frescura e Daniel Rossoni."
-    }, 
-    {
-        titulo: "Indústrias Paranaenses",
-        descricao: "Industrialização do Estado do Paraná.",
-        descricaoDetalhada: "Essa apresentação busca trazer informações sobre o desenvolvimento industrial do Paraná.",
-        imagens: [
-            "industrias paranaenses-michel (1).webp", "industrias paranaenses-michel (2).webp",
-            "industrias paranaenses-michel (3).webp", "industrias paranaenses-michel (4).webp",
-            "industrias paranaenses-michel (5).webp", "industrias paranaenses-michel (6).webp",
-            "industrias paranaenses-michel (7).webp", "industrias paranaenses-michel (8).webp",
-            "industrias paranaenses-michel (9).webp", "industrias paranaenses-michel (10).webp",
-            "industrias paranaenses-michel (11).webp", "industrias paranaenses-michel (12).webp",
-            "industrias paranaenses-michel (13).webp", "industrias paranaenses-michel (14).webp"
-        ],
-        autor: "Tayane Zamperon, Victor Stoll e Danilo Panzenhagen."
-    },
-    {
-        titulo: "Oeste e Sudoeste Paranaense",
-        descricao: "Principais Cidades de cada região do Paraná.",
-        descricaoDetalhada: "Essa apresentação busca trazer as principais cidades e suas importâncias de cada região do Paraná.",
-        imagens: [
-            "oeste e sudoeste-michel (1).webp", "oeste e sudoeste-michel (2).webp",
-            "oeste e sudoeste-michel (3).webp", "oeste e sudoeste-michel (4).webp",
-            "oeste e sudoeste-michel (5).webp", "oeste e sudoeste-michel (6).webp",
-            "oeste e sudoeste-michel (7).webp", "oeste e sudoeste-michel (8).webp",
-            "oeste e sudoeste-michel (9).webp", "oeste e sudoeste-michel (10).webp",
-            "oeste e sudoeste-michel (11).webp", "oeste e sudoeste-michel (12).webp",
-            "oeste e sudoeste-michel (13).webp", "oeste e sudoeste-michel (14).webp",
-            "oeste e sudoeste-michel (15).webp", "oeste e sudoeste-michel (16).webp",
-            "oeste e sudoeste-michel (17).webp", "oeste e sudoeste-michel (18).webp",
-            "oeste e sudoeste-michel (19).webp"
-        ],
-        autor: "Tayane Zamperon, Victor Stoll e Danilo Panzenhagen."
-    },
-    {
-        titulo: "Campos Gerais e Centro Oriental Paranaense",
-        descricao: "Principais Cidades de cada região do Paraná.",
-        descricaoDetalhada: "Essa apresentação busca trazer as principais cidades e suas importâncias de cada região do Paraná.",
-        imagens: [
-            "campos gerais e centro oriental-michel (1).webp", "campos gerais e centro oriental-michel (2).webp",
-            "campos gerais e centro oriental-michel (3).webp", "campos gerais e centro oriental-michel (4).webp",
-            "campos gerais e centro oriental-michel (5).webp", "campos gerais e centro oriental-michel (6).webp",
-            "campos gerais e centro oriental-michel (7).webp", "campos gerais e centro oriental-michel (8).webp",
-            "campos gerais e centro oriental-michel (9).webp", "campos gerais e centro oriental-michel (10).webp",
-            "campos gerais e centro oriental-michel (11).webp", "campos gerais e centro oriental-michel (12).webp",
-            "campos gerais e centro oriental-michel (13).webp", "campos gerais e centro oriental-michel (14).webp",
-            "campos gerais e centro oriental-michel (15).webp", "campos gerais e centro oriental-michel (16).webp",
-            "campos gerais e centro oriental-michel (17).webp", "campos gerais e centro oriental-michel (18).webp"
-        ],
-        autor: "Luiza Binsfiel, Maisa Constantino e Rafael Huber."
-    },
-    {
-        titulo: "Sul e Centro Sul Paranaense",
-        descricao: "Principais Cidades de cada região do Paraná.",
-        descricaoDetalhada: "Essa apresentação busca trazer as principais cidades e suas importâncias de cada região do Paraná.",
-        imagens: [
-            "Sul e centro-sul-michel (1).webp", "Sul e centro-sul-michel (2).webp",
-            "Sul e centro-sul-michel (3).webp", "Sul e centro-sul-michel (4).webp",
-            "Sul e centro-sul-michel (5).webp", "Sul e centro-sul-michel (6).webp",
-            "Sul e centro-sul-michel (7).webp", "Sul e centro-sul-michel (8).webp",
-            "Sul e centro-sul-michel (9).webp", "Sul e centro-sul-michel (10).webp",
-            "Sul e centro-sul-michel (11).webp", "Sul e centro-sul-michel (12).webp",
-            "Sul e centro-sul-michel (13).webp", "Sul e centro-sul-michel (14).webp",
-            "Sul e centro-sul-michel (15).webp", "Sul e centro-sul-michel (16).webp",
-            "Sul e centro-sul-michel (17).webp"
-        ],
-        autor: "Pedro, Pyetro e Sthefanny."
-    },
-    {
-        titulo: "Região Metropolitana de Curitiba e Litoral Paranaense",
-        descricao: "Principais Cidades de cada região do Paraná.",
-        descricaoDetalhada: "Essa apresentação busca trazer as principais cidades e suas importâncias de cada região do Paraná.",
-        imagens: [
-            "rmc e litoral-michel (1).webp", 
-            "rmc e litoral-michel (3).webp", 
-            "rmc e litoral-michel (4).webp",
-            "rmc e litoral-michel (5).webp", 
-            "rmc e litoral-michel (6).webp",
-            "rmc e litoral-michel (7).webp", 
-            "rmc e litoral-michel (8).webp",
-            "rmc e litoral-michel (9).webp", 
-            "rmc e litoral-michel (10).webp",
-            "rmc e litoral-michel (11).webp", 
-            "rmc e litoral-michel (17).webp",
-            "rmc e litoral-michel (14).webp",
-            "rmc e litoral-michel (12).webp",
-            "rmc e litoral-michel (13).webp", 
-            "rmc e litoral-michel (15).webp", 
-            "rmc e litoral-michel (16).webp",
-        ],
-        autor: "Sabrina Kunzel, Eduardo Panzenhagen e Rafael Frasson."
-    }
+    { titulo: "Cerco da Lapa", descricao: "Jornal do dia 16 de Fevereiro de 1894.", descricaoDetalhada: "Essa é uma representação de jornal da época da revolução federalista, que retrata informações sobre a história e acontecimentos do Cerco da Lapa.", imagens: [ "cerco da lapa-michel (1).webp", "cerco da lapa-michel (2).webp" ], autor: "Luiza, Maisa e Rafael Huber." },
+    { titulo: "Barão do Cerro Azul", descricao: "Jornal do dia 20 de maio de 1894.", descricaoDetalhada: "Essa é uma representação de jornal da época da revolução federalista, que retrata informações sobre a história e vida de Ildefonso Pereira Correia, o Barão do Cerro Azul.", imagens: [ "jornal barão do serro azul-michel (1).webp", "jornal barão do serro azul-michel (2).webp" ], autor: "Pesquisa Escolar" },
+    { titulo: "Guerra do Contestado", descricao: "Slide sobre os principais acontecimentos e contextualização desse evento tão importante para o povo Paranaense.", descricaoDetalhada: "Esta proposta de pesquisa traz para nós uma breve volta ao passado e aos conflitos que moldaram a nossa sociedade e o povo Paranaense.", imagens: [ "contestado (1).webp", "contestado (2).webp", "contestado (3).webp", "contestado (4).webp", "contestado (5).webp", "contestado (6).webp", "contestado (8).webp", "contestado (9).webp", "contestado (10).webp", "contestado (11).webp" ], autor: "Ana T., Henry Frescura e Daniel Rossoni." },
+    { titulo: "Indústrias Paranaenses", descricao: "Industrialização do Estado do Paraná.", descricaoDetalhada: "Essa apresentação busca trazer informações sobre o desenvolvimento industrial do Paraná.", imagens: [ "industrias paranaenses-michel (1).webp", "industrias paranaenses-michel (2).webp", "industrias paranaenses-michel (3).webp", "industrias paranaenses-michel (4).webp", "industrias paranaenses-michel (5).webp", "industrias paranaenses-michel (6).webp", "industrias paranaenses-michel (7).webp", "industrias paranaenses-michel (8).webp", "industrias paranaenses-michel (9).webp", "industrias paranaenses-michel (10).webp", "industrias paranaenses-michel (11).webp", "industrias paranaenses-michel (12).webp", "industrias paranaenses-michel (13).webp", "industrias paranaenses-michel (14).webp" ], autor: "Tayane Zamperon, Victor Stoll e Danilo Panzenhagen." },
+    { titulo: "Oeste e Sudoeste Paranaense", descricao: "Principais Cidades de cada região do Paraná.", descricaoDetalhada: "Essa apresentação busca trazer as principais cidades e suas importâncias de cada região do Paraná.", imagens: [ "oeste e sudoeste-michel (1).webp", "oeste e sudoeste-michel (2).webp", "oeste e sudoeste-michel (3).webp", "oeste e sudoeste-michel (4).webp", "oeste e sudoeste-michel (5).webp", "oeste e sudoeste-michel (6).webp", "oeste e sudoeste-michel (7).webp", "oeste e sudoeste-michel (8).webp", "oeste e sudoeste-michel (9).webp", "oeste e sudoeste-michel (10).webp", "oeste e sudoeste-michel (11).webp", "oeste e sudoeste-michel (12).webp", "oeste e sudoeste-michel (13).webp", "oeste e sudoeste-michel (14).webp", "oeste e sudoeste-michel (15).webp", "oeste e sudoeste-michel (16).webp", "oeste e sudoeste-michel (17).webp", "oeste e sudoeste-michel (18).webp", "oeste e sudoeste-michel (19).webp" ], autor: "Tayane Zamperon, Victor Stoll e Danilo Panzenhagen." },
+    { titulo: "Campos Gerais e Centro Oriental Paranaense", descricao: "Principais Cidades de cada região do Paraná.", descricaoDetalhada: "Essa apresentação busca trazer as principais cidades e suas importâncias de cada região do Paraná.", imagens: [ "campos gerais e centro oriental-michel (1).webp", "campos gerais e centro oriental-michel (2).webp", "campos gerais e centro oriental-michel (3).webp", "campos gerais e centro oriental-michel (4).webp", "campos gerais e centro oriental-michel (5).webp", "campos gerais e centro oriental-michel (6).webp", "campos gerais e centro oriental-michel (7).webp", "campos gerais e centro oriental-michel (8).webp", "campos gerais e centro oriental-michel (9).webp", "campos gerais e centro oriental-michel (10).webp", "campos gerais e centro oriental-michel (11).webp", "campos gerais e centro oriental-michel (12).webp", "campos gerais e centro oriental-michel (13).webp", "campos gerais e centro oriental-michel (14).webp", "campos gerais e centro oriental-michel (15).webp", "campos gerais e centro oriental-michel (16).webp", "campos gerais e centro oriental-michel (17).webp", "campos gerais e centro oriental-michel (18).webp" ], autor: "Luiza Binsfiel, Maisa Constantino e Rafael Huber." },
+    { titulo: "Sul e Centro Sul Paranaense", descricao: "Principais Cidades de cada região do Paraná.", descricaoDetalhada: "Essa apresentação busca trazer as principais cidades e suas importâncias de cada região do Paraná.", imagens: [ "Sul e centro-sul-michel (1).webp", "Sul e centro-sul-michel (2).webp", "Sul e centro-sul-michel (3).webp", "Sul e centro-sul-michel (4).webp", "Sul e centro-sul-michel (5).webp", "Sul e centro-sul-michel (6).webp", "Sul e centro-sul-michel (7).webp", "Sul e centro-sul-michel (8).webp", "Sul e centro-sul-michel (9).webp", "Sul e centro-sul-michel (10).webp", "Sul e centro-sul-michel (11).webp", "Sul e centro-sul-michel (12).webp", "Sul e centro-sul-michel (13).webp", "Sul e centro-sul-michel (14).webp", "Sul e centro-sul-michel (15).webp", "Sul e centro-sul-michel (16).webp", "Sul e centro-sul-michel (17).webp" ], autor: "Pedro, Pyetro e Sthefanny." },
+    { titulo: "Região Metropolitana de Curitiba e Litoral Paranaense", descricao: "Principais Cidades de cada região do Paraná.", descricaoDetalhada: "Essa apresentação busca trazer as principais cidades e suas importâncias de cada região do Paraná.", imagens: [ "rmc e litoral-michel (1).webp", "rmc e litoral-michel (3).webp", "rmc e litoral-michel (4).webp", "rmc e litoral-michel (5).webp", "rmc e litoral-michel (6).webp", "rmc e litoral-michel (7).webp", "rmc e litoral-michel (8).webp", "rmc e litoral-michel (9).webp", "rmc e litoral-michel (10).webp", "rmc e litoral-michel (11).webp", "rmc e litoral-michel (17).webp", "rmc e litoral-michel (14).webp", "rmc e litoral-michel (12).webp", "rmc e litoral-michel (13).webp", "rmc e litoral-michel (15).webp", "rmc e litoral-michel (16).webp" ], autor: "Sabrina Kunzel, Eduardo Panzenhagen e Rafael Frasson." }
 ];
 
 const dadosGeografia = [
-    {
-        titulo: "Paraná: um mosaico de culturas e tradições",
-        descricao: "Estudo sobre a orografia, a Serra do Mar e os três planaltos paranaenses.",
-        descricaoDetalhada: "O Paraná é marcado pela diversidade de povos, paisagens, costumes e manifestações culturais. Sua identidade foi construída pela presença dos povos indígenas e pela chegada de diferentes grupos de imigrantes, que contribuíram para os modos de viver, as festas, a culinária, a música e as tradições presentes em todo o estado. De suas paisagens naturais às manifestações culturais, o Paraná reúne diferentes histórias que formam uma identidade rica e plural.",
-        imagens: [
-            "mariana mapa parana 1.webp",
-            "mariana mapa parana 2.webp",
-            "mariana mapa parana 3.webp"
-        ],
-        autor: "Pesquisa de Geografia"
-    }
+    { titulo: "Paraná: um mosaico de culturas e tradições", descricao: "Estudo sobre a orografia, a Serra do Mar e os três planaltos paranaenses.", descricaoDetalhada: "O Paraná é marcado pela diversidade de povos, paisagens, costumes e manifestações culturais. Sua identidade foi construída pela presença dos povos indígenas e pela chegada de diferentes grupos de imigrantes, que contribuíram para os modos de viver, as festas, a culinária, a música e as tradições presentes em todo o estado. De suas paisagens naturais às manifestações culturais, o Paraná reúne diferentes histórias que formam uma identidade rica e plural.", imagens: [ "mariana mapa parana 1.webp", "mariana mapa parana 2.webp", "mariana mapa parana 3.webp" ], autor: "Pesquisa de Geografia" }
 ];
 
 const dadosArte = [
-    {
-        titulo: "Primeiras Artes Artistas: Região Metropolitana e Litoral",
-        descricao: "Slide sobre os principais nomes da arte paranaense que influenciaram a cultura desta região.",
-        descricaoDetalhada: "Esta proposta de pesquisa e produção de slides teve como objetivo analisar e conhecer as artes e artistas pioneiros em cada região do Paraná e como estes influenciaram a cultura até os dias de hoje.",
-        imagens: [
-            "Literal e Região Metropolitana - Artes e artistas (1).webp",
-            "Literal e Região Metropolitana - Artes e artistas (2).webp",
-            "Literal e Região Metropolitana - Artes e artistas (3).webp",
-            "Literal e Região Metropolitana - Artes e artistas (4).webp",
-            "Literal e Região Metropolitana - Artes e artistas (5).webp",
-            "Literal e Região Metropolitana - Artes e artistas (6).webp",
-            "Literal e Região Metropolitana - Artes e artistas (7).webp",
-            "Literal e Região Metropolitana - Artes e artistas (8).webp",
-            "Literal e Região Metropolitana - Artes e artistas (9).webp",
-            "Literal e Região Metropolitana - Artes e artistas (10).webp"
-        ],
-        autor: "Sabrina, Eduardo e Rafael."
-    },
-    {
-        titulo: "Artes e artistas: Oeste e Sudoeste Paranaense",
-        descricao: "Slide sobre os principais nomes da arte paranaense que influenciaram a cultura desta região.",
-        descricaoDetalhada: "Esta proposta de pesquisa e produção de slides teve como objetivo analisar e conhecer as artes e artistas pioneiros em cada região do Paraná e como estes influenciaram a cultura até os dias de hoje.",
-        imagens: [
-            "Oeste e Sudoeste Paranaense - Artes e artistas (1).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (2).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (3).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (4).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (5).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (6).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (7).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (8).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (9).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (10).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (11).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (12).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (13).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (14).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (15).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (16).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (17).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (18).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (19).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (20).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (21).webp",
-            "Oeste e Sudoeste Paranaense - Artes e artistas (22).webp"
-        ],
-        autor: "Tayane, Victor e Danilo"
-    },
-    {
-        titulo: "Artes e Artistas: Região Centro Oriental e Campos Gerais",
-        descricao: "Slide sobre os principais nomes da arte paranaense que influenciaram a cultura desta região.",
-        descricaoDetalhada: "Esta proposta de pesquisa e produção de slides teve como objetivo analisar e conhecer as artes e artistas pioneiros em cada região do Paraná e como estes influenciaram a cultura até os dias de hoje.",
-        imagens: [
-            "Região Centro Oriental e Campos Gerais - Artes e Artistas (1).webp",
-            "Região Centro Oriental e Campos Gerais - Artes e Artistas (2).webp",
-            "Região Centro Oriental e Campos Gerais - Artes e Artistas (3).webp",
-            "Região Centro Oriental e Campos Gerais - Artes e Artistas (4).webp",
-            "Região Centro Oriental e Campos Gerais - Artes e Artistas (5).webp",
-            "Região Centro Oriental e Campos Gerais - Artes e Artistas (6).webp",
-            "Região Centro Oriental e Campos Gerais - Artes e Artistas (7).webp",
-            "Região Centro Oriental e Campos Gerais - Artes e Artistas (8).webp",
-            "Região Centro Oriental e Campos Gerais - Artes e Artistas (9).webp",
-            "Região Centro Oriental e Campos Gerais - Artes e Artistas (10).webp",
-            "Região Centro Oriental e Campos Gerais - Artes e Artistas (12).webp"
-        ],
-        autor: "Maisa, Rafael H. e Luiza."
-    },
-    {
-        titulo: "Artes e artistas: Sul e Centro-sul",
-        descricao: "Slide sobre os principais nomes da arte paranaense que influenciaram a cultura desta região.",
-        descricaoDetalhada: "Esta proposta de pesquisa e produção de slides teve como objetivo analisar e conhecer as artes e artistas pioneiros em cada região do Paraná e como estes influenciaram a cultura até os dias de hoje.",
-        imagens: [
-            "Sul e Centro-sul - Artes e artistas (1).webp",
-            "Sul e Centro-sul - Artes e artistas (2).webp",
-            "Sul e Centro-sul - Artes e artistas (3).webp",
-            "Sul e Centro-sul - Artes e artistas (4).webp",
-            "Sul e Centro-sul - Artes e artistas (5).webp",
-            "Sul e Centro-sul - Artes e artistas (6).webp",
-            "Sul e Centro-sul - Artes e artistas (7).webp",
-            "Sul e Centro-sul - Artes e artistas (8).webp",
-            "Sul e Centro-sul - Artes e artistas (9).webp",
-            "Sul e Centro-sul - Artes e artistas (10).webp"
-        ],
-        autor: "Pedro, Pyetro e Sthefanny."
-    }
+    { titulo: "Primeiras Artes Artistas: Região Metropolitana e Litoral", descricao: "Slide sobre os principais nomes da arte paranaense que influenciaram a cultura desta região.", descricaoDetalhada: "Esta proposta de pesquisa e produção de slides teve como objetivo analisar e conhecer as artes e artistas pioneiros em cada região do Paraná e como estes influenciaram a cultura até os dias de hoje.", imagens: [ "Literal e Região Metropolitana - Artes e artistas (1).webp", "Literal e Região Metropolitana - Artes e artistas (2).webp", "Literal e Região Metropolitana - Artes e artistas (3).webp", "Literal e Região Metropolitana - Artes e artistas (4).webp", "Literal e Região Metropolitana - Artes e artistas (5).webp", "Literal e Região Metropolitana - Artes e artistas (6).webp", "Literal e Região Metropolitana - Artes e artistas (7).webp", "Literal e Região Metropolitana - Artes e artistas (8).webp", "Literal e Região Metropolitana - Artes e artistas (9).webp", "Literal e Região Metropolitana - Artes e artistas (10).webp" ], autor: "Sabrina, Eduardo e Rafael." },
+    { titulo: "Artes e artistas: Oeste e Sudoeste Paranaense", descricao: "Slide sobre os principais nomes da arte paranaense que influenciaram a cultura desta região.", descricaoDetalhada: "Esta proposta de pesquisa e produção de slides teve como objetivo analisar e conhecer as artes e artistas pioneiros em cada região do Paraná e como estes influenciaram a cultura até os dias de hoje.", imagens: [ "Oeste e Sudoeste Paranaense - Artes e artistas (1).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (2).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (3).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (4).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (5).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (6).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (7).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (8).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (9).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (10).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (11).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (12).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (13).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (14).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (15).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (16).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (17).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (18).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (19).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (20).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (21).webp", "Oeste e Sudoeste Paranaense - Artes e artistas (22).webp" ], autor: "Tayane, Victor e Danilo" },
+    { titulo: "Artes e Artistas: Região Centro Oriental e Campos Gerais", descricao: "Slide sobre os principais nomes da arte paranaense que influenciaram a cultura desta região.", descricaoDetalhada: "Esta proposta de pesquisa e produção de slides teve como objetivo analisar e conhecer as artes e artistas pioneiros em cada região do Paraná e como estes influenciaram a cultura até os dias de hoje.", imagens: [ "Região Centro Oriental e Campos Gerais - Artes e Artistas (1).webp", "Região Centro Oriental e Campos Gerais - Artes e Artistas (2).webp", "Região Centro Oriental e Campos Gerais - Artes e Artistas (3).webp", "Região Centro Oriental e Campos Gerais - Artes e Artistas (4).webp", "Região Centro Oriental e Campos Gerais - Artes e Artistas (5).webp", "Região Centro Oriental e Campos Gerais - Artes e Artistas (6).webp", "Região Centro Oriental e Campos Gerais - Artes e Artistas (7).webp", "Região Centro Oriental e Campos Gerais - Artes e Artistas (8).webp", "Região Centro Oriental e Campos Gerais - Artes e Artistas (9).webp", "Região Centro Oriental e Campos Gerais - Artes e Artistas (10).webp", "Região Centro Oriental e Campos Gerais - Artes e Artistas (12).webp" ], autor: "Maisa, Rafael H. e Luiza." },
+    { titulo: "Artes e artistas: Sul e Centro-sul", descricao: "Slide sobre os principais nomes da arte paranaense que influenciaram a cultura desta região.", descricaoDetalhada: "Esta proposta de pesquisa e produção de slides teve como objetivo analisar e conhecer as artes e artistas pioneiros em cada região do Paraná e como estes influenciaram a cultura até os dias de hoje.", imagens: [ "Sul e Centro-sul - Artes e artistas (1).webp", "Sul e Centro-sul - Artes e artistas (2).webp", "Sul e Centro-sul - Artes e artistas (3).webp", "Sul e Centro-sul - Artes e artistas (4).webp", "Sul e Centro-sul - Artes e artistas (5).webp", "Sul e Centro-sul - Artes e artistas (6).webp", "Sul e Centro-sul - Artes e artistas (7).webp", "Sul e Centro-sul - Artes e artistas (8).webp", "Sul e Centro-sul - Artes e artistas (9).webp", "Sul e Centro-sul - Artes e artistas (10).webp" ], autor: "Pedro, Pyetro e Sthefanny." }
 ];
 
 const trabalhosAlunos = [
-    {
-        id: 't1',
-        titulo: 'As regiões Oeste e Sudoeste em traços e cores',
-        descricao: 'Produções artísticas com material alternativo e foco na sustentabilidade.',
-        descricaoDetalhada: 'Trabalho prático integrando Arte, História e Geografia. Os alunos analisaram as características e particularidades culturais, históricas e geográficas de cada região do Paraná, influenciados pelos principais artistas plásticos paranaenses.',
-        autor: 'Tayane, Victor e Danilo.',
-        disciplina: 'Arte / História / Geografia.',
-        imagem: 'As regiões Oeste e Sudoeste em traços e cores_.webp',
-        lon: 0, lat: 0
-    },
-    {
-        id: 't2',
-        titulo: 'As araucárias',
-        descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        autor: 'Victor',
-        disciplina: 'Arte',
-        imagem: 'As araucárias - Victor_.webp',
-        lon: 36, lat: 0
-    },
-    {
-        id: 't3',
-        titulo: 'Do litoral à metrópole',
-        descricao: 'Produções artísticas com material alternativo e foco na sustentabilidade.',
-        descricaoDetalhada: 'Trabalho prático integrando Arte, História e Geografia. Produziram retratos utilizando bases e riscadores alternativos.',
-        autor: 'Trabalho Coletivo (Sabrina, Rafael e Eduardo)',
-        disciplina: 'Arte / História / Geografia.',
-        imagem: 'Do litoral à metrópole_.webp',
-        lon: 72, lat: 0
-    },
-    {
-        id: 't4',
-        titulo: 'Infância na lavoura',
-        descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        autor: 'Luiza',
-        disciplina: 'Arte',
-        imagem: 'IMG_20260903_102822.webp',
-        lon: 108, lat: 0
-    },
-    {
-        id: 't5',
-        titulo: 'O cafezal',
-        descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais e papel machê.',
-        descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais e papel machê para moldura.',
-        autor: 'Pyetro',
-        disciplina: 'Artes',
-        imagem: 'O Cafezal - Pyetro.webp',
-        lon: 144, lat: 0
-    },
-    {
-        id: 't6',
-        titulo: 'Costumes e tradições',
-        descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        autor: 'Eduardo',
-        disciplina: 'Arte',
-        imagem: 'IMG_20260903_102805.webp',
-        lon: 180, lat: 0
-    },
-    {
-        id: 't7',
-        titulo: 'Mateando ao sol',
-        descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com pigmentos naturais.',
-        autor: 'Rafael Huber',
-        disciplina: 'Arte',
-        imagem: 'IMG_20260902_083851.webp',
-        lon: 216, lat: 0
-    },
-    {
-        id: 't8',
-        titulo: 'Tradição entre Araucárias',
-        descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        autor: 'Sabrina',
-        disciplina: 'Arte',
-        imagem: 'IMG_20260902_083837.webp',
-        lon: 252, lat: 0
-    },
-    {
-        id: 't9',
-        titulo: 'Amanhecer',
-        descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        autor: 'Danilo',
-        disciplina: 'Arte',
-        imagem: 'IMG_20260902_083827.webp',
-        lon: 288, lat: 0
-    },
-    {
-        id: 't10',
-        titulo: 'Um olhar sobre os Campos gerais paranaenses',
-        descricao: 'Produções artísticas com material alternativo e foco na sustentabilidade.',
-        descricaoDetalhada: 'Trabalho prático integrando Arte, História e Geografia. Os alunos analisaram as características e particularidades culturais das regiões do Paraná.',
-        autor: 'Trabalho Coletivo (Luiza, Rafael H. e Maisa)',
-        disciplina: 'História / Arte / Geografia',
-        imagem: 'Um olhar sobre os Campos gerais paranaenses_.webp',
-        lon: 324, lat: 0
-    },
-    {
-        id: 't11',
-        titulo: 'Café nacional',
-        descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        autor: 'Sthefanny',
-        disciplina: 'Arte',
-        imagem: 'IMG20260902114137.webp',
-        lon: 288, lat: 0
-    },
-    {
-        id: 't12',
-        titulo: 'Preservando a tradição',
-        descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        autor: 'Rafael Frasson',
-        disciplina: 'Arte',
-        imagem: 'IMG20260902082909.webp',
-        lon: 288, lat: 0
-    },
-    {
-        id: 't13',
-        titulo: 'O chimarrão',
-        descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.',
-        autor: 'Maisa',
-        disciplina: 'Arte',
-        imagem: 'IMG20260902082805.webp',
-        lon: 288, lat: 0
-    },
-    {
-        id: 't14',
-        titulo: 'Peroba: Texturas do tempo',
-        descricao: 'Representação tridimensional e tátil dos símbolos paranaenses.',
-        descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses. Elementos básicos da arte.',
-        autor: 'Professora Ingridi',
-        disciplina: 'Arte',
-        imagem: 'IMG20260824110034.webp',
-        lon: 288, lat: 0
-    },
-    {
-        id: 't15',
-        titulo: 'Campo de araucárias',
-        descricao: 'Produções artísticas com material alternativo e foco na sustentabilidade.',
-        autor: 'Trabalho Coletivo (Pedro, Pyetro e Sthefanny)',
-        disciplina: 'Arte',
-        imagem: 'Campo de araucárias_.webp',
-        lon: 288, lat: 0
-    }
+    { id: 't1', titulo: 'As regiões Oeste e Sudoeste em traços e cores', descricao: 'Produções artísticas com material alternativo e foco na sustentabilidade.', descricaoDetalhada: 'Trabalho prático integrando Arte, História e Geografia. Os alunos analisaram as características e particularidades culturais, históricas e geográficas de cada região do Paraná, influenciados pelos principais artistas plásticos paranaenses.', autor: 'Tayane, Victor e Danilo.', disciplina: 'Arte / História / Geografia.', imagem: 'As regiões Oeste e Sudoeste em traços e cores_.webp', lon: 0, lat: 0 },
+    { id: 't2', titulo: 'As araucárias', descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', autor: 'Victor', disciplina: 'Arte', imagem: 'As araucárias - Victor_.webp', lon: 24, lat: 0 },
+    { id: 't3', titulo: 'Do litoral à metrópole', descricao: 'Produções artísticas com material alternativo e foco na sustentabilidade.', descricaoDetalhada: 'Trabalho prático integrando Arte, História e Geografia. Produziram retratos utilizando bases e riscadores alternativos.', autor: 'Trabalho Coletivo (Sabrina, Rafael e Eduardo)', disciplina: 'Arte / História / Geografia.', imagem: 'Do litoral à metrópole_.webp', lon: 48, lat: 0 },
+    { id: 't4', titulo: 'Infância na lavoura', descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', autor: 'Luiza', disciplina: 'Arte', imagem: 'IMG_20260903_102822.webp', lon: 72, lat: 0 },
+    { id: 't5', titulo: 'O cafezal', descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais e papel machê.', descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais e papel machê para moldura.', autor: 'Pyetro', disciplina: 'Artes', imagem: 'O Cafezal - Pyetro.webp', lon: 96, lat: 0 },
+    { id: 't6', titulo: 'Costumes e tradições', descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', autor: 'Eduardo', disciplina: 'Arte', imagem: 'IMG_20260903_102805.webp', lon: 120, lat: 0 },
+    { id: 't7', titulo: 'Mateando ao sol', descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com pigmentos naturais.', autor: 'Rafael Huber', disciplina: 'Arte', imagem: 'IMG_20260902_083851.webp', lon: 144, lat: 0 },
+    { id: 't8', titulo: 'Tradição entre Araucárias', descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', autor: 'Sabrina', disciplina: 'Arte', imagem: 'IMG_20260902_083837.webp', lon: 168, lat: 0 },
+    { id: 't9', titulo: 'Amanhecer', descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', autor: 'Danilo', disciplina: 'Arte', imagem: 'IMG_20260902_083827.webp', lon: 192, lat: 0 },
+    { id: 't10', titulo: 'Um olhar sobre os Campos gerais paranaenses', descricao: 'Produções artísticas com material alternativo e foco na sustentabilidade.', descricaoDetalhada: 'Trabalho prático integrando Arte, História e Geografia. Os alunos analisaram as características e particularidades culturais das regiões do Paraná.', autor: 'Trabalho Coletivo (Luiza, Rafael H. e Maisa)', disciplina: 'História / Arte / Geografia', imagem: 'Um olhar sobre os Campos gerais paranaenses_.webp', lon: 216, lat: 0 },
+    { id: 't11', titulo: 'Café nacional', descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', autor: 'Sthefanny', disciplina: 'Arte', imagem: 'IMG20260902114137.webp', lon: 240, lat: 0 },
+    { id: 't12', titulo: 'Preservando a tradição', descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', autor: 'Rafael Frasson', disciplina: 'Arte', imagem: 'IMG20260902082909.webp', lon: 264, lat: 0 },
+    { id: 't13', titulo: 'O chimarrão', descricao: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses com uso de tintas naturais.', autor: 'Maisa', disciplina: 'Arte', imagem: 'IMG20260902082805.webp', lon: 288, lat: 0 },
+    { id: 't14', titulo: 'Peroba: Texturas do tempo', descricao: 'Representação tridimensional e tátil dos símbolos paranaenses.', descricaoDetalhada: 'Representação tridimensional e tátil dos símbolos paranaenses. Elementos básicos da arte.', autor: 'Professora Ingridi', disciplina: 'Arte', imagem: 'IMG20260824110034.webp', lon: 312, lat: 0 },
+    { id: 't15', titulo: 'Campo de araucárias', descricao: 'Produções artísticas com material alternativo e foco na sustentabilidade.', autor: 'Trabalho Coletivo (Pedro, Pyetro e Sthefanny)', disciplina: 'Arte', imagem: 'Campo de araucárias_.webp', lon: 336, lat: 0 }
 ];
 
 const obrasCafe = [
-    {
-        id: 'c1',
-        titulo: 'Uma história curiosa sobre o café',
-        descricao: 'Estudo em pintura sobre a expansão cafeeira no Norte do Paraná.',
-        descricaoDetalhada: 'Uma antiga lenda conta que um pastor teria percebido os efeitos dos frutos do café ao observar o comportamento animado de suas cabras. A história ajuda a explicar como o café passou a ser associado à energia e à disposição.',
-        autor: 'Geografia',
-        disciplina: 'Geografia',
-        imagem: 'Mariana 1.webp'
-    },
-    {
-        id: 'c2',
-        titulo: 'Traços e Cores do Sudoeste',
-        descricao: 'Expressão visual das paisagens cafeeiras e agrícolas.',
-        descricaoDetalhada: 'Nos anos 50 e 60, o café se tornou a alma do Noroeste do Paraná. A terra fértil e o clima favorável atraíram milhares de famílias.',
-        autor: 'Post de Campo Mourão D',
-        disciplina: 'Arte',
-        imagem: 'marina5.webp'
-    },
-    {
-        id: 'c3',
-        titulo: 'O café e a identidade do Norte do Paraná',
-        descricao: 'Integração da flora nativa com a cultura cafeeira.',
-        descricaoDetalhada: 'O café foi muito mais que um produto agrícola: ajudou a transformar paisagens, comunidades e modos de vida no Paraná.',
-        autor: 'Geografia',
-        disciplina: 'Geografia',
-        imagem: 'Mariana 3.webp'
-    },
-    {
-        id: 'c4',
-        titulo: 'Do Litoral à Metrópole',
-        descricao: 'Rota de escoamento do café ao Porto de Paranaguá.',
-        descricaoDetalhada: 'Em meio ao cafezal, no município de Tomazina, lembra-se das tristes cenas da grande geada de 1975.',
-        autor: 'Acervo Museu Histórico',
-        disciplina: 'História',
-        imagem: 'mariana 6.webp'
-    },
-    {
-        id: 'c5',
-        titulo: 'As mudanças no campo',
-        descricao: 'Retrato do cotidiano rural nas plantações históricas.',
-        descricaoDetalhada: 'A história do café também revela como a agricultura se adapta às condições econômicas, ambientais e às transformações no território.',
-        autor: 'Geografia',
-        disciplina: 'Geografia',
-        imagem: 'Mariana 2.webp'
-    },
-    {
-        id: 'c6',
-        titulo: 'Costumes e Tradições',
-        descricao: 'A vida no campo e a convivência nas fazendas de café.',
-        descricaoDetalhada: 'O Norte do Paraná é a principal região produtora de café no Estado, produzindo grãos premiados internacionalmente.',
-        autor: 'Foto: Feito no Paraná/divulgação',
-        disciplina: 'Arte',
-        imagem: 'mariana7.webp'
-    },
-    {
-        id: 'c7',
-        titulo: 'Um período de grande expansão',
-        descricao: 'Pigmentação natural derivada dos próprios grãos de café.',
-        descricaoDetalhada: 'A cafeicultura viveu um momento de forte crescimento e deixou marcas importantes na economia e na ocupação do território paranaense.',
-        autor: 'Geografia',
-        disciplina: 'Geografia',
-        imagem: 'Mariana 4.webp'
-    },
-    {
-        id: 'c8',
-        titulo: 'Café do Norte Pioneiro',
-        descricao: 'Combinação da madeira das tulhas com elementos da natureza.',
-        descricaoDetalhada: 'O Café do Norte Pioneiro obteve o registro de Indicação Geográfica (IG) pelo INPI.',
-        autor: 'AEN',
-        disciplina: 'Arte',
-        imagem: 'mariana8.webp'
-    }
+    { id: 'c1', titulo: 'Uma história curiosa sobre o café', descricao: 'Estudo em pintura sobre a expansão cafeeira no Norte do Paraná.', descricaoDetalhada: 'Uma antiga lenda conta que um pastor teria percebido os efeitos dos frutos do café ao observar o comportamento animado de suas cabras. A história ajuda a explicar como o café passou a ser associado à energia e à disposição.', autor: 'Geografia', disciplina: 'Geografia', imagem: 'Mariana 1.webp' },
+    { id: 'c2', titulo: 'Traços e Cores do Sudoeste', descricao: 'Expressão visual das paisagens cafeeiras e agrícolas.', descricaoDetalhada: 'Nos anos 50 e 60, o café se tornou a alma do Noroeste do Paraná. A terra fértil e o clima favorável atraíram milhares de famílias.', autor: 'Post de Campo Mourão D', disciplina: 'Arte', imagem: 'marina5.webp' },
+    { id: 'c3', titulo: 'O café e a identidade do Norte do Paraná', descricao: 'Integração da flora nativa com a cultura cafeeira.', descricaoDetalhada: 'O café foi muito mais que um produto agrícola: ajudou a transformar paisagens, comunidades e modos de vida no Paraná.', autor: 'Geografia', disciplina: 'Geografia', imagem: 'Mariana 3.webp' },
+    { id: 'c4', titulo: 'Do Litoral à Metrópole', descricao: 'Rota de escoamento do café ao Porto de Paranaguá.', descricaoDetalhada: 'Em meio ao cafezal, no município de Tomazina, lembra-se das tristes cenas da grande geada de 1975.', autor: 'Acervo Museu Histórico', disciplina: 'História', imagem: 'mariana 6.webp' },
+    { id: 'c5', titulo: 'As mudanças no campo', descricao: 'Retrato do cotidiano rural nas plantações históricas.', descricaoDetalhada: 'A história do café também revela como a agricultura se adapta às condições econômicas, ambientais e às transformações no território.', autor: 'Geografia', disciplina: 'Geografia', imagem: 'Mariana 2.webp' },
+    { id: 'c6', titulo: 'Costumes e Tradições', descricao: 'A vida no campo e a convivência nas fazendas de café.', descricaoDetalhada: 'O Norte do Paraná é a principal região produtora de café no Estado, produzindo grãos premiados internacionalmente.', autor: 'Foto: Feito no Paraná/divulgação', disciplina: 'Arte', imagem: 'mariana7.webp' },
+    { id: 'c7', titulo: 'Um período de grande expansão', descricao: 'Pigmentação natural derivada dos próprios grãos de café.', descricaoDetalhada: 'A cafeicultura viveu um momento de forte crescimento e deixou marcas importantes na economia e na ocupação do território paranaense.', autor: 'Geografia', disciplina: 'Geografia', imagem: 'Mariana 4.webp' },
+    { id: 'c8', titulo: 'Café do Norte Pioneiro', descricao: 'Combinação da madeira das tulhas com elementos da natureza.', descricaoDetalhada: 'O Café do Norte Pioneiro obteve o registro de Indicação Geográfica (IG) pelo INPI.', autor: 'AEN', disciplina: 'Arte', imagem: 'mariana8.webp' }
 ];
 
 // ==========================================
-// 3. MOTOR DO LIVRO INTERATIVO (COM GESTOS SWIPE)
+// 3. MOTOR DO LIVRO INTERATIVO (SWIPE E TECLADO)
 // ==========================================
 const colecaoLivros = {
     livro1: {
@@ -571,12 +178,10 @@ const colecaoLivros = {
 };
 
 let livroChaveAtual = 'livro1';
-let paginaLivroAtual = -1; // -1 = Capa Fechada
+let paginaLivroAtual = -1;
 let audioAtivo = false;
 
-function obterLivroAtual() {
-    return colecaoLivros[livroChaveAtual] || colecaoLivros['livro1'];
-}
+function obterLivroAtual() { return colecaoLivros[livroChaveAtual] || colecaoLivros['livro1']; }
 
 function atualizarIndicadoresLivro() {
     const livroObj = obterLivroAtual();
@@ -613,14 +218,12 @@ function renderizarPaginaLivro() {
 
     if (!pagEsq || !pagDir) return;
 
-    // Efeito visual de virada de página
     if (container) {
         container.classList.remove('animar-virada');
-        void container.offsetWidth; // Trigger reflow
+        void container.offsetWidth;
         container.classList.add('animar-virada');
     }
 
-    // RENDERIZAR CAPA FECHADA (paginaLivroAtual === -1)
     if (paginaLivroAtual === -1) {
         pagEsq.innerHTML = `
             <div class="flex-1 flex flex-col justify-center items-center h-full w-full bg-[#2A160A] text-[#C59B27] p-4 sm:p-6 rounded-l-lg border-r-2 border-[#C59B27]/40 shadow-inner select-none cursor-pointer hover:bg-[#321B0C] transition group min-h-[200px]" onclick="goToSpread(0)">
@@ -629,17 +232,11 @@ function renderizarPaginaLivro() {
                         🏛️
                     </div>
                     <div>
-                        <h3 class="font-serif font-bold text-xs sm:text-sm text-[#FAF8F5] tracking-wider uppercase">
-                            Museu Digital do Paraná
-                        </h3>
-                        <p class="font-serif italic text-[10px] sm:text-[11px] text-amber-200/70 mt-1">
-                            Projeto Pedagógico Interdisciplinar
-                        </p>
+                        <h3 class="font-serif font-bold text-xs sm:text-sm text-[#FAF8F5] tracking-wider uppercase">Museu Digital do Paraná</h3>
+                        <p class="font-serif italic text-[10px] sm:text-[11px] text-amber-200/70 mt-1">Projeto Pedagógico Interdisciplinar</p>
                     </div>
                     <div class="w-12 sm:w-16 h-0.5 bg-[#C59B27] mx-auto opacity-50"></div>
-                    <p class="font-serif text-[9px] sm:text-[10px] text-stone-400 uppercase tracking-widest">
-                        Edição Interativa
-                    </p>
+                    <p class="font-serif text-[9px] sm:text-[10px] text-stone-400 uppercase tracking-widest">Edição Interativa</p>
                 </div>
             </div>
         `;
@@ -657,7 +254,6 @@ function renderizarPaginaLivro() {
                     <p class="font-serif italic text-xs md:text-sm text-amber-200/90 font-medium line-clamp-4">
                         ${livroObj.subtitulo}
                     </p>
-                    
                     <div class="pt-2 sm:pt-3">
                         <span class="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-[#C59B27] hover:bg-amber-400 text-stone-950 font-serif font-bold text-xs md:text-sm rounded-full shadow-xl transition-all border border-amber-200 group-hover:scale-105">
                             📖 Clique na Capa para Abrir
@@ -671,14 +267,12 @@ function renderizarPaginaLivro() {
         return;
     }
 
-    // RENDERIZAR PÁGINAS DO LIVRO (paginaLivroAtual >= 0)
     const item = listaDados[paginaLivroAtual];
     if (!item) return;
 
     const imgEsq = item.imagemEsq || item.imagem || '';
     const imgDir = item.imagemDir || item.imagem || '';
 
-    // Render Página Esquerda
     pagEsq.innerHTML = `
         <div class="w-full h-full flex flex-col justify-center items-center">
             <div class="w-full border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgEsq}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
@@ -692,7 +286,6 @@ function renderizarPaginaLivro() {
         </div>
     `;
 
-    // Render Página Direita
     pagDir.innerHTML = `
         <div class="w-full h-full flex flex-col justify-center items-center">
             <div class="w-full border-2 border-[#C59B27]/60 p-1.5 sm:p-2 bg-white dark:bg-zinc-900 rounded-xl shadow-lg img-zoom-container cursor-pointer group relative overflow-hidden flex items-center justify-center" onclick="abrirGaleria(['${imgDir}'], '${livroObj.titulo}', '', '${livroObj.titulo}', '${livroObj.titulo}')">
@@ -734,25 +327,6 @@ function goToSpread(index) {
     renderizarPaginaLivro();
 }
 
-function openTocModal() {
-    const livroObj = obterLivroAtual();
-    const listaDados = livroObj.dados || [];
-
-    const modal = document.getElementById('modalToc');
-    const container = document.getElementById('tocContainer');
-    if (!modal || !container) return;
-
-    container.innerHTML = listaDados.map((item, idx) => `
-        <button onclick="goToSpread(${idx}); closeModal('modalToc');" 
-                class="w-full text-left p-3 rounded-lg bg-slate-800/80 hover:bg-amber-600/20 border border-slate-700/60 hover:border-amber-500/50 transition flex justify-between items-center text-xs text-amber-200">
-            <span class="font-bold">${item.capitulo}: ${item.titulo || ('Página ' + (idx + 1))}</span>
-            <span class="text-amber-400 font-serif">${item.paginaEsq || ('Pág. ' + (idx*2 + 2))}</span>
-        </button>
-    `).join('');
-
-    modal.classList.remove('hidden');
-}
-
 function closeModal(idModal) {
     const modal = document.getElementById(idModal);
     if (modal) modal.classList.add('hidden');
@@ -767,7 +341,6 @@ function toggleAudio() {
     }
 }
 
-// Configuração de Gestos no Leitor de Livros
 let bookTouchStartX = 0;
 let bookTouchEndX = 0;
 
@@ -782,37 +355,28 @@ function configurarSwipeLivro() {
     container.addEventListener('touchend', (e) => {
         bookTouchEndX = e.changedTouches[0].screenX;
         const diff = bookTouchStartX - bookTouchEndX;
-        if (diff > 40) {
-            nextSpread(); // Deslizou para esquerda -> Próxima página
-        } else if (diff < -40) {
-            prevSpread(); // Deslizou para direita -> Página anterior
-        }
+        if (diff > 40) nextSpread();
+        else if (diff < -40) prevSpread();
     }, { passive: true });
 }
 
 function abrirLeitorLivro(idLivro = 'livro1') {
-    if (colecaoLivros[idLivro]) {
-        livroChaveAtual = idLivro;
-    } else {
-        livroChaveAtual = 'livro1';
-    }
-    
+    if (colecaoLivros[idLivro]) livroChaveAtual = idLivro;
+    else livroChaveAtual = 'livro1';
     paginaLivroAtual = -1;
 
     const headerTitle = document.getElementById('headerBookTitle');
-    if (headerTitle) {
-        headerTitle.textContent = colecaoLivros[livroChaveAtual].titulo;
-    }
+    if (headerTitle) headerTitle.textContent = colecaoLivros[livroChaveAtual].titulo;
 
     const modal = document.getElementById('modal-leitor-livro');
     if (!modal) return;
-    
+
     modal.classList.remove('hidden');
     setTimeout(() => {
         modal.classList.remove('opacity-0');
         modal.classList.add('opacity-100');
     }, 10);
-    
+
     renderizarPaginaLivro();
     configurarSwipeLivro();
 
@@ -826,9 +390,7 @@ function fecharLeitorLivro() {
 
     modal.classList.remove('opacity-100');
     modal.classList.add('opacity-0');
-    setTimeout(() => {
-        modal.classList.add('hidden');
-    }, 300);
+    setTimeout(() => { modal.classList.add('hidden'); }, 300);
 
     document.removeEventListener('keydown', tratarTecladoLivro);
 }
@@ -837,13 +399,9 @@ function tratarTecladoLivro(e) {
     const modal = document.getElementById('modal-leitor-livro');
     if (!modal || modal.classList.contains('hidden')) return;
 
-    if (e.key === 'ArrowRight') {
-        nextSpread();
-    } else if (e.key === 'ArrowLeft') {
-        prevSpread();
-    } else if (e.key === 'Escape') {
-        fecharLeitorLivro();
-    }
+    if (e.key === 'ArrowRight') nextSpread();
+    else if (e.key === 'ArrowLeft') prevSpread();
+    else if (e.key === 'Escape') fecharLeitorLivro();
 }
 
 // ==========================================
@@ -856,7 +414,6 @@ const colecaoDados = {
     trabalhos: { dados: trabalhosAlunos, tag: 'Trabalho de Aluno' }
 };
 
-// Renderização dos Cards com container adaptável
 function criarCardHtml(item, tag, categoria, index) {
     const listaImagens = (item.imagens && item.imagens.length > 0) ? item.imagens : [item.imagem || "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80"];
     const qtdFotos = listaImagens.length;
@@ -909,7 +466,7 @@ if (document.readyState === 'loading') {
 }
 
 // ==========================================
-// 5. LIGHTBOX / SLIDES (COM GESTOS SWIPE)
+// 5. LIGHTBOX / SLIDES
 // ==========================================
 let galeriaImagensAtual = [];
 let indiceSlideAtual = 0;
@@ -974,11 +531,8 @@ function configurarSwipeLightbox() {
     container.addEventListener('touchend', (e) => {
         lightboxTouchEndX = e.changedTouches[0].screenX;
         const diff = lightboxTouchStartX - lightboxTouchEndX;
-        if (diff > 40) {
-            mudarSlide(1);  // Avançar slide
-        } else if (diff < -40) {
-            mudarSlide(-1); // Voltar slide
-        }
+        if (diff > 40) mudarSlide(1);
+        else if (diff < -40) mudarSlide(-1);
     }, { passive: true });
 }
 
@@ -1037,9 +591,7 @@ function fecharLightbox() {
 
     lightbox.classList.remove('opacity-100');
     lightbox.classList.add('opacity-0');
-    setTimeout(() => {
-        lightbox.classList.add('hidden');
-    }, 300);
+    setTimeout(() => { lightbox.classList.add('hidden'); }, 300);
     document.body.style.overflow = 'auto';
 
     if (document.fullscreenElement) {
@@ -1050,17 +602,11 @@ function fecharLightbox() {
 function alternarTelaCheia() {
     const elem = document.getElementById('lightbox-container') || document.documentElement;
     if (!document.fullscreenElement) {
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) {
-            elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) {
-            elem.msRequestFullscreen();
-        }
+        if (elem.requestFullscreen) elem.requestFullscreen();
+        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+        else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
     } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        }
+        if (document.exitFullscreen) document.exitFullscreen();
     }
 }
 
@@ -1068,45 +614,113 @@ document.addEventListener('keydown', (e) => {
     const lightbox = document.getElementById('lightbox');
     if (!lightbox || lightbox.classList.contains('hidden')) return;
 
-    if (e.key === 'ArrowRight') {
-        mudarSlide(1);
-    } else if (e.key === 'ArrowLeft') {
-        mudarSlide(-1);
-    } else if (e.key === 'Escape') {
-        fecharLightbox();
-    } else if (e.key === 'f' || e.key === 'F') {
-        alternarTelaCheia();
-    }
+    if (e.key === 'ArrowRight') mudarSlide(1);
+    else if (e.key === 'ArrowLeft') mudarSlide(-1);
+    else if (e.key === 'Escape') fecharLightbox();
 });
 
 // ==========================================
-// 6. SALA VIRTUAL 3D REALISTA (GALERIA CÚBICA)
+// 6. SALA VIRTUAL 3D: GALERIA CLÁSSICA (LOUVRE STYLE)
 // ==========================================
 let cena, camera, renderizador, grupoQuadros, raycaster, mouse;
 let interagindo = false;
 let mouseX = 0, mouseY = 0, lon = 0, lat = 0, latOnDown = 0, lonOnDown = 0;
 let startX = 0, startY = 0;
-let animacaoId = null;
 let fovAlvo = 65;
 let lonAlvo = 0, latAlvo = 0;
 
-function criarTexturaPiso() {
+// Gerador de Textura de Piso de Parquet / Madeira Maciça de Alta Resolução
+function criarTexturaPisoMadeira() {
     const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 512;
+    canvas.width = 1024;
+    canvas.height = 1024;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#2A1810';
-    ctx.fillRect(0, 0, 512, 512);
-    ctx.strokeStyle = '#1A0E0A';
-    ctx.lineWidth = 4;
-    for (let i = 0; i < 512; i += 64) {
-        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 512); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(512, i); ctx.stroke();
+
+    ctx.fillStyle = '#2A170B';
+    ctx.fillRect(0, 0, 1024, 1024);
+
+    const tileSize = 128;
+    for (let x = 0; x < 1024; x += tileSize) {
+        for (let y = 0; y < 1024; y += tileSize) {
+            const alt = ((x / tileSize) + (y / tileSize)) % 2 === 0;
+            ctx.fillStyle = alt ? '#3B2111' : '#281409';
+            ctx.fillRect(x, y, tileSize, tileSize);
+
+            ctx.strokeStyle = alt ? 'rgba(20, 10, 4, 0.45)' : 'rgba(48, 26, 12, 0.45)';
+            ctx.lineWidth = 2;
+            for (let g = 6; g < tileSize; g += 14) {
+                ctx.beginPath();
+                if (alt) {
+                    ctx.moveTo(x + g, y);
+                    ctx.lineTo(x + g, y + tileSize);
+                } else {
+                    ctx.moveTo(x, y + g);
+                    ctx.lineTo(x + tileSize, y + g);
+                }
+                ctx.stroke();
+            }
+
+            ctx.strokeStyle = '#140A04';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(x, y, tileSize, tileSize);
+        }
     }
+
     const texture = new THREE.CanvasTexture(canvas);
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(12, 12);
+    texture.repeat.set(10, 10);
+    return texture;
+}
+
+// Gerador de Placa de Latão Explicativa para Cada Obra
+function gerarTexturaPlacaBalaustre(titulo, autor, disciplina) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 220;
+    const ctx = canvas.getContext('2d');
+
+    // Fundo de latão escovado
+    const grad = ctx.createLinearGradient(0, 0, 512, 220);
+    grad.addColorStop(0, '#FAF6EE');
+    grad.addColorStop(1, '#EAE1CE');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 512, 220);
+
+    // Moldura Dourada Dupla
+    ctx.strokeStyle = '#C59B27';
+    ctx.lineWidth = 10;
+    ctx.strokeRect(6, 6, 500, 208);
+
+    ctx.strokeStyle = '#7A1C1C';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(16, 16, 480, 188);
+
+    // Título da Obra
+    ctx.font = 'bold 28px Georgia, serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#3D2314';
+    ctx.fillText((titulo || 'Trabalho de Aluno').substring(0, 28), 256, 60);
+
+    ctx.beginPath();
+    ctx.moveTo(60, 80);
+    ctx.lineTo(452, 80);
+    ctx.strokeStyle = '#C59B27';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Autor
+    ctx.font = 'italic 22px Georgia, serif';
+    ctx.fillStyle = '#7A1C1C';
+    ctx.fillText(`Autor: ${autor || 'Aluno'}`, 256, 122);
+
+    // Disciplina / Projeto
+    ctx.font = '18px Inter, sans-serif';
+    ctx.fillStyle = '#5A3D28';
+    ctx.fillText(`Disciplina: ${disciplina || 'Arte & História'}`, 256, 162);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.needsUpdate = true;
     return texture;
 }
 
@@ -1121,23 +735,24 @@ function initSala3D() {
     mouse = new THREE.Vector2();
     cena = new THREE.Scene();
 
-    camera = new THREE.PerspectiveCamera(fovAlvo, container.clientWidth / container.clientHeight, 1, 1500);
+    camera = new THREE.PerspectiveCamera(fovAlvo, container.clientWidth / container.clientHeight, 1, 1800);
     camera.target = new THREE.Vector3(0, 0, 0);
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     renderizador = new THREE.WebGLRenderer({ 
-        antialias: false, 
+        antialias: !isMobile, 
         precision: isMobile ? "mediump" : "highp",
-        powerPreference: "low-power",
+        powerPreference: "high-performance",
         alpha: false 
     });
-    
-    renderizador.setPixelRatio(isMobile ? 0.85 : Math.min(window.devicePixelRatio, 1.25));
+
+    renderizador.setPixelRatio(isMobile ? 0.9 : Math.min(window.devicePixelRatio, 1.5));
     renderizador.setSize(container.clientWidth, container.clientHeight);
-    renderizador.shadowMap.enabled = false;
+    renderizador.shadowMap.enabled = true;
+    renderizador.shadowMap.type = THREE.PCFSoftShadowMap;
     renderizador.toneMapping = THREE.ACESFilmicToneMapping;
-    renderizador.toneMappingExposure = 1.4;
+    renderizador.toneMappingExposure = 1.25;
     container.appendChild(renderizador.domElement);
 
     renderizador.domElement.addEventListener('webglcontextlost', (e) => {
@@ -1145,40 +760,78 @@ function initSala3D() {
         pararAnimacoes3D();
     }, false);
 
-    const luzAmbiente = new THREE.AmbientLight(0xFFFFFF, 1.1);
+    // Iluminação Aquecida de Museu Clássico
+    const luzAmbiente = new THREE.AmbientLight(0xFFF6EA, 0.6);
     cena.add(luzAmbiente);
 
-    const luzTeto = new THREE.HemisphereLight(0xFFFFFF, 0x555555, 0.9);
-    luzTeto.position.set(0, 250, 0);
-    cena.add(luzTeto);
+    const luzHemisferica = new THREE.HemisphereLight(0xFFFAEE, 0x221810, 0.7);
+    luzHemisferica.position.set(0, 280, 0);
+    cena.add(luzHemisferica);
 
-    const largura = 800, altura = 300, profundidade = 800;
+    const largura = 950, altura = 360, profundidade = 950;
 
+    // Piso de Madeira Nobre com Especularidade
     const geoPiso = new THREE.PlaneGeometry(largura, profundidade);
-    const matPiso = new THREE.MeshBasicMaterial({ color: 0x3D2314 });
+    const matPiso = new THREE.MeshStandardMaterial({ 
+        map: criarTexturaPisoMadeira(), 
+        roughness: 0.35, 
+        metalness: 0.08 
+    });
     const piso = new THREE.Mesh(geoPiso, matPiso);
     piso.rotation.x = -Math.PI / 2;
     piso.position.y = -altura / 2;
+    piso.receiveShadow = true;
     cena.add(piso);
 
-    const matParede = new THREE.MeshLambertMaterial({ color: 0xE5DFD3 });
-    const criarParede = (w, h, x, y, z, rotY) => {
-        const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, h), matParede);
-        mesh.position.set(x, y, z);
-        mesh.rotation.y = rotY;
-        cena.add(mesh);
+    // Teto com Caixotões e Gesso Elegante
+    const geoTeto = new THREE.PlaneGeometry(largura, profundidade);
+    const matTeto = new THREE.MeshStandardMaterial({ color: 0xF7F4EC, roughness: 0.85 });
+    const teto = new THREE.Mesh(geoTeto, matTeto);
+    teto.rotation.x = Math.PI / 2;
+    teto.position.y = altura / 2;
+    cena.add(teto);
+
+    // Paredes na Cor Vinho Real (Bordeaux Gallery) com Molduras Boiserie
+    const matParede = new THREE.MeshStandardMaterial({ color: 0x3D1A1A, roughness: 0.65 });
+    const matBoiserie = new THREE.MeshStandardMaterial({ color: 0x2E1212, roughness: 0.5 });
+    const matRodape = new THREE.MeshStandardMaterial({ color: 0x1A0B0B, roughness: 0.3 });
+    const matCimalha = new THREE.MeshStandardMaterial({ color: 0xC59B27, metalness: 0.6, roughness: 0.3 });
+
+    const criarParedeElegante = (w, h, x, y, z, rotY) => {
+        const grupoParede = new THREE.Group();
+
+        // Painel Principal
+        const meshP = new THREE.Mesh(new THREE.PlaneGeometry(w, h), matParede);
+        meshP.receiveShadow = true;
+        grupoParede.add(meshP);
+
+        // Rodapé de Madeira
+        const geoRodape = new THREE.BoxGeometry(w, 24, 6);
+        const rodape = new THREE.Mesh(geoRodape, matRodape);
+        rodape.position.set(0, -h / 2 + 12, 3);
+        grupoParede.add(rodape);
+
+        // Cimalha de Teto Dourada
+        const geoCimalha = new THREE.BoxGeometry(w, 16, 10);
+        const cimalha = new THREE.Mesh(geoCimalha, matCimalha);
+        cimalha.position.set(0, h / 2 - 8, 5);
+        grupoParede.add(cimalha);
+
+        grupoParede.position.set(x, y, z);
+        grupoParede.rotation.y = rotY;
+        cena.add(grupoParede);
     };
 
-    criarParede(largura, altura, 0, 0, -profundidade / 2, 0);
-    criarParede(largura, altura, 0, 0, profundidade / 2, Math.PI);
-    criarParede(profundidade, altura, -largura / 2, 0, 0, Math.PI / 2);
-    criarParede(profundidade, altura, largura / 2, 0, 0, -Math.PI / 2);
+    criarParedeElegante(largura, altura, 0, 0, -profundidade / 2, 0);
+    criarParedeElegante(largura, altura, 0, 0, profundidade / 2, Math.PI);
+    criarParedeElegante(profundidade, altura, -largura / 2, 0, 0, Math.PI / 2);
+    criarParedeElegante(profundidade, altura, largura / 2, 0, 0, -Math.PI / 2);
 
     grupoQuadros = new THREE.Group();
     cena.add(grupoQuadros);
     montarObrasEPlacas3D();
 
-    // Eventos de Toque no Telemóvel
+    // Controles de Toque para Mobile
     container.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
             interagindo = true;
@@ -1193,8 +846,8 @@ function initSala3D() {
 
     container.addEventListener('touchmove', (e) => {
         if (interagindo && e.touches.length === 1) {
-            lonAlvo = (mouseX - e.touches[0].clientX) * 0.2 + lonOnDown;
-            latAlvo = (e.touches[0].clientY - mouseY) * 0.2 + latOnDown;
+            lonAlvo = (mouseX - e.touches[0].clientX) * 0.22 + lonOnDown;
+            latAlvo = (e.touches[0].clientY - mouseY) * 0.22 + latOnDown;
         }
     }, { passive: true });
 
@@ -1210,12 +863,49 @@ function initSala3D() {
         }
     });
 
+    // Controles de Mouse para Desktop
+    container.addEventListener('mousedown', (e) => {
+        interagindo = true;
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        startX = mouseX;
+        startY = mouseY;
+        lonOnDown = lon;
+        latOnDown = lat;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (interagindo) {
+            lonAlvo = (mouseX - e.clientX) * 0.22 + lonOnDown;
+            latAlvo = (e.clientY - mouseY) * 0.22 + latOnDown;
+        }
+    });
+
+    window.addEventListener('mouseup', (e) => {
+        if (interagindo) {
+            interagindo = false;
+            if (Math.hypot(e.clientX - startX, e.clientY - startY) < 12) {
+                checarCliqueObra(e);
+            }
+        }
+    });
+
+    // Zoom via Roda do Mouse
+    container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        fovAlvo += e.deltaY * 0.05;
+        fovAlvo = Math.max(35, Math.min(85, fovAlvo));
+    }, { passive: false });
+
     function animarGaleria() {
         loopGaleriaId = requestAnimationFrame(animarGaleria);
 
         lon += (lonAlvo - lon) * 0.08;
         lat += (latAlvo - lat) * 0.08;
-        lat = Math.max(-85, Math.min(85, lat));
+        lat = Math.max(-80, Math.min(80, lat));
+
+        camera.fov += (fovAlvo - camera.fov) * 0.08;
+        camera.updateProjectionMatrix();
 
         const phi = THREE.MathUtils.degToRad(90 - lat);
         const theta = THREE.MathUtils.degToRad(lon);
@@ -1236,50 +926,98 @@ function montarObrasEPlacas3D() {
     const loader = new THREE.TextureLoader();
     loader.setCrossOrigin('anonymous');
 
-    const raioMural = 390;
+    const raioMural = 440;
     const passoAngulo = 360 / trabalhosAlunos.length;
 
     trabalhosAlunos.forEach((item, index) => {
         const grupoArte = new THREE.Group();
-      
-        const geoMoldura = new THREE.BoxGeometry(116, 86, 6);
-        const matMoldura = new THREE.MeshStandardMaterial({ color: 0xC59B27, metalness: 0.6, roughness: 0.3 });
-        const meshMoldura = new THREE.Mesh(geoMoldura, matMoldura);
-        meshMoldura.castShadow = true;
 
-        const geoTela = new THREE.PlaneGeometry(104, 74);
+        // 1. Moldura Externa de Ouro Entalhado (Gilt Frame)
+        const geoMolduraExt = new THREE.BoxGeometry(118, 88, 8);
+        const matGoldLeaf = new THREE.MeshStandardMaterial({ 
+            color: 0xC59B27, 
+            metalness: 0.8, 
+            roughness: 0.22 
+        });
+        const meshMolduraExt = new THREE.Mesh(geoMolduraExt, matGoldLeaf);
+        meshMolduraExt.castShadow = true;
+
+        // 2. Moldura Interna em Bisel Dourado Antigo
+        const geoMolduraInt = new THREE.BoxGeometry(108, 78, 9);
+        const matAntiqueGold = new THREE.MeshStandardMaterial({ 
+            color: 0x8F6E1B, 
+            metalness: 0.6, 
+            roughness: 0.35 
+        });
+        const meshMolduraInt = new THREE.Mesh(geoMolduraInt, matAntiqueGold);
+
+        // 3. Passe-partout (Paspatur) de Linho Claro
+        const geoPaspatur = new THREE.PlaneGeometry(102, 72);
+        const matPaspatur = new THREE.MeshStandardMaterial({ color: 0xFAF6EE, roughness: 0.8 });
+        const meshPaspatur = new THREE.Mesh(geoPaspatur, matPaspatur);
+        meshPaspatur.position.z = 4.6;
+
+        // 4. Tela de Pintura Principal
+        const geoTela = new THREE.PlaneGeometry(92, 62);
         const matTela = new THREE.MeshStandardMaterial({ side: THREE.DoubleSide, roughness: 0.2 });
         const meshTela = new THREE.Mesh(geoTela, matTela);
-        meshTela.position.z = 3.2;
+        meshTela.position.z = 4.8;
 
-        const geoPlaca = new THREE.BoxGeometry(35, 18, 2);
-        const matPlaca = new THREE.MeshStandardMaterial({ color: 0xFAF8F5, roughness: 0.5 });
+        // 5. Luminária Individual de Latão para o Quadro (Museum Picture Light)
+        const grupoLuminaria = new THREE.Group();
+        grupoLuminaria.position.set(0, 52, 10);
+
+        const geoHasteLuz = new THREE.CylinderGeometry(1.2, 1.2, 14, 8);
+        const matLatao = new THREE.MeshStandardMaterial({ color: 0xD4AF37, metalness: 0.85, roughness: 0.2 });
+        const meshHasteLuz = new THREE.Mesh(geoHasteLuz, matLatao);
+        meshHasteLuz.rotation.x = Math.PI / 4;
+
+        const geoRefletor = new THREE.CylinderGeometry(2.5, 4, 30, 16);
+        const meshRefletor = new THREE.Mesh(geoRefletor, matLatao);
+        meshRefletor.rotation.z = Math.PI / 2;
+        meshRefletor.position.set(0, 6, 6);
+
+        grupoLuminaria.add(meshHasteLuz);
+        grupoLuminaria.add(meshRefletor);
+
+        // Spot de Luz Direcionado para a Tela
+        const spotFoco = new THREE.SpotLight(0xFFE8B3, 1.8);
+        spotFoco.position.set(0, 50, 25);
+        spotFoco.target = meshTela;
+        spotFoco.angle = Math.PI / 5;
+        spotFoco.penumbra = 0.35;
+        spotFoco.distance = 180;
+        grupoArte.add(spotFoco);
+
+        // 6. Placa Explicativa de Latão com Texto Renderizado
+        const geoPlaca = new THREE.BoxGeometry(42, 18, 2);
+        const matPlaca = new THREE.MeshStandardMaterial({
+            map: gerarTexturaPlacaBalaustre(item.titulo, item.autor, item.disciplina),
+            roughness: 0.25
+        });
         const meshPlaca = new THREE.Mesh(geoPlaca, matPlaca);
-        meshPlaca.position.set(0, -56, 1);
+        meshPlaca.position.set(0, -56, 2);
 
-        meshMoldura.userData = item;
+        meshMolduraExt.userData = item;
         meshTela.userData = item;
+        meshPlaca.userData = item;
 
-        grupoArte.add(meshMoldura);
+        grupoArte.add(meshMolduraExt);
+        grupoArte.add(meshMolduraInt);
+        grupoArte.add(meshPaspatur);
         grupoArte.add(meshTela);
+        grupoArte.add(grupoLuminaria);
         grupoArte.add(meshPlaca);
 
         const anguloDeg = index * passoAngulo;
         const rad = THREE.MathUtils.degToRad(anguloDeg);
 
         grupoArte.position.x = raioMural * Math.sin(rad);
-        grupoArte.position.y = 10;
+        grupoArte.position.y = 12;
         grupoArte.position.z = raioMural * Math.cos(rad);
-        grupoArte.lookAt(0, 10, 0);
+        grupoArte.lookAt(0, 12, 0);
 
-        const spot = new THREE.SpotLight(0xFFF0DD, 1.2);
-        spot.position.set(grupoArte.position.x * 0.7, 130, grupoArte.position.z * 0.7);
-        spot.target = grupoArte;
-        spot.angle = Math.PI / 6;
-        spot.penumbra = 0.4;
-        spot.castShadow = true;
-        cena.add(spot);
-
+        item.lon = anguloDeg;
         grupoQuadros.add(grupoArte);
 
         const urlImagem3D = (item.imagens && item.imagens.length > 0) ? item.imagens[0] : item.imagem;
@@ -1312,7 +1050,7 @@ function checarCliqueObra(e) {
     const container = document.getElementById('tour-canvas-container');
     if (!container || !camera || !grupoQuadros) return;
     const rect = container.getBoundingClientRect();
-    
+
     const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
     const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
 
@@ -1334,23 +1072,21 @@ function checarCliqueObra(e) {
 function noRedimensionamento() {
     const container = document.getElementById('tour-canvas-container');
     if (!container || !camera || !renderizador) return;
-    
+
     const largura = container.clientWidth;
     const altura = container.clientHeight;
-    
+
     camera.aspect = largura / altura;
     camera.fov = largura < 768 ? 85 : 65;
     camera.updateProjectionMatrix();
-    
+
     renderizador.setSize(largura, altura);
 }
 
 function animar3D() {
     animacaoId = requestAnimationFrame(animar3D);
 
-    if (!interagindo) {
-        lonAlvo += 0.04;
-    }
+    if (!interagindo) lonAlvo += 0.04;
 
     lon += (lonAlvo - lon) * 0.05;
     lat += (latAlvo - lat) * 0.05;
@@ -1394,19 +1130,11 @@ function fecharTourVirtual() {
     setTimeout(() => {
         modal.classList.add('hidden');
 
-        if (animacaoId) {
-            cancelAnimationFrame(animacaoId);
-            animacaoId = null;
-        }
-        if (cena) {
-            limparRecursos3D(cena);
-            cena = null;
-        }
+        if (animacaoId) { cancelAnimationFrame(animacaoId); animacaoId = null; }
+        if (cena) { limparRecursos3D(cena); cena = null; }
         if (renderizador) {
             renderizador.dispose();
-            if (renderizador.domElement) {
-                renderizador.domElement.remove();
-            }
+            if (renderizador.domElement) renderizador.domElement.remove();
             renderizador = null;
         }
         camera = null;
@@ -1415,19 +1143,20 @@ function fecharTourVirtual() {
 
     document.body.style.overflow = 'auto';
 }
+
 function fecharModalTour() {
     pararAnimacoes3D();
-    const modal = document.getElementById('modal-tour');
+    const modal = document.getElementById('tour-modal');
     if (modal) modal.classList.add('hidden');
 }
+
 // ==========================================
-// 7. SALA VIRTUAL 3D: GALERIA COM ÁRVORE DAS ARTES
+// 7. SALA VIRTUAL 3D: SALA DO CAFÉ & PÉ DE CAFÉ BOTÂNICO
 // ==========================================
 let cenaArvore, cameraArvore, renderizadorArvore, grupoArvore, raycasterArvore, mouseArvore;
 let interagindoArvore = false;
 let mouseXArvore = 0, mouseYArvore = 0, lonArvore = 0, latArvore = 0, latOnDownArvore = 0, lonOnDownArvore = 0;
 let startXArvore = 0, startYArvore = 0;
-let animacaoIdArvore = null;
 let fovAlvoArvore = 65;
 let lonAlvoArvore = 0, latAlvoArvore = 0;
 let quadrosPendurados = [];
@@ -1437,10 +1166,10 @@ let estadoPlacaCafe = { titulo: "Pé de Café", descricao: "Coffea arabica • S
 let meshTelaPlacaCafe = null;
 
 const CONFIG_GALERIA_CLASSICA = {
-    corParede: 0x2A3A35,
-    corBoiserie: 0x1E2B27,
+    corParede: 0x1E3326,
+    corBoiserie: 0x14241B,
     corPiso: 0x3D2314,
-    corRodape: 0x1A120B,
+    corRodape: 0x120C07,
     corTeto: 0xF5F2EB,
     corLuzGaleria: 0xFFF2A3,
     intensidadeSpotlight: 0.8,
@@ -1454,8 +1183,8 @@ const CONFIG_GALERIA_CLASSICA = {
     alturaTronco: 240,
     grossuraTronco: 28,
     comprimentoCorda: 50,
-    corTronco: 0x28170D,
-    corFolhas: 0x1E361A,
+    corTronco: 0x2A170C,
+    corFolhas: 0x143D1A,
     corCorda: 0xC59B27,
     velocidadeBalanco: 0.0015,
     amplitudebalanco: 0.04
@@ -1539,56 +1268,50 @@ function fecharModalInfoPlaca() {
     if (!modal) return;
     modal.classList.remove('opacity-100');
     modal.classList.add('opacity-0');
-    setTimeout(() => {
-        modal.classList.add('hidden');
-    }, 200);
+    setTimeout(() => { modal.classList.add('hidden'); }, 200);
 }
 
 function initSalaArvore3D() {
     const container = document.getElementById('arvore-canvas-container');
     if (!container) return;
 
-    // Cancela qualquer loop 3D anterior
     pararAnimacoes3D();
     container.innerHTML = '';
 
     raycasterArvore = new THREE.Raycaster();
     mouseArvore = new THREE.Vector2();
     cenaArvore = new THREE.Scene();
-    cenaArvore.fog = null;
 
-    cameraArvore = new THREE.PerspectiveCamera(fovAlvoArvore, container.clientWidth / container.clientHeight, 1, 1500);
+    cameraArvore = new THREE.PerspectiveCamera(fovAlvoArvore, container.clientWidth / container.clientHeight, 1, 1800);
     cameraArvore.target = new THREE.Vector3(0, 40, 0);
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    // Renderizador ultraleve para evitar estouro de memória GPU (Tela Preta)
     renderizadorArvore = new THREE.WebGLRenderer({ 
-        antialias: false, 
+        antialias: !isMobile, 
         precision: isMobile ? "mediump" : "highp",
-        powerPreference: "low-power",
+        powerPreference: "high-performance",
         alpha: false 
     });
-    
-    renderizadorArvore.setPixelRatio(isMobile ? 0.85 : Math.min(window.devicePixelRatio, 1.25));
+
+    renderizadorArvore.setPixelRatio(isMobile ? 0.9 : Math.min(window.devicePixelRatio, 1.5));
     renderizadorArvore.setSize(container.clientWidth, container.clientHeight);
-    renderizadorArvore.shadowMap.enabled = false;
+    renderizadorArvore.shadowMap.enabled = true;
+    renderizadorArvore.shadowMap.type = THREE.PCFSoftShadowMap;
     renderizadorArvore.toneMapping = THREE.ACESFilmicToneMapping;
-    renderizadorArvore.toneMappingExposure = 1.4;
+    renderizadorArvore.toneMappingExposure = 1.3;
     container.appendChild(renderizadorArvore.domElement);
 
-    // Proteção contra perda de contexto WebGL
     renderizadorArvore.domElement.addEventListener('webglcontextlost', (e) => {
         e.preventDefault();
         pararAnimacoes3D();
     }, false);
 
-    // Luz ambiente constante (impede escurecimento ao girar)
-    const luzAmbiente = new THREE.AmbientLight(0xFFF5E6, 1.2);
+    const luzAmbiente = new THREE.AmbientLight(0xFFF5E6, 0.7);
     cenaArvore.add(luzAmbiente);
-    
-    const luzHemisferica = new THREE.HemisphereLight(0xFFFFFF, 0x444444, 0.8);
-    luzHemisferica.position.set(0, 200, 0);
+
+    const luzHemisferica = new THREE.HemisphereLight(0xFFFBF0, 0x332211, 0.8);
+    luzHemisferica.position.set(0, 250, 0);
     cenaArvore.add(luzHemisferica);
 
     grupoArvore = new THREE.Group();
@@ -1599,7 +1322,7 @@ function initSalaArvore3D() {
     construirPlacaCafeStand();
     montarObrasNasPontas();
 
-    // Eventos de Toque no Telemóvel
+    // Eventos de Toque no Celular/Tablet
     container.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
             interagindoArvore = true;
@@ -1614,8 +1337,8 @@ function initSalaArvore3D() {
 
     container.addEventListener('touchmove', (e) => {
         if (interagindoArvore && e.touches.length === 1) {
-            lonAlvoArvore = (mouseXArvore - e.touches[0].clientX) * 0.2 + lonOnDownArvore;
-            latAlvoArvore = (e.touches[0].clientY - mouseYArvore) * 0.2 + latOnDownArvore;
+            lonAlvoArvore = (mouseXArvore - e.touches[0].clientX) * 0.22 + lonOnDownArvore;
+            latAlvoArvore = (e.touches[0].clientY - mouseYArvore) * 0.22 + latOnDownArvore;
         }
     }, { passive: true });
 
@@ -1631,7 +1354,40 @@ function initSalaArvore3D() {
         }
     });
 
-    // Loop de Animação Otimizado
+    // Eventos de Mouse para Desktop
+    container.addEventListener('mousedown', (e) => {
+        interagindoArvore = true;
+        mouseXArvore = e.clientX;
+        mouseYArvore = e.clientY;
+        startXArvore = mouseXArvore;
+        startYArvore = mouseYArvore;
+        lonOnDownArvore = lonArvore;
+        latOnDownArvore = latArvore;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (interagindoArvore) {
+            lonAlvoArvore = (mouseXArvore - e.clientX) * 0.22 + lonOnDownArvore;
+            latAlvoArvore = (e.clientY - mouseYArvore) * 0.22 + latOnDownArvore;
+        }
+    });
+
+    window.addEventListener('mouseup', (e) => {
+        if (interagindoArvore) {
+            interagindoArvore = false;
+            if (Math.hypot(e.clientX - startXArvore, e.clientY - startYArvore) < 12) {
+                checarCliqueObraArvore(e);
+            }
+        }
+    });
+
+    // Zoom via Scroll na Sala do Café
+    container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        fovAlvoArvore += e.deltaY * 0.05;
+        fovAlvoArvore = Math.max(35, Math.min(85, fovAlvoArvore));
+    }, { passive: false });
+
     function animarArvore() {
         loopArvoreId = requestAnimationFrame(animarArvore);
 
@@ -1658,12 +1414,16 @@ function construirRecintoElegante() {
     const H = CONFIG_GALERIA_CLASSICA.alturaSala;
     const D = CONFIG_GALERIA_CLASSICA.profundidadeSala;
 
-    const matParede = new THREE.MeshStandardMaterial({ color: CONFIG_GALERIA_CLASSICA.corParede, roughness: 0.7 });
+    const matParede = new THREE.MeshStandardMaterial({ color: CONFIG_GALERIA_CLASSICA.corParede, roughness: 0.65 });
     const matBoiserie = new THREE.MeshStandardMaterial({ color: CONFIG_GALERIA_CLASSICA.corBoiserie, roughness: 0.5 });
-    const matMadeiraEscura = new THREE.MeshStandardMaterial({ color: CONFIG_GALERIA_CLASSICA.corRodape, roughness: 0.4 });
+    const matRodape = new THREE.MeshStandardMaterial({ color: CONFIG_GALERIA_CLASSICA.corRodape, roughness: 0.3 });
 
     const geoPiso = new THREE.PlaneGeometry(W, D);
-    const matPiso = new THREE.MeshStandardMaterial({ color: CONFIG_GALERIA_CLASSICA.corPiso, roughness: 0.3, metalness: 0.1 });
+    const matPiso = new THREE.MeshStandardMaterial({ 
+        map: criarTexturaPisoMadeira(), 
+        roughness: 0.35, 
+        metalness: 0.08 
+    });
     const piso = new THREE.Mesh(geoPiso, matPiso);
     piso.rotation.x = -Math.PI / 2;
     piso.position.y = -100;
@@ -1671,7 +1431,7 @@ function construirRecintoElegante() {
     cenaArvore.add(piso);
 
     const geoTeto = new THREE.PlaneGeometry(W, D);
-    const matTeto = new THREE.MeshStandardMaterial({ color: CONFIG_GALERIA_CLASSICA.corTeto, roughness: 0.9 });
+    const matTeto = new THREE.MeshStandardMaterial({ color: CONFIG_GALERIA_CLASSICA.corTeto, roughness: 0.85 });
     const teto = new THREE.Mesh(geoTeto, matTeto);
     teto.rotation.x = Math.PI / 2;
     teto.position.y = -100 + H;
@@ -1685,12 +1445,13 @@ function construirRecintoElegante() {
         grupoParede.add(meshP);
 
         const geoRodape = new THREE.BoxGeometry(largura, CONFIG_GALERIA_CLASSICA.alturaRodape, 8);
-        const rodape = new THREE.Mesh(geoRodape, matMadeiraEscura);
+        const rodape = new THREE.Mesh(geoRodape, matRodape);
         rodape.position.set(0, -H / 2 + CONFIG_GALERIA_CLASSICA.alturaRodape / 2, 4);
         grupoParede.add(rodape);
 
         const geoCimalha = new THREE.BoxGeometry(largura, 18, 12);
-        const cimalha = new THREE.Mesh(geoCimalha, matMadeiraEscura);
+        const matCimalha = new THREE.MeshStandardMaterial({ color: 0xC59B27, metalness: 0.7, roughness: 0.3 });
+        const cimalha = new THREE.Mesh(geoCimalha, matCimalha);
         cimalha.position.set(0, H / 2 - 9, 6);
         grupoParede.add(cimalha);
 
@@ -1730,33 +1491,66 @@ function construirRecintoElegante() {
 function construirArvoreCentral() {
     pontasDosGalhosDeCafe = [];
 
-    const matTronco = new THREE.MeshStandardMaterial({ color: 0x3D2314, roughness: 0.85 });
+    // 1. Canteiro Circular de Madeira Nobre e Latão na Base da Árvore
+    const geoVasoExt = new THREE.CylinderGeometry(70, 78, 28, 32);
+    const matVaso = new THREE.MeshStandardMaterial({ color: 0x2A170C, roughness: 0.4, metalness: 0.1 });
+    const meshVaso = new THREE.Mesh(geoVasoExt, matVaso);
+    meshVaso.position.y = -100 + 14;
+    meshVaso.castShadow = true;
+    grupoArvore.add(meshVaso);
+
+    const geoBordaVaso = new THREE.TorusGeometry(74, 3, 16, 32);
+    const matLataoVaso = new THREE.MeshStandardMaterial({ color: 0xC59B27, metalness: 0.8, roughness: 0.25 });
+    const meshBordaVaso = new THREE.Mesh(geoBordaVaso, matLataoVaso);
+    meshBordaVaso.rotation.x = Math.PI / 2;
+    meshBordaVaso.position.y = -100 + 28;
+    grupoArvore.add(meshBordaVaso);
+
+    const geoTerra = new THREE.CylinderGeometry(68, 68, 2, 32);
+    const matTerra = new THREE.MeshStandardMaterial({ color: 0x1F120A, roughness: 0.95 });
+    const meshTerra = new THREE.Mesh(geoTerra, matTerra);
+    meshTerra.position.y = -100 + 27;
+    grupoArvore.add(meshTerra);
+
+    // 2. Tronco Orgânico com Raízes Esculpidas
+    const matTronco = new THREE.MeshStandardMaterial({ color: CONFIG_GALERIA_CLASSICA.corTronco, roughness: 0.85 });
     const matFolhas = new THREE.MeshStandardMaterial({
-        color: 0x143818,
-        roughness: 0.3,
-        metalness: 0.1,
+        color: CONFIG_GALERIA_CLASSICA.corFolhas,
+        roughness: 0.25,
+        metalness: 0.08,
         flatShading: true
     });
-    const matCafeMaduro = new THREE.MeshStandardMaterial({ color: 0x9E0C0C, roughness: 0.2, metalness: 0.1 });
-    const matCafeVerde = new THREE.MeshStandardMaterial({ color: 0x486B28, roughness: 0.3 });
+    const matCafeMaduro = new THREE.MeshStandardMaterial({ color: 0xA30B0B, roughness: 0.15, metalness: 0.1 });
+    const matCafeVerde = new THREE.MeshStandardMaterial({ color: 0x416622, roughness: 0.25 });
 
     const altTronco = CONFIG_GALERIA_CLASSICA.alturaTronco;
 
-    const geoTronco = new THREE.CylinderGeometry(10, 22, altTronco, 12);
+    const geoTronco = new THREE.CylinderGeometry(12, 26, altTronco, 16);
     const tronco = new THREE.Mesh(geoTronco, matTronco);
     tronco.position.y = -100 + (altTronco / 2);
     tronco.castShadow = true;
     grupoArvore.add(tronco);
 
-    const geoClusterFolhas = new THREE.DodecahedronGeometry(20, 1);
-    const geoGraoCafe = new THREE.SphereGeometry(3, 8, 8);
+    // Raízes de Apoio
+    for (let r = 0; r < 5; r++) {
+        const angR = r * (Math.PI * 2 / 5);
+        const geoRaiz = new THREE.CylinderGeometry(4, 10, 45, 8);
+        const meshRaiz = new THREE.Mesh(geoRaiz, matTronco);
+        meshRaiz.position.set(Math.sin(angR) * 20, -100 + 15, Math.cos(angR) * 20);
+        meshRaiz.rotation.z = Math.sin(angR) * 0.4;
+        meshRaiz.rotation.x = Math.cos(angR) * 0.4;
+        grupoArvore.add(meshRaiz);
+    }
+
+    const geoClusterFolhas = new THREE.DodecahedronGeometry(22, 1);
+    const geoGraoCafe = new THREE.SphereGeometry(3.5, 8, 8);
 
     const camadas = 5;
     const galhosPorCamada = 6;
 
     for (let i = 0; i < camadas; i++) {
         const alturaCamada = -100 + (altTronco * 0.35) + (i * (altTronco * 0.6 / camadas));
-        const raioCamada = 140 - (i * 20);
+        const raioCamada = 150 - (i * 20);
 
         for (let j = 0; j < galhosPorCamada; j++) {
             const angulo = (j * (Math.PI * 2 / galhosPorCamada)) + (i * 0.4);
@@ -1766,34 +1560,34 @@ function construirArvoreCentral() {
             const posY = alturaCamada;
 
             const pontoInicio = new THREE.Vector3(0, posY - 8, 0);
-            const pontoMedio = new THREE.Vector3(posX * 0.5, posY + 12, posZ * 0.5);
+            const pontoMedio = new THREE.Vector3(posX * 0.5, posY + 14, posZ * 0.5);
             const pontoFim = new THREE.Vector3(posX, posY + 4, posZ);
 
             const curvaGalho = new THREE.CatmullRomCurve3([pontoInicio, pontoMedio, pontoFim]);
-            const geoGalho = new THREE.TubeGeometry(curvaGalho, 10, 3, 8, false);
+            const geoGalho = new THREE.TubeGeometry(curvaGalho, 12, 3.5, 8, false);
             const meshGalho = new THREE.Mesh(geoGalho, matTronco);
             meshGalho.castShadow = true;
             grupoArvore.add(meshGalho);
 
             const folhagem = new THREE.Mesh(geoClusterFolhas, matFolhas);
             folhagem.position.set(posX, posY + 4, posZ);
-            folhagem.scale.set(1.5, 0.5, 1.5);
+            folhagem.scale.set(1.6, 0.55, 1.6);
             folhagem.rotation.y = Math.random() * Math.PI;
             folhagem.castShadow = true;
             grupoArvore.add(folhagem);
 
-            const quantidadeFrutos = 8;
+            const quantidadeFrutos = 10;
             for (let k = 0; k < quantidadeFrutos; k++) {
                 const ehMaduro = Math.random() > 0.2;
                 const matFruto = ehMaduro ? matCafeMaduro : matCafeVerde;
                 const fruto = new THREE.Mesh(geoGraoCafe, matFruto);
 
-                const offsetX = (Math.random() - 0.5) * 18;
-                const offsetY = (Math.random() - 0.5) * 10 - 4;
-                const offsetZ = (Math.random() - 0.5) * 18;
+                const offsetX = (Math.random() - 0.5) * 20;
+                const offsetY = (Math.random() - 0.5) * 12 - 4;
+                const offsetZ = (Math.random() - 0.5) * 20;
 
                 fruto.position.set(posX + offsetX, posY + offsetY, posZ + offsetZ);
-                fruto.scale.set(1, 1.2, 1);
+                fruto.scale.set(1, 1.25, 1);
                 fruto.castShadow = true;
                 grupoArvore.add(fruto);
             }
@@ -1811,32 +1605,32 @@ function construirPlacaCafeStand() {
     grupoPlaca.name = "placaInformativa";
     grupoPlaca.userData = { isPlaca: true };
 
-    grupoPlaca.position.set(120, -100, 250);
+    grupoPlaca.position.set(130, -100, 260);
     grupoPlaca.rotation.y = -Math.PI / 6;
 
     const matBase = new THREE.MeshStandardMaterial({ color: 0x3D2314, roughness: 0.4 });
-    const matAste = new THREE.MeshStandardMaterial({ color: 0xC59B27, metalness: 0.7, roughness: 0.3 });
+    const matAste = new THREE.MeshStandardMaterial({ color: 0xC59B27, metalness: 0.8, roughness: 0.25 });
     const matMoldura = new THREE.MeshStandardMaterial({ color: 0x7A1C1C, roughness: 0.5 });
 
-    const geoBase = new THREE.BoxGeometry(35, 6, 25);
+    const geoBase = new THREE.BoxGeometry(38, 6, 28);
     const meshBase = new THREE.Mesh(geoBase, matBase);
     meshBase.position.y = 3;
     meshBase.castShadow = true;
     meshBase.userData = { isPlaca: true };
     grupoPlaca.add(meshBase);
 
-    const geoHaste = new THREE.CylinderGeometry(1.8, 1.8, 45, 12);
+    const geoHaste = new THREE.CylinderGeometry(2, 2, 48, 12);
     const meshHaste = new THREE.Mesh(geoHaste, matAste);
-    meshHaste.position.y = 28;
+    meshHaste.position.y = 30;
     meshHaste.castShadow = true;
     meshHaste.userData = { isPlaca: true };
     grupoPlaca.add(meshHaste);
 
     const grupoPainel = new THREE.Group();
-    grupoPainel.position.set(0, 50, 0);
+    grupoPainel.position.set(0, 54, 0);
     grupoPainel.rotation.x = -Math.PI / 8;
 
-    const geoMolduraPlaca = new THREE.BoxGeometry(64, 40, 4);
+    const geoMolduraPlaca = new THREE.BoxGeometry(68, 42, 4);
     const meshMolduraPlaca = new THREE.Mesh(geoMolduraPlaca, matMoldura);
     meshMolduraPlaca.castShadow = true;
     meshMolduraPlaca.name = "placaInformativa";
@@ -1844,7 +1638,7 @@ function construirPlacaCafeStand() {
     meshMolduraPlaca.renderOrder = 10;
     grupoPainel.add(meshMolduraPlaca);
 
-    const geoTelaPlaca = new THREE.PlaneGeometry(60, 36);
+    const geoTelaPlaca = new THREE.PlaneGeometry(64, 38);
     const matTelaPlaca = new THREE.MeshStandardMaterial({
         map: gerarTexturaPlaca(estadoPlacaCafe.titulo, estadoPlacaCafe.descricao),
         roughness: 0.2
@@ -1862,92 +1656,58 @@ function construirPlacaCafeStand() {
 
 function montarObrasNasPontas() {
     quadrosPendurados = [];
-    if (!obrasCafe || obrasCafe.length === 0) return;
-
     const loader = new THREE.TextureLoader();
     loader.setCrossOrigin('anonymous');
 
-    const matCorda = new THREE.MeshStandardMaterial({ 
-        color: CONFIG_GALERIA_CLASSICA.corCorda, 
-        metalness: 0.6, 
-        roughness: 0.2 
-    });
-    const matHasteSuporte = new THREE.MeshStandardMaterial({
-        color: 0x3D2314,
-        roughness: 0.7
-    });
+    obrasCafe.forEach((item, idx) => {
+        if (idx >= pontasDosGalhosDeCafe.length) return;
+        const galho = pontasDosGalhosDeCafe[idx];
 
-    const totalObras = obrasCafe.length;
-    const passoAngulo = (Math.PI * 2) / totalObras;
-    const raioAncoragem = 220;
+        const grupoQuadro = new THREE.Group();
 
-    obrasCafe.forEach((item, index) => {
-        const anguloObra = (index * passoAngulo) + 0.2;
-
-        const dirX = Math.sin(anguloObra);
-        const dirZ = Math.cos(anguloObra);
-
-        const camadaIdx = (index % 3) + 1;
-        const alturaGalhoBase = -100 + (CONFIG_GALERIA_CLASSICA.alturaTronco * 0.35) + (camadaIdx * (CONFIG_GALERIA_CLASSICA.alturaTronco * 0.6 / 5));
-
-        const pontoOrigem = new THREE.Vector3(dirX * 60, alturaGalhoBase + 10, dirZ * 60);
-
-        const pontoAncoragem = new THREE.Vector3(
-            dirX * raioAncoragem,
-            alturaGalhoBase + (index % 2 === 0 ? 15 : 0),
-            dirZ * raioAncoragem
-        );
-
-        const curvaHaste = new THREE.CatmullRomCurve3([
-            new THREE.Vector3(dirX * 20, alturaGalhoBase, dirZ * 20),
-            pontoOrigem,
-            new THREE.Vector3(dirX * (raioAncoragem * 0.65), alturaGalhoBase + 8, dirZ * (raioAncoragem * 0.65)),
-            pontoAncoragem
-        ]);
-        const geoHaste = new THREE.TubeGeometry(curvaHaste, 12, 2.2, 8, false);
-        const meshHaste = new THREE.Mesh(geoHaste, matHasteSuporte);
-        meshHaste.castShadow = true;
-        grupoArvore.add(meshHaste);
-
-        const grupoPendulo = new THREE.Group();
-        grupoPendulo.position.copy(pontoAncoragem);
-
-        const comprimentoCorda = 42;
-        const geoCorda = new THREE.CylinderGeometry(0.8, 0.8, comprimentoCorda, 8);
+        // Corda Dupla de Sisal / Latão
+        const geoCorda = new THREE.CylinderGeometry(0.6, 0.6, CONFIG_GALERIA_CLASSICA.comprimentoCorda, 8);
+        const matCorda = new THREE.MeshStandardMaterial({ color: CONFIG_GALERIA_CLASSICA.corCorda, roughness: 0.75 });
         const meshCorda = new THREE.Mesh(geoCorda, matCorda);
-        meshCorda.position.y = -comprimentoCorda / 2;
-        grupoPendulo.add(meshCorda);
+        meshCorda.position.y = -CONFIG_GALERIA_CLASSICA.comprimentoCorda / 2;
+        grupoQuadro.add(meshCorda);
 
-        const geoMoldura = new THREE.BoxGeometry(80, 60, 4);
-        const matMoldura = new THREE.MeshStandardMaterial({ color: 0x8C6D2B, metalness: 0.7, roughness: 0.3 });
+        // Moldura Trabalhada
+        const geoMoldura = new THREE.BoxGeometry(68, 52, 4);
+        const matMoldura = new THREE.MeshStandardMaterial({ color: 0xC59B27, metalness: 0.65, roughness: 0.28 });
         const meshMoldura = new THREE.Mesh(geoMoldura, matMoldura);
-        meshMoldura.position.y = -comprimentoCorda - 30;
+        meshMoldura.position.y = -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26;
+        meshMoldura.castShadow = true;
 
-        const geoTela = new THREE.PlaneGeometry(72, 52);
+        const geoPaspatur = new THREE.PlaneGeometry(62, 46);
+        const matPaspatur = new THREE.MeshStandardMaterial({ color: 0xFAF8F5, roughness: 0.8 });
+        const meshPaspatur = new THREE.Mesh(geoPaspatur, matPaspatur);
+        meshPaspatur.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 2.1);
+
+        const geoTela = new THREE.PlaneGeometry(56, 40);
         const matTela = new THREE.MeshStandardMaterial({ side: THREE.DoubleSide, roughness: 0.2 });
         const meshTela = new THREE.Mesh(geoTela, matTela);
-        meshTela.position.set(0, -comprimentoCorda - 30, 2.2);
+        meshTela.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 2.2);
 
         meshMoldura.userData = item;
         meshTela.userData = item;
 
-        grupoPendulo.add(meshMoldura);
-        grupoPendulo.add(meshTela);
+        grupoQuadro.add(meshMoldura);
+        grupoQuadro.add(meshPaspatur);
+        grupoQuadro.add(meshTela);
 
-        grupoPendulo.rotation.set(0, Math.atan2(pontoAncoragem.x, pontoAncoragem.z), 0);
+        grupoQuadro.position.copy(galho.posicao);
+        grupoQuadro.rotation.y = galho.angulo + Math.PI / 2;
 
-        const spot = new THREE.SpotLight(CONFIG_GALERIA_CLASSICA.corLuzGaleria, CONFIG_GALERIA_CLASSICA.intensidadeSpotlight);
-        spot.position.set(pontoAncoragem.x * 1.2, pontoAncoragem.y + 35, pontoAncoragem.z * 1.2);
-        spot.target = meshTela;
-        spot.angle = Math.PI / 6;
-        cenaArvore.add(spot);
+        grupoArvore.add(grupoQuadro);
 
-        grupoArvore.add(grupoPendulo);
+        quadrosPendurados.push({
+            grupo: grupoQuadro,
+            offsetTempo: idx * 0.5
+        });
 
-        quadrosPendurados.push({ grupo: grupoPendulo, offsetTempo: index * 1.5 });
-
-        const urlImagem3D = (item.imagens && item.imagens.length > 0) ? item.imagens[0] : item.imagem;
-        loader.load(urlImagem3D, (tex) => {
+        const urlImg = (item.imagens && item.imagens.length > 0) ? item.imagens[0] : item.imagem;
+        loader.load(urlImg, (tex) => {
             matTela.map = tex;
             matTela.needsUpdate = true;
         });
@@ -1964,14 +1724,12 @@ function animarArvore3D() {
         item.grupo.rotation.x = Math.cos(tempo * 0.8 + item.offsetTempo) * (CONFIG_GALERIA_CLASSICA.amplitudebalanco * 0.5);
     });
 
-    if (!interagindoArvore) {
-        lonAlvoArvore += 0.03;
-    }
+    if (!interagindoArvore) lonAlvoArvore += 0.03;
 
     lonArvore += (lonAlvoArvore - lonArvore) * 0.05;
     latArvore += (latAlvoArvore - latArvore) * 0.05;
 
-    latArvore = Math.max(-18, Math.min(28, latArvore));
+    latArvore = Math.max(-22, Math.min(32, latArvore));
 
     cameraArvore.fov += (fovAlvoArvore - cameraArvore.fov) * 0.05;
     cameraArvore.updateProjectionMatrix();
@@ -1979,7 +1737,7 @@ function animarArvore3D() {
     const phi = THREE.MathUtils.degToRad(90 - latArvore);
     const theta = THREE.MathUtils.degToRad(lonArvore);
 
-    const raioOrbita = 410;
+    const raioOrbita = 430;
 
     let posX = raioOrbita * Math.sin(phi) * Math.sin(theta);
     let posY = raioOrbita * Math.cos(phi) + 20;
@@ -2031,14 +1789,14 @@ function checarCliqueObraArvore(e) {
 function noRedimensionamentoArvore() {
     const container = document.getElementById('arvore-canvas-container');
     if (!container || !cameraArvore || !renderizadorArvore) return;
-    
+
     const largura = container.clientWidth;
     const altura = container.clientHeight;
 
     cameraArvore.aspect = largura / altura;
     cameraArvore.fov = largura < 768 ? 85 : 65;
     cameraArvore.updateProjectionMatrix();
-    
+
     renderizadorArvore.setSize(largura, altura);
 }
 
@@ -2066,19 +1824,11 @@ function fecharTourArvoreVirtual() {
     setTimeout(() => {
         modal.classList.add('hidden');
 
-        if (animacaoIdArvore) {
-            cancelAnimationFrame(animacaoIdArvore);
-            animacaoIdArvore = null;
-        }
-        if (cenaArvore) {
-            limparRecursos3D(cenaArvore);
-            cenaArvore = null;
-        }
+        if (animacaoIdArvore) { cancelAnimationFrame(animacaoIdArvore); animacaoIdArvore = null; }
+        if (cenaArvore) { limparRecursos3D(cenaArvore); cenaArvore = null; }
         if (renderizadorArvore) {
             renderizadorArvore.dispose();
-            if (renderizadorArvore.domElement) {
-                renderizadorArvore.domElement.remove();
-            }
+            if (renderizadorArvore.domElement) renderizadorArvore.domElement.remove();
             renderizadorArvore = null;
         }
         cameraArvore = null;
