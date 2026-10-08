@@ -834,7 +834,7 @@ function initSala3D() {
     renderizador.shadowMap.enabled = !isMobile;
     renderizador.shadowMap.type = THREE.PCFSoftShadowMap;
     renderizador.toneMapping = THREE.ACESFilmicToneMapping;
-    renderizador.toneMappingExposure = 1.25;
+    renderizador.toneMappingExposure = 1.0;
     container.appendChild(renderizador.domElement);
 
     renderizador.domElement.addEventListener('webglcontextlost', (e) => {
@@ -842,18 +842,18 @@ function initSala3D() {
         pararAnimacoes3D();
     }, false);
 
-    // Iluminação Aquecida de Museu Clássico (Otimizada para Mobile/Desktop)
-    const luzAmbiente = new THREE.AmbientLight(0xFFF6EA, 0.85);
+    // Iluminação Calibrada de Museu para Preservação Fiel da Cor Vinho #722F37
+    const luzAmbiente = new THREE.AmbientLight(0xFFF6EA, 0.45);
     cena.add(luzAmbiente);
 
-    const luzHemisferica = new THREE.HemisphereLight(0xFFFAEE, 0x221810, 0.8);
+    const luzHemisferica = new THREE.HemisphereLight(0xFFFAEE, 0x221810, 0.35);
     luzHemisferica.position.set(0, 280, 0);
     cena.add(luzHemisferica);
 
-    // 4 Pontos de Luz Suaves de Teto (Evita estourar o limite de WebGL SpotLights no Celular)
+    // 4 Pontos de Luz Suaves de Teto (Intensidade Calibrada para evitar superexposição)
     const angulosLuz = [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2];
     angulosLuz.forEach(ang => {
-        const luzTeto = new THREE.PointLight(0xFFE8B3, 1.1, 750);
+        const luzTeto = new THREE.PointLight(0xFFF5EE, 0.4, 750);
         luzTeto.position.set(320 * Math.sin(ang), 120, 320 * Math.cos(ang));
         cena.add(luzTeto);
     });
@@ -881,9 +881,17 @@ function initSala3D() {
     teto.position.y = altura / 2;
     cena.add(teto);
 
-    // Paredes na Cor Vinho Real (Bordeaux Gallery) com Molduras Boiserie
-    const matParede = new THREE.MeshStandardMaterial({ color: 0x3D1A1A, roughness: 0.65 });
-    const matBoiserie = new THREE.MeshStandardMaterial({ color: 0x2E1212, roughness: 0.5 });
+    // Paredes na Cor Vinho Bordô (#722F37) Calibradas para o Tom Exato
+    const matParede = new THREE.MeshStandardMaterial({ 
+        color: new THREE.Color('#4b1214'), 
+        emissive: new THREE.Color('#1E0C0E'),
+        roughness: 0.85,
+        metalness: 0.0
+    });
+    const matBoiserie = new THREE.MeshStandardMaterial({ 
+        color: new THREE.Color('#421B20'), 
+        roughness: 0.7 
+    });
     const matRodape = new THREE.MeshStandardMaterial({ color: 0x1A0B0B, roughness: 0.3 });
     const matCimalha = new THREE.MeshStandardMaterial({ color: 0xC59B27, metalness: 0.6, roughness: 0.3 });
 
