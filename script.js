@@ -1132,7 +1132,7 @@ function montarObrasEPlacas3D() {
             side: THREE.FrontSide
         });
         const meshTela = new THREE.Mesh(geoTela, matTela);
-        meshTela.position.z = 4.2;
+        meshTela.position.z = 6.5;
 
         // 4. Luminária Individual de Latão para o Quadro
         const grupoLuminaria = new THREE.Group();
@@ -1801,12 +1801,12 @@ function construirPlacaCafeStand() {
     grupoPainel.add(meshMolduraPlaca);
 
     const geoTelaPlaca = new THREE.PlaneGeometry(64, 38);
-    const matTelaPlaca = new THREE.MeshStandardMaterial({
+    const matTelaPlaca = new THREE.MeshBasicMaterial({
         map: gerarTexturaPlaca(estadoPlacaCafe.titulo, estadoPlacaCafe.descricao),
-        roughness: 0.2
+        side: THREE.FrontSide
     });
     meshTelaPlacaCafe = new THREE.Mesh(geoTelaPlaca, matTelaPlaca);
-    meshTelaPlacaCafe.position.z = 2.2;
+    meshTelaPlacaCafe.position.z = 4.5;
     meshTelaPlacaCafe.name = "placaInformativa";
     meshTelaPlacaCafe.userData = { isPlaca: true };
     meshTelaPlacaCafe.renderOrder = 11;
@@ -1848,7 +1848,7 @@ function montarObrasNasPontas() {
             side: THREE.FrontSide
         });
         const meshTela = new THREE.Mesh(geoTela, matTela);
-        meshTela.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 2.2);
+        meshTela.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 4.5);
 
         meshMoldura.userData = item;
         meshTela.userData = item;
