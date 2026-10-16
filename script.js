@@ -176,7 +176,7 @@ function carregarTexturaComFallback(loader, urlOriginal, onSuccess, onError) {
 const dadosHistoria = [
     { titulo: "Cerco da Lapa", descricao: "Jornal do dia 16 de Fevereiro de 1894.", descricaoDetalhada: "Essa é uma representação de jornal da época da revolução federalista, que retrata informações sobre a história e acontecimentos do Cerco da Lapa.", imagens: [ "cerco da lapa-michel (1).webp", "cerco da lapa-michel (2).webp" ], autor: "Luiza, Maisa e Rafael Huber." },
     { titulo: "Barão do Cerro Azul", descricao: "Jornal do dia 20 de maio de 1894.", descricaoDetalhada: "Essa é uma representação de jornal da época da revolução federalista, que retrata informações sobre a história e vida de Ildefonso Pereira Correia, o Barão do Cerro Azul.", imagens: [ "jornal barão do serro azul-michel (1).webp", "jornal barão do serro azul-michel (2).webp" ], autor: "Pesquisa Escolar" },
-    { titulo: "Guerra do Contestado", descricao: "Slide sobre os principais acontecimentos e contextualização desse evento tão importante para o povo Paranaense.", descricaoDetalhada: "Esta proposta de pesquisa traz para nós uma breve volta ao passado e aos conflitos que moldaram a nossa sociedade e o povo Paranaense.", imagens: [ "contestado (1).webp", "contestado (2).webp", "contestado (4).webp", "contestado (5).webp", "contestado (6).webp", "contestado (8).webp", "contestado (9).webp", "contestado (10).webp", "contestado (11).webp" ], autor: "Ana T., Henry Frescura e Daniel Rossoni." },
+    { titulo: "Guerra do Contestado", descricao: "Slide sobre os principais acontecimentos e contextualização desse evento tão importante para o povo Paranaense.", descricaoDetalhada: "Esta proposta de pesquisa traz para nós uma breve volta ao passado e aos conflitos que moldaram a nossa sociedade e o povo Paranaense.", imagens: [ "contestado (1).webp", "contestado (2).webp", "contestado (3).webp", "contestado (4).webp", "contestado (5).webp", "contestado (6).webp", "contestado (8).webp", "contestado (9).webp", "contestado (10).webp", "contestado (11).webp" ], autor: "Ana T., Henry Frescura e Daniel Rossoni." },
     { titulo: "Indústrias Paranaenses", descricao: "Industrialização do Estado do Paraná.", descricaoDetalhada: "Essa apresentação busca trazer informações sobre o desenvolvimento industrial do Paraná.", imagens: [ "industrias paranaenses-michel (1).webp", "industrias paranaenses-michel (2).webp", "industrias paranaenses-michel (3).webp", "industrias paranaenses-michel (4).webp", "industrias paranaenses-michel (5).webp", "industrias paranaenses-michel (6).webp", "industrias paranaenses-michel (7).webp", "industrias paranaenses-michel (8).webp", "industrias paranaenses-michel (9).webp", "industrias paranaenses-michel (10).webp", "industrias paranaenses-michel (11).webp", "industrias paranaenses-michel (12).webp", "industrias paranaenses-michel (13).webp", "industrias paranaenses-michel (14).webp" ], autor: "Tayane Zamperon, Victor Stoll e Danilo Panzenhagen." },
     { titulo: "Oeste e Sudoeste Paranaense", descricao: "Principais Cidades de cada região do Paraná.", descricaoDetalhada: "Essa apresentação busca trazer as principais cidades e suas importâncias de cada região do Paraná.", imagens: [ "oeste e sudoeste-michel (1).webp", "oeste e sudoeste-michel (2).webp", "oeste e sudoeste-michel (3).webp", "oeste e sudoeste-michel (4).webp", "oeste e sudoeste-michel (5).webp", "oeste e sudoeste-michel (6).webp", "oeste e sudoeste-michel (7).webp", "oeste e sudoeste-michel (8).webp", "oeste e sudoeste-michel (9).webp", "oeste e sudoeste-michel (10).webp", "oeste e sudoeste-michel (11).webp", "oeste e sudoeste-michel (12).webp", "oeste e sudoeste-michel (13).webp", "oeste e sudoeste-michel (14).webp", "oeste e sudoeste-michel (15).webp", "oeste e sudoeste-michel (16).webp", "oeste e sudoeste-michel (17).webp", "oeste e sudoeste-michel (18).webp", "oeste e sudoeste-michel (19).webp" ], autor: "Tayane Zamperon, Victor Stoll e Danilo Panzenhagen." },
     { titulo: "Campos Gerais e Centro Oriental Paranaense", descricao: "Principais Cidades de cada região do Paraná.", descricaoDetalhada: "Essa apresentação busca trazer as principais cidades e suas importâncias de cada região do Paraná.", imagens: [ "campos gerais e centro oriental-michel (1).webp", "campos gerais e centro oriental-michel (2).webp", "campos gerais e centro oriental-michel (3).webp", "campos gerais e centro oriental-michel (4).webp", "campos gerais e centro oriental-michel (5).webp", "campos gerais e centro oriental-michel (6).webp", "campos gerais e centro oriental-michel (7).webp", "campos gerais e centro oriental-michel (8).webp", "campos gerais e centro oriental-michel (9).webp", "campos gerais e centro oriental-michel (10).webp", "campos gerais e centro oriental-michel (11).webp", "campos gerais e centro oriental-michel (12).webp", "campos gerais e centro oriental-michel (13).webp", "campos gerais e centro oriental-michel (14).webp", "campos gerais e centro oriental-michel (15).webp", "campos gerais e centro oriental-michel (16).webp", "campos gerais e centro oriental-michel (17).webp", "campos gerais e centro oriental-michel (18).webp" ], autor: "Luiza Binsfiel, Maisa Constantino e Rafael Huber." },
@@ -185,7 +185,7 @@ const dadosHistoria = [
 ];
 
 const dadosGeografia = [
-    { titulo: "Paraná: um mosaico de culturas e tradições", descricao: "Estudo sobre a orografia, a Serra do Mar e os três planaltos paranaenses.", descricaoDetalhada: "O Paraná é marcado pela diversidade de povos, paisagens, costumes e manifestações culturais. Sua identidade foi construída pela presença dos povos indígenas e pela chegada de diferentes grupos de imigrantes, que contribuíram para os modos de viver, as festas, a culinária, a música e as tradições presentes em todo o estado. De suas paisagens naturais às manifestações culturais, o Paraná reúne diferentes histórias que formam uma identidade rica e plural.", imagens: [ "mariana mapa parana 1.webp", "mariana mapa parana 2.webp", "mariana mapa parana 3.webp" ], autor: "Pesquisa de Geografia" }, 
+    { titulo: "Paraná: um mosaico de culturas e tradições", descricao: "Estudo sobre a orografia, a Serra do Mar e os três planaltos paranaenses.", descricaoDetalhada: "O Paraná é marcado pela diversidade de povos, paisagens, costumes e manifestações culturais. Sua identidade foi construída pela presença dos povos indígenas e pela chegada de diferentes grupos de imigrantes, que contribuíram para os modos de viver, as festas, a culinária, a música e as tradições presentes em todo o estado. De suas paisagens naturais às manifestações culturais, o Paraná reúne diferentes histórias que formam uma identidade rica e plural.", imagens: [ "mariana mapa parana 1.webp", "mariana mapa parana 2.webp", "mariana mapa parana 3.webp" ], autor: "Pesquisa de Geografia" }
 ];
 
 const dadosArte = [
@@ -228,21 +228,6 @@ const obrasCafe = [
 // 3. MOTOR DO LIVRO INTERATIVO (SWIPE E TECLADO)
 // ==========================================
 const colecaoLivros = {
-    livroerva: {
-        titulo: "Processo de Produção da Erva Mate",
-        subtitulo: "A erva-mate faz parte da história e da identidade cultural do Paraná. Presente nos costumes de diferentes comunidades, o mate representa muito mais do que uma bebida.",
-        iconeCapa: "🌿🧉",
-        dados: [
-            { capitulo: "Capítulo I", paginaEsq: "pág. 02", paginaDir: "Pág. 03", titulo: "A Orografia e os Três Planaltos", imagemEsq: "processo da erva- mariana1.jpeg", imagemDir: "descrição processo da erva1.webp" },
-            { capitulo: "Capítulo II", paginaEsq: "Pág. 04", paginaDir: "Pág. 05", titulo: "Clima e Vegetação", imagemEsq: "processo da erva- mariana2.jpeg", imagemDir: "descrição processo da erva2.webp" },
-            { capitulo: "Capítulo III", paginaEsq: "Pág. 06", paginaDir: "Pág. 07", titulo: "Solos e Agricultura", imagemEsq: "processo da erva- mariana3.jpeg", imagemDir: "descrição processo da erva3.webp" },
-            { capitulo: "Capítulo IV", paginaEsq: "Pág. 08", paginaDir: "Pág. 09", titulo: "A Colheita e Processamento", imagemEsq: "processo da erva- mariana4.jpeg", imagemDir: "descrição processo da erva4.webp" },
-            { capitulo: "Capítulo V", paginaEsq: "Pág. 10", paginaDir: "Pág. 11", titulo: "Tradição e Identidade", imagemEsq: "processo da erva- mariana5.jpeg", imagemDir: "descrição processo da erva5.webp" },
-            { capitulo: "Capítulo V", paginaEsq: "Pág. 10", paginaDir: "Pág. 11", titulo: "Tradição e Identidade", imagemEsq: "processo da erva- mariana6.jpeg", imagemDir: "descrição processo da erva6.webp" }
-        ]
-        
-    },
-    
     livro1: {
         titulo: "Da Folha Ao Mate",
         subtitulo: "A erva-mate faz parte da história e da identidade cultural do Paraná. Presente nos costumes de diferentes comunidades, o mate representa muito mais do que uma bebida.",
@@ -254,11 +239,7 @@ const colecaoLivros = {
             { capitulo: "Capítulo IV", paginaEsq: "Pág. 08", paginaDir: "Pág. 09", titulo: "A Colheita e Processamento", imagemEsq: "STHEFANNY TONETO-1 ANO (7).webp", imagemDir: "STHEFANNY TONETO-1 ANO (8).webp" },
             { capitulo: "Capítulo V", paginaEsq: "Pág. 10", paginaDir: "Pág. 11", titulo: "Tradição e Identidade", imagemEsq: "STHEFANNY TONETO-1 ANO (9).webp", imagemDir: "STHEFANNY TONETO-1 ANO (10).webp" }
         ]
-        
     },
-
-    
-
     livro2: {
         titulo: "Da Folha Ao Mate",
         subtitulo: "A erva-mate faz parte da história e da identidade cultural do Paraná. Presente nos costumes de diferentes comunidades, o mate representa muito mais do que uma bebida.",
@@ -836,7 +817,7 @@ function initSala3D() {
     mouse = new THREE.Vector2();
     cena = new THREE.Scene();
 
-    camera = new THREE.PerspectiveCamera(fovAlvo, container.clientWidth / container.clientHeight, 1, 1800);
+    camera = new THREE.PerspectiveCamera(fovAlvo, container.clientWidth / container.clientHeight, 10, 1200);
     camera.target = new THREE.Vector3(0, 0, 0);
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -1061,25 +1042,40 @@ function montarObrasEPlacas3D() {
         meshMolduraExt.castShadow = true;
 
         // 2. Moldura Interna em Bisel Dourado Antigo
-        const geoMolduraInt = new THREE.BoxGeometry(108, 78, 9);
+        const geoMolduraInt = new THREE.BoxGeometry(108, 78, 6);
         const matAntiqueGold = new THREE.MeshStandardMaterial({ 
             color: 0x8F6E1B, 
             metalness: 0.6, 
             roughness: 0.35 
         });
         const meshMolduraInt = new THREE.Mesh(geoMolduraInt, matAntiqueGold);
+        meshMolduraInt.renderOrder = 2;
 
         // 3. Passe-partout (Paspatur) de Linho Claro
         const geoPaspatur = new THREE.PlaneGeometry(102, 72);
-        const matPaspatur = new THREE.MeshStandardMaterial({ color: 0xFAF6EE, roughness: 0.8 });
+        const matPaspatur = new THREE.MeshStandardMaterial({ 
+            color: 0xFAF6EE, 
+            roughness: 0.8,
+            polygonOffset: true,
+            polygonOffsetFactor: -1,
+            polygonOffsetUnits: -1
+        });
         const meshPaspatur = new THREE.Mesh(geoPaspatur, matPaspatur);
-        meshPaspatur.position.z = 4.6;
+        meshPaspatur.position.z = 4.8;
+        meshPaspatur.renderOrder = 8;
 
-        // 4. Tela de Pintura Principal (FrontSide e z-offset adequado para evitar Z-Fighting no celular)
+        // 4. Tela de Pintura Principal (Distanciamento z-offset elevado e polygonOffset para eliminar Z-Fighting em celulares)
         const geoTela = new THREE.PlaneGeometry(92, 62);
-        const matTela = new THREE.MeshStandardMaterial({ side: THREE.FrontSide, roughness: 0.2 });
+        const matTela = new THREE.MeshStandardMaterial({ 
+            side: THREE.FrontSide, 
+            roughness: 0.2,
+            polygonOffset: true,
+            polygonOffsetFactor: -2,
+            polygonOffsetUnits: -2
+        });
         const meshTela = new THREE.Mesh(geoTela, matTela);
-        meshTela.position.z = 5.8;
+        meshTela.position.z = 7.5;
+        meshTela.renderOrder = 10;
 
         // 5. Luminária Individual de Latão para o Quadro (Museum Picture Light)
         const grupoLuminaria = new THREE.Group();
@@ -1302,7 +1298,7 @@ const CONFIG_GALERIA_CLASSICA = {
     raioGalhos: 210,
     alturaTronco: 240,
     grossuraTronco: 28,
-    comprimentoCorda: 25,
+    comprimentoCorda: 50,
     corTronco: 0x2A170C,
     corFolhas: 0x143D1A,
     corCorda: 0xC59B27,
@@ -1402,7 +1398,7 @@ function initSalaArvore3D() {
     mouseArvore = new THREE.Vector2();
     cenaArvore = new THREE.Scene();
 
-    cameraArvore = new THREE.PerspectiveCamera(fovAlvoArvore, container.clientWidth / container.clientHeight, 1, 1800);
+    cameraArvore = new THREE.PerspectiveCamera(fovAlvoArvore, container.clientWidth / container.clientHeight, 10, 1200);
     cameraArvore.target = new THREE.Vector3(0, 40, 0);
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -1801,14 +1797,28 @@ function montarObrasNasPontas() {
         meshMoldura.castShadow = true;
 
         const geoPaspatur = new THREE.PlaneGeometry(62, 46);
-        const matPaspatur = new THREE.MeshStandardMaterial({ color: 0xFAF8F5, roughness: 0.8 });
+        const matPaspatur = new THREE.MeshStandardMaterial({ 
+            color: 0xFAF8F5, 
+            roughness: 0.8,
+            polygonOffset: true,
+            polygonOffsetFactor: -1,
+            polygonOffsetUnits: -1
+        });
         const meshPaspatur = new THREE.Mesh(geoPaspatur, matPaspatur);
-        meshPaspatur.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 2.2);
+        meshPaspatur.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 2.5);
+        meshPaspatur.renderOrder = 8;
 
         const geoTela = new THREE.PlaneGeometry(56, 40);
-        const matTela = new THREE.MeshStandardMaterial({ side: THREE.FrontSide, roughness: 0.2 });
+        const matTela = new THREE.MeshStandardMaterial({ 
+            side: THREE.FrontSide, 
+            roughness: 0.2,
+            polygonOffset: true,
+            polygonOffsetFactor: -2,
+            polygonOffsetUnits: -2
+        });
         const meshTela = new THREE.Mesh(geoTela, matTela);
-        meshTela.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 3.2);
+        meshTela.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 4.5);
+        meshTela.renderOrder = 10;
 
         meshMoldura.userData = item;
         meshTela.userData = item;
