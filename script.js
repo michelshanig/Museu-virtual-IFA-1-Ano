@@ -755,6 +755,80 @@ function criarTexturaPisoMadeira() {
     return texture;
 }
 
+
+// Função para gerar uma textura única composta (Paspatur + Obra de Arte + Moldura Interna)
+function criarTexturaTelaComPaspatur(imgElement) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1024;
+    canvas.height = 768;
+    const ctx = canvas.getContext('2d');
+
+    // 1. Fundo Paspatur de Linho Claro
+    ctx.fillStyle = '#FAF6EE';
+    ctx.fillRect(0, 0, 1024, 768);
+
+    // 2. Filete Dourado e Vinho de Moldura Interna
+    ctx.strokeStyle = '#C59B27';
+    ctx.lineWidth = 8;
+    ctx.strokeRect(36, 36, 952, 696);
+
+    ctx.strokeStyle = '#7A1C1C';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(44, 44, 936, 680);
+
+    // 3. Área para a Pintura do Aluno
+    const marginX = 70;
+    const marginY = 70;
+    const maxW = 1024 - (marginX * 2);
+    const maxH = 768 - (marginY * 2);
+
+    if (imgElement && imgElement.width && imgElement.height) {
+        const imgW = imgElement.width;
+        const imgH = imgElement.height;
+        const imgAspect = imgW / imgH;
+        const maxAspect = maxW / maxH;
+
+        let drawW = maxW;
+        let drawH = maxH;
+
+        if (imgAspect > maxAspect) {
+            drawW = maxW;
+            drawH = maxW / imgAspect;
+        } else {
+            drawH = maxH;
+            drawW = maxH * imgAspect;
+        }
+
+        const drawX = marginX + (maxW - drawW) / 2;
+        const drawY = marginY + (maxH - drawH) / 2;
+
+        // Sombra suave sob a pintura
+        ctx.shadowColor = 'rgba(0,0,0,0.2)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 3;
+
+        ctx.drawImage(imgElement, drawX, drawY, drawW, drawH);
+
+        ctx.shadowColor = 'transparent';
+
+        // Borda elegante na pintura
+        ctx.strokeStyle = '#D4C4A8';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(drawX, drawY, drawW, drawH);
+    }
+
+    const texture = new THREE.CanvasTexture(canvas);
+    if (THREE.SRGBColorSpace) {
+        texture.colorSpace = THREE.SRGBColorSpace;
+    } else if (THREE.sRGBEncoding) {
+        texture.encoding = THREE.sRGBEncoding;
+    }
+    texture.needsUpdate = true;
+    return texture;
+}
+
+
 // Gerador de Placa de Latão Explicativa para Cada Obra
 function gerarTexturaPlacaBalaustre(titulo, autor, disciplina) {
     const canvas = document.createElement('canvas');
@@ -1049,35 +1123,19 @@ function montarObrasEPlacas3D() {
             roughness: 0.35 
         });
         const meshMolduraInt = new THREE.Mesh(geoMolduraInt, matAntiqueGold);
-        meshMolduraInt.renderOrder = 2;
 
-        // 3. Passe-partout (Paspatur) de Linho Claro
-        const geoPaspatur = new THREE.PlaneGeometry(102, 72);
-        const matPaspatur = new THREE.MeshStandardMaterial({ 
-            color: 0xFAF6EE, 
-            roughness: 0.8,
-            polygonOffset: true,
-            polygonOffsetFactor: -1,
-            polygonOffsetUnits: -1
-        });
-        const meshPaspatur = new THREE.Mesh(geoPaspatur, matPaspatur);
-        meshPaspatur.position.z = 4.8;
-        meshPaspatur.renderOrder = 8;
-
-        // 4. Tela de Pintura Principal (Distanciamento z-offset elevado e polygonOffset para eliminar Z-Fighting em celulares)
-        const geoTela = new THREE.PlaneGeometry(92, 62);
+        // 3. Tela Única Integrada (Contém Paspatur Linho + Moldura Dourada + Pintura do Aluno em uma só geometria)
+        // Elimina 100% a sobreposição de planos e o recorte diagonal no Z-buffer em celulares
+        const geoTela = new THREE.PlaneGeometry(102, 72);
         const matTela = new THREE.MeshStandardMaterial({ 
+            color: 0xFFFFFF,
             side: THREE.FrontSide, 
-            roughness: 0.2,
-            polygonOffset: true,
-            polygonOffsetFactor: -2,
-            polygonOffsetUnits: -2
+            roughness: 0.25
         });
         const meshTela = new THREE.Mesh(geoTela, matTela);
-        meshTela.position.z = 7.5;
-        meshTela.renderOrder = 10;
+        meshTela.position.z = 4.2;
 
-        // 5. Luminária Individual de Latão para o Quadro (Museum Picture Light)
+        // 4. Luminária Individual de Latão para o Quadro
         const grupoLuminaria = new THREE.Group();
         grupoLuminaria.position.set(0, 52, 10);
 
@@ -1094,9 +1152,7 @@ function montarObrasEPlacas3D() {
         grupoLuminaria.add(meshHasteLuz);
         grupoLuminaria.add(meshRefletor);
 
-        // Luz individual desativada para manter alta performance em dispositivos móveis
-
-        // 6. Placa Explicativa de Latão com Texto Renderizado
+        // 5. Placa Explicativa de Latão com Texto Renderizado
         const geoPlaca = new THREE.BoxGeometry(42, 18, 2);
         const matPlaca = new THREE.MeshStandardMaterial({
             map: gerarTexturaPlacaBalaustre(item.titulo, item.autor, item.disciplina),
@@ -1111,7 +1167,6 @@ function montarObrasEPlacas3D() {
 
         grupoArte.add(meshMolduraExt);
         grupoArte.add(meshMolduraInt);
-        grupoArte.add(meshPaspatur);
         grupoArte.add(meshTela);
         grupoArte.add(grupoLuminaria);
         grupoArte.add(meshPlaca);
@@ -1129,23 +1184,14 @@ function montarObrasEPlacas3D() {
 
         const urlImagem3D = (item.imagens && item.imagens.length > 0) ? item.imagens[0] : item.imagem;
         carregarTexturaComFallback(loader, urlImagem3D, (tex) => {
-            if (tex.image && tex.image.width && tex.image.height) {
-                const imgAspect = tex.image.width / tex.image.height;
-                const planeAspect = 92 / 62;
-                if (imgAspect > planeAspect) {
-                    meshTela.scale.set(1, planeAspect / imgAspect, 1);
-                } else {
-                    meshTela.scale.set(imgAspect / planeAspect, 1, 1);
-                }
+            if (tex && tex.image) {
+                const texComposta = criarTexturaTelaComPaspatur(tex.image);
+                matTela.map = texComposta;
+                matTela.needsUpdate = true;
             }
-            matTela.map = tex;
-            matTela.needsUpdate = true;
-        }, () => {
-            console.warn("Aviso: Falha ao carregar imagem 3D da galeria:", urlImagem3D);
         });
     });
 }
-
 function focarObraMaisProxima() {
     if (!trabalhosAlunos || trabalhosAlunos.length === 0) return;
     const lonNorm = ((lon % 360) + 360) % 360;
@@ -1796,35 +1842,20 @@ function montarObrasNasPontas() {
         meshMoldura.position.y = -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26;
         meshMoldura.castShadow = true;
 
-        const geoPaspatur = new THREE.PlaneGeometry(62, 46);
-        const matPaspatur = new THREE.MeshStandardMaterial({ 
-            color: 0xFAF8F5, 
-            roughness: 0.8,
-            polygonOffset: true,
-            polygonOffsetFactor: -1,
-            polygonOffsetUnits: -1
-        });
-        const meshPaspatur = new THREE.Mesh(geoPaspatur, matPaspatur);
-        meshPaspatur.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 2.5);
-        meshPaspatur.renderOrder = 8;
-
-        const geoTela = new THREE.PlaneGeometry(56, 40);
+        // Tela Única Integrada (Paspatur + Pintura em uma só geometria)
+        const geoTela = new THREE.PlaneGeometry(60, 44);
         const matTela = new THREE.MeshStandardMaterial({ 
+            color: 0xFFFFFF,
             side: THREE.FrontSide, 
-            roughness: 0.2,
-            polygonOffset: true,
-            polygonOffsetFactor: -2,
-            polygonOffsetUnits: -2
+            roughness: 0.25 
         });
         const meshTela = new THREE.Mesh(geoTela, matTela);
-        meshTela.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 4.5);
-        meshTela.renderOrder = 10;
+        meshTela.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 2.2);
 
         meshMoldura.userData = item;
         meshTela.userData = item;
 
         grupoQuadro.add(meshMoldura);
-        grupoQuadro.add(meshPaspatur);
         grupoQuadro.add(meshTela);
 
         grupoQuadro.position.copy(galho.posicao);
@@ -1839,23 +1870,14 @@ function montarObrasNasPontas() {
 
         const urlImg = (item.imagens && item.imagens.length > 0) ? item.imagens[0] : item.imagem;
         carregarTexturaComFallback(loader, urlImg, (tex) => {
-            if (tex.image && tex.image.width && tex.image.height) {
-                const imgAspect = tex.image.width / tex.image.height;
-                const planeAspect = 56 / 40;
-                if (imgAspect > planeAspect) {
-                    meshTela.scale.set(1, planeAspect / imgAspect, 1);
-                } else {
-                    meshTela.scale.set(imgAspect / planeAspect, 1, 1);
-                }
+            if (tex && tex.image) {
+                const texComposta = criarTexturaTelaComPaspatur(tex.image);
+                matTela.map = texComposta;
+                matTela.needsUpdate = true;
             }
-            matTela.map = tex;
-            matTela.needsUpdate = true;
-        }, () => {
-            console.warn("Aviso: Falha ao carregar imagem 3D da sala do café:", urlImg);
         });
     });
 }
-
 function animarArvore3D() {
     animacaoIdArvore = requestAnimationFrame(animarArvore3D);
 
