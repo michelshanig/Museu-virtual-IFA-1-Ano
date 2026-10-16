@@ -957,7 +957,7 @@ function initSala3D() {
 
     // Paredes na Cor Vinho Bordô (#722F37) Calibradas para o Tom Exato
     const matParede = new THREE.MeshStandardMaterial({ 
-        color: new THREE.Color('#4b1214'), 
+        color: new THREE.Color('#722F37'), 
         emissive: new THREE.Color('#1E0C0E'),
         roughness: 0.85,
         metalness: 0.0
@@ -1127,10 +1127,9 @@ function montarObrasEPlacas3D() {
         // 3. Tela Única Integrada (Contém Paspatur Linho + Moldura Dourada + Pintura do Aluno em uma só geometria)
         // Elimina 100% a sobreposição de planos e o recorte diagonal no Z-buffer em celulares
         const geoTela = new THREE.PlaneGeometry(102, 72);
-        const matTela = new THREE.MeshStandardMaterial({ 
-            color: 0xFFFFFF,
-            side: THREE.FrontSide, 
-            roughness: 0.25
+        const matTela = new THREE.MeshBasicMaterial({ 
+            map: criarTexturaTelaComPaspatur(null),
+            side: THREE.FrontSide
         });
         const meshTela = new THREE.Mesh(geoTela, matTela);
         meshTela.position.z = 4.2;
@@ -1844,10 +1843,9 @@ function montarObrasNasPontas() {
 
         // Tela Única Integrada (Paspatur + Pintura em uma só geometria)
         const geoTela = new THREE.PlaneGeometry(60, 44);
-        const matTela = new THREE.MeshStandardMaterial({ 
-            color: 0xFFFFFF,
-            side: THREE.FrontSide, 
-            roughness: 0.25 
+        const matTela = new THREE.MeshBasicMaterial({ 
+            map: criarTexturaTelaComPaspatur(null),
+            side: THREE.FrontSide
         });
         const meshTela = new THREE.Mesh(geoTela, matTela);
         meshTela.position.set(0, -CONFIG_GALERIA_CLASSICA.comprimentoCorda - 26, 2.2);
