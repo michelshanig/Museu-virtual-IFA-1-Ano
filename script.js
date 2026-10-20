@@ -228,6 +228,20 @@ const obrasCafe = [
 // 3. MOTOR DO LIVRO INTERATIVO (SWIPE E TECLADO)
 // ==========================================
 const colecaoLivros = {
+    livroerva: {
+        titulo: "Processo de Produção da Erva Mate",
+        subtitulo: "A erva-mate faz parte da história e da identidade cultural do Paraná. Presente nos costumes de diferentes comunidades, o mate representa muito mais do que uma bebida.",
+        iconeCapa: "📜",
+        dados: [
+            { capitulo: "Capítulo I", paginaEsq: "Pág. 02", paginaDir: "Pág. 03", titulo: "A Orografia e os Três Planaltos", imagemEsq: "processo da erva- mariana1.jpeg", imagemDir: "descrição processo da erva1.webp" },
+            { capitulo: "Capítulo II", paginaEsq: "Pág. 04", paginaDir: "Pág. 05", titulo: "Clima e Vegetação", imagemEsq: "processo da erva- mariana2.jpeg", imagemDir: "descrição processo da erva2.webp" },
+            { capitulo: "Capítulo III", paginaEsq: "Pág. 06", paginaDir: "Pág. 07", titulo: "Solos e Agricultura", imagemEsq: "processo da erva- mariana3.jpeg", imagemDir: "descrição processo da erva3.webp" },
+            { capitulo: "Capítulo IV", paginaEsq: "Pág. 08", paginaDir: "Pág. 09", titulo: "A Colheita e Processamento", imagemEsq: "processo da erva- mariana4.jpeg", imagemDir: "descrição processo da erva4.webp" },
+            { capitulo: "Capítulo V", paginaEsq: "Pág. 10", paginaDir: "Pág. 11", titulo: "Tradição e Identidade", imagemEsq: "processo da erva- mariana5.jpeg", imagemDir: "descrição processo da erva5.webp" },
+            { capitulo: "Capítulo V", paginaEsq: "Pág. 10", paginaDir: "Pág. 11", titulo: "Tradição e Identidade", imagemEsq: "processo da erva- mariana6.jpeg", imagemDir: "descrição processo da erva6.webp" }
+        ]
+    },
+    
     livro1: {
         titulo: "Da Folha Ao Mate",
         subtitulo: "A erva-mate faz parte da história e da identidade cultural do Paraná. Presente nos costumes de diferentes comunidades, o mate representa muito mais do que uma bebida.",
