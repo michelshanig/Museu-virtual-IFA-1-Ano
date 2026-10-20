@@ -1343,7 +1343,7 @@ const CONFIG_GALERIA_CLASSICA = {
     raioGalhos: 210,
     alturaTronco: 240,
     grossuraTronco: 28,
-    comprimentoCorda: 50,
+    comprimentoCorda: 25,
     corTronco: 0x2A170C,
     corFolhas: 0x143D1A,
     corCorda: 0xC59B27,
@@ -1857,7 +1857,7 @@ function montarObrasNasPontas() {
         grupoQuadro.add(meshTela);
 
         grupoQuadro.position.copy(galho.posicao);
-        grupoQuadro.rotation.y = galho.angulo + Math.PI / 2;
+        grupoQuadro.rotation.y = galho.angulo;
 
         grupoArvore.add(grupoQuadro);
 
