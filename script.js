@@ -846,50 +846,57 @@ function criarTexturaTelaComPaspatur(imgElement) {
 // Gerador de Placa de Latão Explicativa para Cada Obra
 function gerarTexturaPlacaBalaustre(titulo, autor, disciplina) {
     const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 220;
+    canvas.width = 1024;
+    canvas.height = 440;
     const ctx = canvas.getContext('2d');
 
-    // Fundo de latão escovado
-    const grad = ctx.createLinearGradient(0, 0, 512, 220);
+    // Fundo de latão escovado de alta resolução
+    const grad = ctx.createLinearGradient(0, 0, 1024, 440);
     grad.addColorStop(0, '#FAF6EE');
     grad.addColorStop(1, '#EAE1CE');
     ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 512, 220);
+    ctx.fillRect(0, 0, 1024, 440);
 
-    // Moldura Dourada Dupla
+    // Moldura Dourada Dupla Nítida
     ctx.strokeStyle = '#C59B27';
-    ctx.lineWidth = 10;
-    ctx.strokeRect(6, 6, 500, 208);
+    ctx.lineWidth = 20;
+    ctx.strokeRect(12, 12, 1000, 416);
 
     ctx.strokeStyle = '#7A1C1C';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(16, 16, 480, 188);
+    ctx.lineWidth = 6;
+    ctx.strokeRect(32, 32, 960, 376);
 
-    // Título da Obra
-    ctx.font = 'bold 28px Georgia, serif';
+    // Título da Obra (Maior, Ultra-Nítido e Negrito)
+    ctx.font = 'bold 54px Georgia, serif';
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#3D2314';
-    ctx.fillText((titulo || 'Trabalho de Aluno').substring(0, 28), 256, 60);
+    ctx.fillStyle = '#221105';
+    ctx.fillText((titulo || 'Trabalho de Aluno').substring(0, 32), 512, 120);
 
     ctx.beginPath();
-    ctx.moveTo(60, 80);
-    ctx.lineTo(452, 80);
+    ctx.moveTo(120, 160);
+    ctx.lineTo(904, 160);
     ctx.strokeStyle = '#C59B27';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 4;
     ctx.stroke();
 
     // Autor
-    ctx.font = 'italic 22px Georgia, serif';
-    ctx.fillStyle = '#7A1C1C';
-    ctx.fillText(`Autor: ${autor || 'Aluno'}`, 256, 122);
+    ctx.font = 'bold 42px Georgia, serif';
+    ctx.fillStyle = '#6B1212';
+    ctx.fillText(`Autor: ${autor || 'Aluno'}`, 512, 244);
 
     // Disciplina / Projeto
-    ctx.font = '18px Inter, sans-serif';
-    ctx.fillStyle = '#5A3D28';
-    ctx.fillText(`Disciplina: ${disciplina || 'Arte & História'}`, 256, 162);
+    ctx.font = 'bold 36px Inter, sans-serif';
+    ctx.fillStyle = '#3D2314';
+    ctx.fillText(`Disciplina: ${disciplina || 'Arte & História'}`, 512, 324);
 
     const texture = new THREE.CanvasTexture(canvas);
+    if (THREE.SRGBColorSpace) {
+        texture.colorSpace = THREE.SRGBColorSpace;
+    } else if (THREE.sRGBEncoding) {
+        texture.encoding = THREE.sRGBEncoding;
+    }
+    texture.generateMipmaps = true;
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
     texture.needsUpdate = true;
     return texture;
 }
@@ -969,9 +976,9 @@ function initSala3D() {
     teto.position.y = altura / 2;
     cena.add(teto);
 
-    // Paredes na Cor Vinho Bordô (#722F37) Calibradas para o Tom Exato
+    // Paredes na Cor Bege Claro (#722F37) Calibradas para o Tom Exato
     const matParede = new THREE.MeshStandardMaterial({ 
-        color: new THREE.Color('#722F37'), 
+        color: new THREE.Color('#ede8d0'), 
         emissive: new THREE.Color('#1E0C0E'),
         roughness: 0.85,
         metalness: 0.0
@@ -1076,15 +1083,41 @@ function initSala3D() {
         }
     });
 
-    // Zoom via Roda do Mouse
+    // Zoom via Roda do Mouse (Permite aproximação profunda até FOV 15)
     container.addEventListener('wheel', (e) => {
         e.preventDefault();
         fovAlvo += e.deltaY * 0.05;
-        fovAlvo = Math.max(35, Math.min(85, fovAlvo));
+        fovAlvo = Math.max(15, Math.min(85, fovAlvo));
     }, { passive: false });
+
+    // Suporte a Pinch-to-Zoom em Dispositivos Móveis (Galeria Clássica)
+    let distTouchOnDown = 0;
+    container.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+            distTouchOnDown = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+        }
+    }, { passive: true });
+
+    container.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2 && distTouchOnDown > 0) {
+            const distAtual = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            const delta = distTouchOnDown - distAtual;
+            fovAlvo += delta * 0.08;
+            fovAlvo = Math.max(15, Math.min(85, fovAlvo));
+            distTouchOnDown = distAtual;
+        }
+    }, { passive: true });
 
     function animarGaleria() {
         loopGaleriaId = requestAnimationFrame(animarGaleria);
+
+        if (!interagindo) lonAlvo += 0.03;
 
         lon += (lonAlvo - lon) * 0.08;
         lat += (latAlvo - lat) * 0.08;
@@ -1220,7 +1253,8 @@ function focarObraMaisProxima() {
     });
 
     lonAlvo = obraMaisProxima.lon || 0;
-    latAlvo = 0;
+    latAlvo = -4; // Leve inclinação para enquadrar perfeitamente a pintura e a plaquinha
+    fovAlvo = 20; // Zoom profundo (FOV 20) para leitura clara da plaquinha e apreciação detalhada
 }
 
 function checarCliqueObra(e) {
@@ -1682,10 +1716,12 @@ function construirArvoreCentral() {
     meshBordaVaso.position.y = -100 + 28;
     grupoArvore.add(meshBordaVaso);
 
-    const geoTerra = new THREE.CylinderGeometry(68, 68, 2, 32);
-    const matTerra = new THREE.MeshStandardMaterial({ color: 0x1F120A, roughness: 0.95 });
+    // Canteiro de Terra de Café Orgânica (Monte Suave sem colisão/oscilação de Z-buffer)
+    const geoTerra = new THREE.CylinderGeometry(24, 66, 6, 32);
+    const matTerra = new THREE.MeshStandardMaterial({ color: 0x24140A, roughness: 0.95 });
     const meshTerra = new THREE.Mesh(geoTerra, matTerra);
-    meshTerra.position.y = -100 + 27;
+    meshTerra.position.y = -100 + 30; // Topo do monte em Y = -67 (acima da borda Y = -72)
+    meshTerra.castShadow = true;
     grupoArvore.add(meshTerra);
 
     // 2. Tronco Orgânico com Raízes Esculpidas
